@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#101923">
+  <meta name="referrer" content="no-referrer">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'">
+  <title>DIG: Deep Quest — gameplay preview</title>
+  <link rel="stylesheet" href="style.css">
+  <script type="module" src="app.mjs"></script>
+</head>
+<body>
+  <header><div><p class="eyebrow">NOMO SUPPLY · DEVELOPMENT DEMO</p><h1>DIG: Deep Quest</h1></div><span class="tag">Simulated currency</span></header>
+  <div class="notice" id="art-status">Temporary labeled visuals. Approved artwork archives have not been transferred.</div>
+  <nav class="quick-links" aria-label="Game sections"><a href="#mine">Mine</a><a href="#supplies">Supplies &amp; Boost</a><a href="#tools">Tools &amp; inventory</a></nav>
+  <details class="how-to"><summary>First expedition? Start here</summary><ol><li>Open Supplies and claim two eligible free shovels, or buy a pack using simulated DIG.</li><li>Choose a covered position in the Mine, then tap Excavate. Discovered metal needs the displayed DIG pickaxe.</li><li>To test Boost, buy a simulated pass. In Tools, open Simulation fixture and deposit simulated funding.</li><li>Use information tools before excavating. Resolve 35 positions, or purchase early descent, then confirm the next depth.</li></ol><p>Nothing connects to a live wallet. Your phone saves a separate local game; saves do not sync across devices.</p></details>
+  <main>
+    <aside class="panel account" id="supplies">
+      <h2>Your expedition</h2>
+      <dl class="metrics"><div><dt>Demo wallet · DIG</dt><dd id="wallet">—</dd></div><div><dt>Shovels</dt><dd id="shovels">—</dd></div><div><dt>Lifetime simulated DIG earned</dt><dd id="earned">—</dd></div><div><dt>Simulated profile Rewards · DIG</dt><dd id="rewards">—</dd></div></dl>
+      <button id="claim-rewards">Claim available Rewards</button>
+      <p class="hint">Rewards above the per-wallet 30M DIG cap stay claimable. This demo uses a local mock of profile Rewards.</p>
+      <h2>Excavation supplies</h2>
+      <label for="pack">Shovel pack</label><select id="pack"><option value="1">1 · 4,500 DIG</option><option value="5">5 · 22,500 DIG</option><option value="10" selected>10 · 45,000 DIG</option><option value="25">25 · 112,500 DIG</option><option value="50">50 · 225,000 DIG</option></select>
+      <button id="buy-shovels">Buy simulated shovels</button><button id="free">Claim 2 daily free shovels</button>
+      <p class="hint" id="free-status"></p>
+      <h2>Boost coverage</h2><p id="boost-status"></p><p><strong id="pass">0</strong> covered positions remaining</p>
+      <button id="buy-pass">Boost Pass · 260,000 DIG</button>
+      <p class="hint">250 future eligible positions. Digging sold separately. Unused uses carry forward. No refunds; timing and profit are not guaranteed.</p>
+    </aside>
+    <section class="mine" id="mine" aria-label="Mining board">
+      <div class="board-heading"><div><p class="eyebrow">CANONICAL 5 × 10 BOARD</p><h2>Depth <span id="depth">1</span></h2></div><div><strong id="progress">0 / 35</strong><p class="hint">resolved to unlock descent</p></div></div>
+      <progress id="progress-bar" max="35" value="0" aria-label="Resolved positions toward descent"></progress>
+      <div id="board" class="board" aria-label="50 mining positions"></div>
+      <p class="hint">Select a position, then excavate. A lit position still needs excavation; discovered metal needs its matching pickaxe.</p>
+      <div class="target-panel"><p id="target">Select a covered position.</p><button id="dig" class="primary">Excavate · 1 shovel</button><button id="pickaxe">Resolve metal with DIG pickaxe</button></div>
+      <div id="message" role="status" aria-live="polite">Buy a shovel pack or claim the daily pair to begin.</div>
+      <div class="descent"><button id="depth-pass">Early descent · 10,000 DIG</button><button id="descend">Descend to next depth</button></div>
+    </section>
+    <aside class="panel tools" id="tools">
+      <h2>Information tools</h2><button id="light">Miner’s Light · 2,000 DIG</button><button id="detector">Metal Detector · 3,000 DIG</button><button id="scanner">Scan selected row · 4,000 DIG</button>
+      <p class="hint">Information tools reveal existing outcomes. They do not excavate, reroll, or consume shovels.</p><div id="info" class="hint"></div>
+      <h2>Inventory</h2><p id="shards"></p><div id="crystals"></div><p id="supplemental" class="hint"></p>
+      <h2>Reward vault · DIG</h2><dl class="metrics compact"><div><dt>Spendable</dt><dd id="spendable">—</dd></div><div><dt>Protected obligations</dt><dd id="reserved">—</dd></div><div><dt>Unreserved treasury</dt><dd id="treasury">—</dd></div></dl>
+      <details><summary>Simulation fixture</summary><p class="hint">Test funding only; no live token transfer. A 100% native deposit can activate Boost once the locked funding conditions qualify.</p><button id="deposit">Funder deposit · 20M simulated DIG</button></details>
+      <h2>Recent activity</h2><ol id="activity"></ol>
+    </aside>
+  </main>
+  <footer><p id="save-status">Progress saves locally in this browser.</p>C29 development slice · no live wallet connection. FENN/NOMO settlement controllers, Mythics, bulk tools, and some crystal settlement policies remain pending. Original artwork will be retained unchanged when transferred.<p><a href="visual-review.html">View draft visual treatments for review</a></p></footer>
+  <dialog id="confirm-dialog"><form method="dialog"><h2 id="confirm-title"></h2><p id="confirm-text"></p><div class="dialog-actions"><button value="cancel">Cancel</button><button value="confirm" class="primary">Confirm</button></div></form></dialog>
+</body>
+</html>
