@@ -1,6 +1,10 @@
 // New presentation only. The engine saves the confirmed descent before playback.
 import {RULES,resolved} from './engine.mjs';
 
+// Coordinates refer to the unchanged 1024 × 1536 approved Depth Pass card.
+// Straighten only its illustrated passage at runtime; no replacement art is drawn.
+export const TUNNEL_ART=Object.freeze({file:'assets/equipment/depth_pass.png',width:420,height:480,centerX:509,centerY:824,angle:14*Math.PI/180,exitX:27,exitY:189});
+
 export function descentStages(previous,next){
  if(next.depth!==previous.depth+1)return [];
  return previous.earlyDescent&&resolved(previous)<RULES.descent?['pass','tunnel']:['tunnel'];
@@ -10,15 +14,24 @@ export class DescentCinematic{
  constructor(dialog,{onTunnelStart=()=>{}}={}){
   this.dialog=dialog;this.canvas=dialog.querySelector('canvas');this.pass=dialog.querySelector('.descent-pass');
   this.status=dialog.querySelector('[data-descent-status]');this.title=dialog.querySelector('[data-descent-title]');
-  this.onTunnelStart=onTunnelStart;this.playing=false;this.cancelFrame=null;this.texture=null;
-  const image=new Image();image.onload=()=>{this.texture=image;};image.src='assets/blocks/tile_covered.png';
+  this.onTunnelStart=onTunnelStart;this.playing=false;this.cancelFrame=null;this.tunnel=null;
+  this.artReady=new Promise(resolve=>{
+   const image=new Image();image.onload=()=>{
+    const crop=document.createElement('canvas');crop.width=TUNNEL_ART.width;crop.height=TUNNEL_ART.height;
+    const ctx=crop.getContext('2d');ctx.translate(crop.width/2,crop.height/2);ctx.rotate(-TUNNEL_ART.angle);
+    ctx.drawImage(image,-TUNNEL_ART.centerX,-TUNNEL_ART.centerY);this.tunnel=crop;
+    this.canvas.dataset.artSource=TUNNEL_ART.file;resolve();
+   };
+   image.onerror=()=>resolve();image.src=TUNNEL_ART.file;
+  });
  }
  async play(previous,next){
   const stages=descentStages(previous,next);if(!stages.length||this.playing)return;
   this.playing=true;
   const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
   const focus=document.activeElement,position={x:scrollX,y:scrollY};
-  let stopped=false;const stop=()=>{stopped=true;this.cancelFrame?.();};
+  let stopped=false,releaseWait;const skipWait=new Promise(resolve=>{releaseWait=resolve;});
+  const stop=()=>{stopped=true;releaseWait();this.cancelFrame?.();};
   const skip=this.dialog.querySelector('[data-descent-skip]');skip.addEventListener('click',stop);
   const cancel=event=>{event.preventDefault();stop();};this.dialog.addEventListener('cancel',cancel);
   this.title.textContent=`Depth ${previous.depth} → ${next.depth}`;
@@ -29,7 +42,7 @@ export class DescentCinematic{
     if(stopped)break;
     this.dialog.dataset.phase=phase;this.pass.hidden=phase!=='pass';this.canvas.hidden=phase!=='tunnel';
     this.status.textContent=phase==='pass'?'Using your Depth Pass':'Traveling through the mine tunnel';
-    if(phase==='tunnel')this.onTunnelStart();
+    if(phase==='tunnel'){await Promise.race([this.artReady,skipWait]);if(stopped)break;this.onTunnelStart();}
     const duration=phase==='pass'?(reduced?700:1100):(reduced?1100:3400);
     await this.phase(duration,phase,reduced);
    }
@@ -61,31 +74,16 @@ export class DescentCinematic{
   const width=Math.round(w*dpr),height=Math.round(h*dpr);
   if(this.canvas.width!==width||this.canvas.height!==height){this.canvas.width=width;this.canvas.height=height;}
   const ctx=this.canvas.getContext('2d');ctx.setTransform(dpr,0,0,dpr,0,0);
-  const vx=w/2,vy=h*.43;
-  const glow=ctx.createRadialGradient(vx,vy,3,vx,vy,Math.max(w,h));glow.addColorStop(0,'#284b32');glow.addColorStop(.35,'#10291f');glow.addColorStop(1,'#030807');ctx.fillStyle=glow;ctx.fillRect(0,0,w,h);
-  // Source tile pixels are used as an unchanged texture; the tunnel geometry is new.
-  const rock=this.texture?ctx.createPattern(this.texture,'repeat'):null;ctx.fillStyle=rock||'#26352b';
-  ctx.beginPath();ctx.moveTo(0,0);ctx.lineTo(vx-8,vy);ctx.lineTo(0,h);ctx.closePath();ctx.fill();
-  ctx.beginPath();ctx.moveTo(w,0);ctx.lineTo(vx+8,vy);ctx.lineTo(w,h);ctx.closePath();ctx.fill();
-  ctx.fillStyle='#06160edd';ctx.fillRect(0,0,w,h);
-  // Rails converge at the passage ahead; sleepers and timber supports move past
-  // the camera to show travel through the mine without introducing an avatar.
-  ctx.fillStyle='#17261a';ctx.beginPath();ctx.moveTo(vx,vy);ctx.lineTo(w,h);ctx.lineTo(0,h);ctx.closePath();ctx.fill();
-  for(const side of [-1,1]){ctx.strokeStyle='#b7bca1';ctx.lineWidth=4;ctx.beginPath();ctx.moveTo(vx+side*3,vy);ctx.lineTo(vx+side*w*.34,h);ctx.stroke();ctx.strokeStyle='#515e51';ctx.lineWidth=7;ctx.beginPath();ctx.moveTo(vx+side*2,vy);ctx.lineTo(vx+side*w*.38,h);ctx.stroke();}
-  const travel=time*.48;
-  for(let i=0;i<10;i++){
-   const q=((i/10+travel)%1),scale=q*q,half=Math.max(4,w*.83*scale),top=vy-(vy+65)*scale,bottom=vy+(h-vy+120)*scale;
-   ctx.strokeStyle='#6e492d';ctx.lineWidth=3+scale*20;ctx.lineJoin='round';ctx.beginPath();ctx.moveTo(vx-half,bottom);ctx.lineTo(vx-half,top+half*.18);ctx.lineTo(vx,top);ctx.lineTo(vx+half,top+half*.18);ctx.lineTo(vx+half,bottom);ctx.stroke();
-   ctx.strokeStyle='#c09a58';ctx.lineWidth=1+scale*2;ctx.stroke();
-   const floorY=vy+(h-vy)*scale;ctx.strokeStyle='#624a32';ctx.lineWidth=2+scale*6;ctx.beginPath();ctx.moveTo(vx-half*.47,floorY);ctx.lineTo(vx+half*.47,floorY);ctx.stroke();
-   for(const side of [-1,1]){
-    const x=vx+side*half*.83,y=vy-h*.13*scale,r=2+scale*9;
-    const lamp=ctx.createRadialGradient(x,y,0,x,y,r*4);lamp.addColorStop(0,'#ffe3a3');lamp.addColorStop(.3,'#e5a141aa');lamp.addColorStop(1,'#edbc5200');ctx.fillStyle=lamp;ctx.fillRect(x-r*4,y-r*4,r*8,r*8);
-    ctx.fillStyle='#e6bc66';ctx.fillRect(x-r*.35,y-r,r*.7,r*1.8);
-    const cx=vx+side*half*.98,cy=vy+h*.13*scale,s=3+scale*13;ctx.fillStyle='#4be295';ctx.beginPath();ctx.moveTo(cx,cy-s);ctx.lineTo(cx+s*.55,cy);ctx.lineTo(cx,cy+s);ctx.lineTo(cx-s*.55,cy);ctx.closePath();ctx.fill();ctx.strokeStyle='#b0ffd0';ctx.lineWidth=1;ctx.stroke();
-   }
-  }
-  // Foreground mine-cart rim gives a stable first-person reference.
-  ctx.fillStyle='#223a2d';ctx.fillRect(0,h*.9,w,h*.1);ctx.fillStyle='#9c7845';ctx.fillRect(0,h*.9,w,7);ctx.strokeStyle='#c6c3a1';ctx.lineWidth=3;ctx.strokeRect(8,h*.92,w-16,h*.12);
+  ctx.fillStyle='#030b07';ctx.fillRect(0,0,w,h);
+  if(!this.tunnel){this.status.textContent='Tunnel artwork could not load — you can skip to your next depth';return;}
+  const {width:sw,height:sh,exitX,exitY}=TUNNEL_ART;
+  // Preserve the complete illustrated passage on phones and wide desktops.
+  // Camera motion advances toward its existing green exit, without drawing
+  // invented rails, crystals, timber, characters or a mine cart over the card.
+  const scale=Math.min(w/sw,Math.max(1,h-170)/sh),dw=sw*scale,dh=sh*scale;
+  const progress=Math.max(0,Math.min(time/3.4,1)),zoom=1+.45*progress;
+  ctx.save();ctx.translate(w/2,h/2);ctx.beginPath();ctx.rect(-dw/2,-dh/2,dw,dh);ctx.clip();
+  ctx.scale(scale,scale);ctx.translate(exitX,exitY);ctx.scale(zoom,zoom);ctx.translate(-exitX,-exitY);
+  ctx.drawImage(this.tunnel,-sw/2,-sh/2);ctx.restore();
  }
 }

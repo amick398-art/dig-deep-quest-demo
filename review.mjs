@@ -53,6 +53,7 @@ try{
 try{
  const candidates=(await (await fetch('./assets/candidate-bindings.json')).json()).assets||{};
  for(const [id,row] of Object.entries(candidates)){
+  if(row.status==='REJECTED_BY_OWNER')continue;
   const card=document.createElement('section');card.className='review-card';const name=document.createElement('h3');name.textContent=id;
   const image=row.region?document.createElement('div'):document.createElement('img');
   if(row.region){const scale=130/row.height;image.className='concept-tool';Object.assign(image.style,{width:`${row.width*row.region[2]*scale}px`,height:'130px',backgroundImage:`url('${row.file}')`,backgroundSize:`${row.width*scale}px 130px`,backgroundPosition:`${-row.width*row.region[0]*scale}px 0`});image.setAttribute('role','img');image.setAttribute('aria-label',id+' new review concept');}else{image.src=row.file;image.alt=id+' review candidate';image.loading='lazy';}

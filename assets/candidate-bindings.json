@@ -46,9 +46,9 @@
     "fx.descent": {
       "file": "assets/new/descent-tunnel.svg",
       "sha256": "f9f01f40a0eaf98006bf5b052d91e9f3765b93f01c9702915ee0be56a3a3e006",
-      "status": "NEW_WORK_AWAITING_REVIEW",
+      "status": "REJECTED_BY_OWNER",
       "production_ready": false,
-      "allowedInDemo": true
+      "allowedInDemo": false
     },
     "plate.silver": {
       "file": "assets/new/plate-silver.svg",
