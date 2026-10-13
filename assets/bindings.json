@@ -1,4 +1,629 @@
 {
   "schema": 1,
-  "assets": {}
+  "assets": {
+    "tile.covered": {
+      "file": "assets/blocks/tile_covered.png",
+      "sourceVerified": true,
+      "sha256": "8b0e74ed204969068b8ee54d22e6d617575181c88c30cd93e5611dcac9903379",
+      "approval": "approved-original",
+      "sourceId": "tile.covered",
+      "batch": "visual-01-board"
+    },
+    "tile.empty": {
+      "file": "assets/blocks/tile_empty.png",
+      "sourceVerified": true,
+      "sha256": "78bd35a89ae51eda974fb97586950095a2880f14688fbe94494e6a2eb0efa328",
+      "approval": "approved-original",
+      "sourceId": "tile.empty",
+      "batch": "visual-01-board"
+    },
+    "tile.copper": {
+      "file": "assets/blocks/tile_copper.png",
+      "sourceVerified": true,
+      "sha256": "207f0f28ab0524847fb57f8bb8dadfd666fa96b0d671a8ea504fcce2a8ad8107",
+      "approval": "approved-original",
+      "sourceId": "tile.copper",
+      "batch": "visual-01-board"
+    },
+    "tile.silver": {
+      "file": "assets/blocks/tile_silver.png",
+      "sourceVerified": true,
+      "sha256": "e56d23a42065f9d2220fdd58e4a523b5036daabfdbfd5c26920d2bf33e6f1395",
+      "approval": "approved-original",
+      "sourceId": "tile.silver",
+      "batch": "visual-01-board"
+    },
+    "tile.gold": {
+      "file": "assets/blocks/tile_gold.png",
+      "sourceVerified": true,
+      "sha256": "a098321715289f65d0ff3d49eb06a168b8752295ea7ad3db9d8158241e941487",
+      "approval": "approved-original",
+      "sourceId": "tile.gold",
+      "batch": "visual-01-board"
+    },
+    "tile.platinum": {
+      "file": "assets/blocks/tile_platinum.png",
+      "sourceVerified": true,
+      "sha256": "a8d0868593706406205bda1954eb30a74474fb6156c21c4a33e13bd135a0aacf",
+      "approval": "approved-original",
+      "sourceId": "tile.platinum",
+      "batch": "visual-01-board"
+    },
+    "tile.dig_shard": {
+      "file": "assets/blocks/tile_dig_shard.png",
+      "sourceVerified": true,
+      "sha256": "015f72879af8d542abf30c7f373cbbfb3282b09174efd2e0e54221f50e3eb5ed",
+      "approval": "approved-original",
+      "sourceId": "tile.dig_shard",
+      "batch": "visual-01-board"
+    },
+    "board.covered_viewport": {
+      "file": "assets/boards/covered_grid_viewport.png",
+      "sourceVerified": true,
+      "sha256": "1107759e17cd26ca042c7ad52a3f9d695a27847bc8fa9d10e37a5b4b184449a3",
+      "approval": "approved-original",
+      "sourceId": "board.covered_viewport",
+      "batch": "visual-01-board"
+    },
+    "ui.shop": {
+      "file": "assets/ui/approved/shop.png",
+      "sourceVerified": true,
+      "sha256": "9acfeb70b88b7ba939c31aeebf4573aae14fee4f13bf2b94fbb462f317754778",
+      "approval": "approved-original",
+      "sourceId": "ui.shop",
+      "batch": "visual-02-navigation"
+    },
+    "ui.how_to_play": {
+      "file": "assets/ui/approved/how_to_play.png",
+      "sourceVerified": true,
+      "sha256": "40fc5f2b51402b997832fee3d11abf022a807cc362911cbb064ae70b8d2ee522",
+      "approval": "approved-original",
+      "sourceId": "ui.how_to_play",
+      "batch": "visual-02-navigation"
+    },
+    "ui.rewards": {
+      "file": "assets/ui/approved/rewards.png",
+      "sourceVerified": true,
+      "sha256": "a611791b0853d6a29631da3e63379c295d1e35608dd6276d512797fada4d3e0e",
+      "approval": "approved-original",
+      "sourceId": "ui.rewards",
+      "batch": "visual-02-navigation"
+    },
+    "ui.leaderboard": {
+      "file": "assets/ui/approved/leaderboard.png",
+      "sourceVerified": true,
+      "sha256": "5f7ce2f0994c0519fccd8b661d7d1fb09ec2a09b7501c2b2de3702ae30985c7d",
+      "approval": "approved-original",
+      "sourceId": "ui.leaderboard",
+      "batch": "visual-02-navigation"
+    },
+    "ui.fenn_shard": {
+      "file": "assets/ui/approved/fenn_shard.png",
+      "sourceVerified": true,
+      "sha256": "4b8728400ebed77a50faf5b298173856fc9ab77657a46522be9f6e60463d5bde",
+      "approval": "approved-original",
+      "sourceId": "ui.fenn_shard",
+      "batch": "visual-02-navigation"
+    },
+    "ui.nomo_crystal": {
+      "file": "assets/ui/approved/nomo_crystal.png",
+      "sourceVerified": true,
+      "sha256": "4e7db0e63a4e7a952600565db9f014d2c8062386dba24e9fab7a655c0e63783d",
+      "approval": "approved-original",
+      "sourceId": "ui.nomo_crystal",
+      "batch": "visual-02-navigation"
+    },
+    "tool.miners_light": {
+      "file": "assets/equipment/miners_light.png",
+      "sourceVerified": true,
+      "sha256": "c91296ff2f5aee5cf3f1012d43eda1243a02e44cf5a265571526b74e28dbcf19",
+      "approval": "approved-original",
+      "sourceId": "tool.miners_light",
+      "batch": "visual-03-equipment"
+    },
+    "tool.metal_detector": {
+      "file": "assets/equipment/metal_detector.png",
+      "sourceVerified": true,
+      "sha256": "78620f0d834d0f80da9bdbfbe939e5586b09b33f480e439f4e8d6d5c5f017e58",
+      "approval": "approved-original",
+      "sourceId": "tool.metal_detector",
+      "batch": "visual-03-equipment"
+    },
+    "tool.prospector_scanner": {
+      "file": "assets/equipment/prospector_scanner.png",
+      "sourceVerified": true,
+      "sha256": "f486fbe154230ff9dd5922359e20f4d5eda06fdf130474febbff4b0689c824b7",
+      "approval": "approved-original",
+      "sourceId": "tool.prospector_scanner",
+      "batch": "visual-03-equipment"
+    },
+    "tool.crystal_finder": {
+      "file": "assets/equipment/crystal_finder.png",
+      "sourceVerified": true,
+      "sha256": "7f1eebff111e3fc2c52e332632ce6cb06dbcf7ebd4f3f089a86f9b072e9a2da0",
+      "approval": "approved-original",
+      "sourceId": "tool.crystal_finder",
+      "batch": "visual-03-equipment"
+    },
+    "tool.depth_pass": {
+      "file": "assets/equipment/depth_pass.png",
+      "sourceVerified": true,
+      "sha256": "837fc8aabe1238688d5a400b838a53994a1ae995ddd5f0d4bc544b4aed53961d",
+      "approval": "approved-original",
+      "sourceId": "tool.depth_pass",
+      "batch": "visual-03-equipment"
+    },
+    "tool.small_charge": {
+      "file": "assets/equipment/small_charge.png",
+      "sourceVerified": true,
+      "sha256": "2d56bea24a3363703317a380a6f228706fb990404569005e0efc355b8b8cc75a",
+      "approval": "approved-original",
+      "sourceId": "tool.small_charge",
+      "batch": "visual-03-equipment"
+    },
+    "currency.selected_coins": {
+      "file": "assets/branding/DIG_NOMO_FENN_Coins_User_Selected.png",
+      "sourceVerified": true,
+      "sha256": "e2bd8b5e5516e04540ad7f74484d939d06399aa00975482bb9337cc99da6bf13",
+      "approval": "approved-original",
+      "sourceId": "currency.selected_coins",
+      "batch": "visual-04-branding"
+    },
+    "currency.selected_dig": {
+      "file": "assets/branding/DIG_Emblem_Coin_REVIEW.png",
+      "sourceVerified": true,
+      "sha256": "29ddaa3f78b5c8e95c28a4b4ef2b9008c2d402e8d8f8041f5335c952d68875b8",
+      "approval": "approved-original",
+      "sourceId": "currency.selected_dig",
+      "batch": "visual-04-branding"
+    },
+    "shovel.basic.sprite": {
+      "file": "assets/shovels/equipped/basic.png",
+      "sourceVerified": true,
+      "sha256": "5230544326073d5679d39fd62541716422d32ade2d3b6094baac860188988b7d",
+      "approval": "approved-original",
+      "sourceId": "shovel.basic.sprite",
+      "batch": "visual-04-branding"
+    },
+    "fx.dirt": {
+      "file": "assets/effects/dirt_impact.png",
+      "sourceVerified": true,
+      "sha256": "5132c8bf1f8e6ce8250f41c4429a6ed7e297f0135ceb3d78e8e120608faddee3",
+      "approval": "approved-original",
+      "sourceId": "fx.dirt",
+      "batch": "visual-04-branding"
+    },
+    "fx.crystal_glint": {
+      "file": "assets/effects/crystal_glint.png",
+      "sourceVerified": true,
+      "sha256": "e373e5be3229115f1d62e21e2431e338b92a825735301544d307601ba71f12b9",
+      "approval": "approved-original",
+      "sourceId": "fx.crystal_glint",
+      "batch": "visual-04-branding"
+    },
+    "shovel.basic.card": {
+      "file": "assets/shovels/cards/basic_card.png",
+      "sourceVerified": true,
+      "sha256": "6fe23b4b5b3ebbdba41e374c8ae5b9887125aa07c7563a657bf24be62d679316",
+      "approval": "approved-original",
+      "sourceId": "shovel.basic.card",
+      "batch": "visual-05-shovel-cards"
+    },
+    "shovel.copper.card": {
+      "file": "assets/shovels/cards/copper_card.png",
+      "sourceVerified": true,
+      "sha256": "9383f2d88276ccbf61030c03bade6d3a00a031a49f4fd97090498bf0b92afed7",
+      "approval": "approved-original",
+      "sourceId": "shovel.copper.card",
+      "batch": "visual-05-shovel-cards"
+    },
+    "shovel.bronze.card": {
+      "file": "assets/shovels/cards/bronze_card.png",
+      "sourceVerified": true,
+      "sha256": "7a6a036093f9933b494276e0b0c59c6faa9601a49b458c1595973d84620e656b",
+      "approval": "approved-original",
+      "sourceId": "shovel.bronze.card",
+      "batch": "visual-05-shovel-cards"
+    },
+    "shovel.iron.card": {
+      "file": "assets/shovels/cards/iron_card.png",
+      "sourceVerified": true,
+      "sha256": "6bc52beb28122a77d653886f9a8aee9f8de7cce8d910087b008cc1044c5ba35b",
+      "approval": "approved-original",
+      "sourceId": "shovel.iron.card",
+      "batch": "visual-05-shovel-cards"
+    },
+    "shovel.silver.card": {
+      "file": "assets/shovels/cards/silver_card.png",
+      "sourceVerified": true,
+      "sha256": "2e643756b8cf226cab774b7339f869e94a46495ece9b38e95dc23e0f80f55a70",
+      "approval": "approved-original",
+      "sourceId": "shovel.silver.card",
+      "batch": "visual-05-shovel-cards"
+    },
+    "shovel.gold.card": {
+      "file": "assets/shovels/cards/gold_card.png",
+      "sourceVerified": true,
+      "sha256": "373e457c93b6beb51bb419587f12f09e5e3b4fc19764f211b9f6e96dad0edfd4",
+      "approval": "approved-original",
+      "sourceId": "shovel.gold.card",
+      "batch": "visual-06-rare-cards"
+    },
+    "shovel.platinum.card": {
+      "file": "assets/shovels/cards/platinum_card.png",
+      "sourceVerified": true,
+      "sha256": "eb397630815e8b5859612365b52501cfe24ee71d8a74013ffa05762b2673e1b1",
+      "approval": "approved-original",
+      "sourceId": "shovel.platinum.card",
+      "batch": "visual-06-rare-cards"
+    },
+    "shovel.crystal.card": {
+      "file": "assets/shovels/cards/crystal_card.png",
+      "sourceVerified": true,
+      "sha256": "81d3a3ba0e5928a992ce951d340b9e792b44748ceb0be84d68c6383aef0e2bf8",
+      "approval": "approved-original",
+      "sourceId": "shovel.crystal.card",
+      "batch": "visual-06-rare-cards"
+    },
+    "shovel.obsidian.card": {
+      "file": "assets/shovels/cards/obsidian_card.png",
+      "sourceVerified": true,
+      "sha256": "1d4077bbec41d191e2af4c5fca338f88cbbfdf9c6012379c36e7a2976704acbe",
+      "approval": "approved-original",
+      "sourceId": "shovel.obsidian.card",
+      "batch": "visual-06-rare-cards"
+    },
+    "shovel.void.card": {
+      "file": "assets/shovels/cards/void_card.png",
+      "sourceVerified": true,
+      "sha256": "27c0d4c9f5e9ee977cae9b40ec34695698489f211cf18e3750681911c7e4201c",
+      "approval": "approved-original",
+      "sourceId": "shovel.void.card",
+      "batch": "visual-06-rare-cards"
+    },
+    "shovel.diamond.card": {
+      "file": "assets/shovels/cards/diamond_card.png",
+      "sourceVerified": true,
+      "sha256": "32ef73d0604b38b0a4cd8f1301610d16b9d931df7b60b4c9b9736a22e98d968f",
+      "approval": "approved-original",
+      "sourceId": "shovel.diamond.card",
+      "batch": "visual-06-rare-cards"
+    },
+    "shovel.copper.sprite": {
+      "file": "assets/shovels/equipped/copper.png",
+      "sourceVerified": true,
+      "sha256": "4873e0c1cf7091afb17edcb6656ee5a121fd477b5796d1027f32634cde15c84b",
+      "approval": "approved-original",
+      "sourceId": "shovel.copper.sprite",
+      "batch": "visual-07-equipped-shovels"
+    },
+    "shovel.bronze.sprite": {
+      "file": "assets/shovels/equipped/bronze.png",
+      "sourceVerified": true,
+      "sha256": "fa8528a19ea2fdd38a70fac5e68b0bf90e22455bedf88233acbb3ffcce3cc170",
+      "approval": "approved-original",
+      "sourceId": "shovel.bronze.sprite",
+      "batch": "visual-07-equipped-shovels"
+    },
+    "shovel.iron.sprite": {
+      "file": "assets/shovels/equipped/iron.png",
+      "sourceVerified": true,
+      "sha256": "b862f7d643be1468882ff77582d5f3eaf0af79012af01fa384bc68d42e14b167",
+      "approval": "approved-original",
+      "sourceId": "shovel.iron.sprite",
+      "batch": "visual-07-equipped-shovels"
+    },
+    "shovel.silver.sprite": {
+      "file": "assets/shovels/equipped/silver.png",
+      "sourceVerified": true,
+      "sha256": "cb85a4187c889a497f67378034ef2707901f421f12c92b1d63dc2104a6deedc8",
+      "approval": "approved-original",
+      "sourceId": "shovel.silver.sprite",
+      "batch": "visual-07-equipped-shovels"
+    },
+    "shovel.gold.sprite": {
+      "file": "assets/shovels/equipped/gold.png",
+      "sourceVerified": true,
+      "sha256": "621ba536ba872dd6b45196fe1ea24931d60daa207f87d3ffe6e2670a16cddd71",
+      "approval": "approved-original",
+      "sourceId": "shovel.gold.sprite",
+      "batch": "visual-07-equipped-shovels"
+    },
+    "shovel.platinum.sprite": {
+      "file": "assets/shovels/equipped/platinum.png",
+      "sourceVerified": true,
+      "sha256": "11bb03104be700f680d7400359df3df9ddd3620aee9657a8c1f8f699989fcd2f",
+      "approval": "approved-original",
+      "sourceId": "shovel.platinum.sprite",
+      "batch": "visual-07-equipped-shovels"
+    },
+    "pickaxe.dig.copper.card": {
+      "file": "assets/pickaxes/cards/pickaxe.dig.copper.png",
+      "sourceVerified": true,
+      "sha256": "03da50a789306019978e72ec659db98f3807d7d47e493562a77223ba71ac0b96",
+      "approval": "approved-original",
+      "sourceId": "pickaxe.dig.copper.card",
+      "batch": "visual-08-dig-pickaxes"
+    },
+    "pickaxe.dig.copper.sprite": {
+      "file": "assets/pickaxes/equipped/pickaxe.dig.copper.png",
+      "sourceVerified": true,
+      "sha256": "8ba3e1bb2fd80537d7093a900c0f9c854ca14fb0e2135935bb5010fcf071c99a",
+      "approval": "approved-original",
+      "sourceId": "pickaxe.dig.copper.sprite",
+      "batch": "visual-08-dig-pickaxes"
+    },
+    "pickaxe.dig.silver.card": {
+      "file": "assets/pickaxes/cards/pickaxe.dig.silver.png",
+      "sourceVerified": true,
+      "sha256": "681536bb7bda28ddbce878dc1b6fd061f21c871f3f548b9b0da67a262e86a9ca",
+      "approval": "approved-original",
+      "sourceId": "pickaxe.dig.silver.card",
+      "batch": "visual-08-dig-pickaxes"
+    },
+    "pickaxe.dig.silver.sprite": {
+      "file": "assets/pickaxes/equipped/pickaxe.dig.silver.png",
+      "sourceVerified": true,
+      "sha256": "24a46197f0965166c0405c7bdd1ab223e8228e59eb044fb719026a96626a7afa",
+      "approval": "approved-original",
+      "sourceId": "pickaxe.dig.silver.sprite",
+      "batch": "visual-08-dig-pickaxes"
+    },
+    "pickaxe.dig.gold.card": {
+      "file": "assets/pickaxes/cards/pickaxe.dig.gold.png",
+      "sourceVerified": true,
+      "sha256": "b0d8c6523388b7d5325b08a3413b985590e1d999d9cd17c38e66d73c42cae924",
+      "approval": "approved-original",
+      "sourceId": "pickaxe.dig.gold.card",
+      "batch": "visual-08-dig-pickaxes"
+    },
+    "pickaxe.dig.gold.sprite": {
+      "file": "assets/pickaxes/equipped/pickaxe.dig.gold.png",
+      "sourceVerified": true,
+      "sha256": "5c03a95fc5053366578921dfb59db919df3023d5051c628c9eb0f62cbd131290",
+      "approval": "approved-original",
+      "sourceId": "pickaxe.dig.gold.sprite",
+      "batch": "visual-08-dig-pickaxes"
+    },
+    "pickaxe.dig.platinum.card": {
+      "file": "assets/pickaxes/cards/pickaxe.dig.platinum.png",
+      "sourceVerified": true,
+      "sha256": "39cf795013c550eb9517d242b79fc3aa0999b9f9966bc33b6f0f99cde4ffa160",
+      "approval": "approved-original",
+      "sourceId": "pickaxe.dig.platinum.card",
+      "batch": "visual-08-dig-pickaxes"
+    },
+    "pickaxe.dig.platinum.sprite": {
+      "file": "assets/pickaxes/equipped/pickaxe.dig.platinum.png",
+      "sourceVerified": true,
+      "sha256": "3b3c0b3f5fd35320fb3eff47cde4212d3f67df32bd12c7f02fa4806e25f32c9d",
+      "approval": "approved-original",
+      "sourceId": "pickaxe.dig.platinum.sprite",
+      "batch": "visual-08-dig-pickaxes"
+    },
+    "pickaxe.fenn.copper.card": {
+      "file": "assets/pickaxes/cards/pickaxe.fenn.copper.png",
+      "sourceVerified": true,
+      "sha256": "700d069d6b25749b3636dc9dcf3e7bcc02e18b8a821ac09bf40b981e9a675523",
+      "approval": "approved-original",
+      "sourceId": "pickaxe.fenn.copper.card",
+      "batch": "visual-09-fenn-pickaxes"
+    },
+    "pickaxe.fenn.copper.sprite": {
+      "file": "assets/pickaxes/equipped/pickaxe.fenn.copper.png",
+      "sourceVerified": true,
+      "sha256": "9027ebf6348f04430dfe48968739ee799b1e8efad0ab3873d486617a104dc102",
+      "approval": "approved-original",
+      "sourceId": "pickaxe.fenn.copper.sprite",
+      "batch": "visual-09-fenn-pickaxes"
+    },
+    "pickaxe.fenn.silver.card": {
+      "file": "assets/pickaxes/cards/pickaxe.fenn.silver.png",
+      "sourceVerified": true,
+      "sha256": "8012177753381a2e2ed23f534cc0df74a02d7c0e7fbe3826de620ed1728c062c",
+      "approval": "approved-original",
+      "sourceId": "pickaxe.fenn.silver.card",
+      "batch": "visual-09-fenn-pickaxes"
+    },
+    "pickaxe.fenn.silver.sprite": {
+      "file": "assets/pickaxes/equipped/pickaxe.fenn.silver.png",
+      "sourceVerified": true,
+      "sha256": "33927a2ae54b44396272f3e3499b61a3818df63e9cce858d7d83cd60ac53c1bd",
+      "approval": "approved-original",
+      "sourceId": "pickaxe.fenn.silver.sprite",
+      "batch": "visual-09-fenn-pickaxes"
+    },
+    "pickaxe.fenn.gold.card": {
+      "file": "assets/pickaxes/cards/pickaxe.fenn.gold.png",
+      "sourceVerified": true,
+      "sha256": "eca1c71a1030061a60487336341818755264d1eef3b1337d0f5db7d11aed0d3f",
+      "approval": "approved-original",
+      "sourceId": "pickaxe.fenn.gold.card",
+      "batch": "visual-09-fenn-pickaxes"
+    },
+    "pickaxe.fenn.gold.sprite": {
+      "file": "assets/pickaxes/equipped/pickaxe.fenn.gold.png",
+      "sourceVerified": true,
+      "sha256": "640a6ce2b627c58030193df0a2646241a97eb0da53f4497891378403244cddb9",
+      "approval": "approved-original",
+      "sourceId": "pickaxe.fenn.gold.sprite",
+      "batch": "visual-09-fenn-pickaxes"
+    },
+    "pickaxe.fenn.platinum.card": {
+      "file": "assets/pickaxes/cards/pickaxe.fenn.platinum.png",
+      "sourceVerified": true,
+      "sha256": "231147a10ae1b8e338a409b5da11dbd08f08850604b3fdd45bbbd8f739139227",
+      "approval": "approved-original",
+      "sourceId": "pickaxe.fenn.platinum.card",
+      "batch": "visual-09-fenn-pickaxes"
+    },
+    "pickaxe.fenn.platinum.sprite": {
+      "file": "assets/pickaxes/equipped/pickaxe.fenn.platinum.png",
+      "sourceVerified": true,
+      "sha256": "b41b404695abb1993d5a0329f0a02c323feba862942e9d115f5d186e1161cdf4",
+      "approval": "approved-original",
+      "sourceId": "pickaxe.fenn.platinum.sprite",
+      "batch": "visual-09-fenn-pickaxes"
+    },
+    "pickaxe.nomo.copper.card": {
+      "file": "assets/pickaxes/cards/pickaxe.nomo.copper.png",
+      "sourceVerified": true,
+      "sha256": "0dcc3c435394c037e8a465e3c269308a0eb4ec0d91d1c7d0a5ab6cdda13050d1",
+      "approval": "approved-original",
+      "sourceId": "pickaxe.nomo.copper.card",
+      "batch": "visual-10-nomo-pickaxes"
+    },
+    "pickaxe.nomo.copper.sprite": {
+      "file": "assets/pickaxes/equipped/pickaxe.nomo.copper.png",
+      "sourceVerified": true,
+      "sha256": "beebc08ec1ac54760cbf1155edf786004745892e9ecc8b94fc122ecce65b4ba0",
+      "approval": "approved-original",
+      "sourceId": "pickaxe.nomo.copper.sprite",
+      "batch": "visual-10-nomo-pickaxes"
+    },
+    "pickaxe.nomo.silver.card": {
+      "file": "assets/pickaxes/cards/pickaxe.nomo.silver.png",
+      "sourceVerified": true,
+      "sha256": "50c8ff3f5308daa10796fd55a2612c4f949142a9a627f1ca9233029f6b21a860",
+      "approval": "approved-original",
+      "sourceId": "pickaxe.nomo.silver.card",
+      "batch": "visual-10-nomo-pickaxes"
+    },
+    "pickaxe.nomo.silver.sprite": {
+      "file": "assets/pickaxes/equipped/pickaxe.nomo.silver.png",
+      "sourceVerified": true,
+      "sha256": "f2da7c20d7c194ecdd91601bb08eb1481e2cb8d92f485ebaf1d9a26873a3ad20",
+      "approval": "approved-original",
+      "sourceId": "pickaxe.nomo.silver.sprite",
+      "batch": "visual-10-nomo-pickaxes"
+    },
+    "pickaxe.nomo.gold.card": {
+      "file": "assets/pickaxes/cards/pickaxe.nomo.gold.png",
+      "sourceVerified": true,
+      "sha256": "adca0de7298024b5d3536b43c12308e22605e419c9cebe04bcc173e636fdd1d1",
+      "approval": "approved-original",
+      "sourceId": "pickaxe.nomo.gold.card",
+      "batch": "visual-10-nomo-pickaxes"
+    },
+    "pickaxe.nomo.gold.sprite": {
+      "file": "assets/pickaxes/equipped/pickaxe.nomo.gold.png",
+      "sourceVerified": true,
+      "sha256": "c7ee1b94f644152618dabe570e2e289ef939d6667ca3462aa680a8b9a0d054ab",
+      "approval": "approved-original",
+      "sourceId": "pickaxe.nomo.gold.sprite",
+      "batch": "visual-10-nomo-pickaxes"
+    },
+    "pickaxe.nomo.platinum.card": {
+      "file": "assets/pickaxes/cards/pickaxe.nomo.platinum.png",
+      "sourceVerified": true,
+      "sha256": "0ca064c6ffc14ca1e02120f104522ec60c74c0682e69e5e837bb872dfd0f16ed",
+      "approval": "approved-original",
+      "sourceId": "pickaxe.nomo.platinum.card",
+      "batch": "visual-10-nomo-pickaxes"
+    },
+    "pickaxe.nomo.platinum.sprite": {
+      "file": "assets/pickaxes/equipped/pickaxe.nomo.platinum.png",
+      "sourceVerified": true,
+      "sha256": "e404158c6039467fadff2d3ee919d2204be2aee5c9c0a774cac781c3b9df6950",
+      "approval": "approved-original",
+      "sourceId": "pickaxe.nomo.platinum.sprite",
+      "batch": "visual-10-nomo-pickaxes"
+    },
+    "fx.dirt_cracking.atlas": {
+      "file": "assets/animations/dirt_cracking/dirt_cracking_spritesheet.png",
+      "sourceVerified": true,
+      "sha256": "731f5936237b4b5a0cb4425304ba547c3ef3a65a88e485fdd4230557eed7d91f",
+      "approval": "approved-original",
+      "sourceId": "fx.dirt_cracking.atlas",
+      "batch": "visual-11-approved-atlases"
+    },
+    "fx.dirt_clearing.atlas": {
+      "file": "assets/animations/dirt_clearing/dirt_clearing_spritesheet.png",
+      "sourceVerified": true,
+      "sha256": "e116d78cd5b34a44fe15190bb62f722778af679aa1ca11c91d87da32c38f2056",
+      "approval": "approved-original",
+      "sourceId": "fx.dirt_clearing.atlas",
+      "batch": "visual-11-approved-atlases"
+    },
+    "fx.copper_discovery.atlas": {
+      "file": "assets/animations/copper_discovery/copper_discovery_spritesheet.png",
+      "sourceVerified": true,
+      "sha256": "00738a7797085bb82ca045d88f8352e3b88bf687c72262f5f31ae406bab153f6",
+      "approval": "approved-original",
+      "sourceId": "fx.copper_discovery.atlas",
+      "batch": "visual-11-approved-atlases"
+    },
+    "fx.silver_discovery.atlas": {
+      "file": "assets/animations/silver_discovery/silver_discovery_spritesheet.png",
+      "sourceVerified": true,
+      "sha256": "04aacffcffe3a5813a93a28ae2a6bb1288b341421160a873f2f8ae6b017b5260",
+      "approval": "approved-original",
+      "sourceId": "fx.silver_discovery.atlas",
+      "batch": "visual-11-approved-atlases"
+    },
+    "fx.gold_discovery.atlas": {
+      "file": "assets/animations/gold_discovery/gold_discovery_spritesheet.png",
+      "sourceVerified": true,
+      "sha256": "eca02b005d6738322da1ba6901c737f728237eae4227263343d372e4fdd770d8",
+      "approval": "approved-original",
+      "sourceId": "fx.gold_discovery.atlas",
+      "batch": "visual-11-approved-atlases"
+    },
+    "mask.tile_fill": {
+      "file": "assets/effects/masks/tile_fill.png",
+      "sourceVerified": true,
+      "sha256": "19650254f909a63873b0d08ecc6a990ac3a826e1e8886345fc99213fc72efb98",
+      "approval": "approved-original",
+      "sourceId": "mask.tile_fill",
+      "batch": "visual-12-masks-and-damage"
+    },
+    "mask.tile_outline": {
+      "file": "assets/effects/masks/tile_outline.png",
+      "sourceVerified": true,
+      "sha256": "62e22afb8c7a93cf7c23a78cd81d35ab2edf0548f7ad8787707902eb7da437f1",
+      "approval": "approved-original",
+      "sourceId": "mask.tile_outline",
+      "batch": "visual-12-masks-and-damage"
+    },
+    "mask.tile_focus": {
+      "file": "assets/effects/masks/tile_focus.png",
+      "sourceVerified": true,
+      "sha256": "3e3380ec1d76a0af667572dd0687c00cb9618027a93c25e27519517c58395b7a",
+      "approval": "approved-original",
+      "sourceId": "mask.tile_focus",
+      "batch": "visual-12-masks-and-damage"
+    },
+    "fx.spark": {
+      "file": "assets/effects/fuse_spark.png",
+      "sourceVerified": true,
+      "sha256": "08f3f844a21c2415318b19e3e66fb1356598655c270548780a42ef7eea0b37cf",
+      "approval": "approved-original",
+      "sourceId": "fx.spark",
+      "batch": "visual-12-masks-and-damage"
+    },
+    "block.damage.light": {
+      "file": "assets/blocks/dirt_damage_light.png",
+      "sourceVerified": true,
+      "sha256": "a9a556a1c99aeefe5e943fd71847802b97ec2bbf9d7dd8359e1330740a76dbe0",
+      "approval": "approved-original",
+      "sourceId": "block.damage.light",
+      "batch": "visual-12-masks-and-damage"
+    },
+    "block.damage.medium": {
+      "file": "assets/blocks/dirt_damage_medium.png",
+      "sourceVerified": true,
+      "sha256": "eb8d21e21917693c26ad51a58141c862367787576d2c898340c735882b2e04a3",
+      "approval": "approved-original",
+      "sourceId": "block.damage.medium",
+      "batch": "visual-12-masks-and-damage"
+    },
+    "block.damage.heavy": {
+      "file": "assets/blocks/dirt_damage_heavy.png",
+      "sourceVerified": true,
+      "sha256": "1673a517796b5f1fc7308e39f2b7e9a5e64f076e7a0f475425462d1b592e470f",
+      "approval": "approved-original",
+      "sourceId": "block.damage.heavy",
+      "batch": "visual-12-masks-and-damage"
+    }
+  }
 }

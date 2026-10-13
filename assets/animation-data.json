@@ -1,0 +1,1757 @@
+{
+  "animations": [
+    {
+      "id": "fx.dirt_cracking",
+      "canvas": {
+        "width": 96,
+        "height": 96
+      },
+      "duration_ms": 854,
+      "atlas": {
+        "path": "assets/animations/dirt_cracking/dirt_cracking_spritesheet.png",
+        "width": 576,
+        "height": 288,
+        "columns": 6,
+        "rows": 3,
+        "sha256": "731f5936237b4b5a0cb4425304ba547c3ef3a65a88e485fdd4230557eed7d91f",
+        "asset_id": "fx.dirt_cracking.atlas"
+      },
+      "tile_rect_in_frame": [
+        8,
+        7,
+        80,
+        81
+      ],
+      "frames": [
+        {
+          "index": 0,
+          "duration_ms": 90,
+          "atlas_rect": [
+            0,
+            0,
+            96,
+            96
+          ],
+          "sha256": "2e1fb060c80c2fc46678c84adc8006b24bb94c682cdad4d7884f29da650bd552"
+        },
+        {
+          "index": 1,
+          "duration_ms": 34,
+          "atlas_rect": [
+            96,
+            0,
+            96,
+            96
+          ],
+          "sha256": "914221f94086d2b9144a2b3baf197f35f12298a99fe83fcea0773e152ea34887"
+        },
+        {
+          "index": 2,
+          "duration_ms": 34,
+          "atlas_rect": [
+            192,
+            0,
+            96,
+            96
+          ],
+          "sha256": "e683ff01b61c935a01e882290e9560c1bd66760a74949e10217f88e4946cdd68"
+        },
+        {
+          "index": 3,
+          "duration_ms": 34,
+          "atlas_rect": [
+            288,
+            0,
+            96,
+            96
+          ],
+          "sha256": "df5fa676976d8d9a4ab07a26dffc285d3f790de63ae93243f3fe4f69382a225e"
+        },
+        {
+          "index": 4,
+          "duration_ms": 34,
+          "atlas_rect": [
+            384,
+            0,
+            96,
+            96
+          ],
+          "sha256": "a2d9d70d9861ba1f5ebe75f2c5f6b593e8ababd54b29439bda5ca1ca7ae04231"
+        },
+        {
+          "index": 5,
+          "duration_ms": 34,
+          "atlas_rect": [
+            480,
+            0,
+            96,
+            96
+          ],
+          "sha256": "a9a556a1c99aeefe5e943fd71847802b97ec2bbf9d7dd8359e1330740a76dbe0"
+        },
+        {
+          "index": 6,
+          "duration_ms": 34,
+          "atlas_rect": [
+            0,
+            96,
+            96,
+            96
+          ],
+          "sha256": "d109755ad910c2bc0e7a2a548b034a2570b7da170396c2052bb7b3f8fb06f7d5"
+        },
+        {
+          "index": 7,
+          "duration_ms": 34,
+          "atlas_rect": [
+            96,
+            96,
+            96,
+            96
+          ],
+          "sha256": "d39c5acf11e05d93202e00354aa64db3c68a8451193ec87949ff244884f98930"
+        },
+        {
+          "index": 8,
+          "duration_ms": 34,
+          "atlas_rect": [
+            192,
+            96,
+            96,
+            96
+          ],
+          "sha256": "7d880376305273c2d8a5878ce323bdababa353e0887fcc715fc99196a9e0fdeb"
+        },
+        {
+          "index": 9,
+          "duration_ms": 34,
+          "atlas_rect": [
+            288,
+            96,
+            96,
+            96
+          ],
+          "sha256": "0a10c14a350a3611536fde236060946468f5e5662769fcde9e0a40f66e45eb7e"
+        },
+        {
+          "index": 10,
+          "duration_ms": 34,
+          "atlas_rect": [
+            384,
+            96,
+            96,
+            96
+          ],
+          "sha256": "ca41a628e687c5f28aa0625717e25c1a493e84227d244ced1f69d82246d50360"
+        },
+        {
+          "index": 11,
+          "duration_ms": 34,
+          "atlas_rect": [
+            480,
+            96,
+            96,
+            96
+          ],
+          "sha256": "eb8d21e21917693c26ad51a58141c862367787576d2c898340c735882b2e04a3"
+        },
+        {
+          "index": 12,
+          "duration_ms": 34,
+          "atlas_rect": [
+            0,
+            192,
+            96,
+            96
+          ],
+          "sha256": "39fa29d207a5257ea58065cec1f343dfbdc764bf3730da207d36a753cda0aeae"
+        },
+        {
+          "index": 13,
+          "duration_ms": 34,
+          "atlas_rect": [
+            96,
+            192,
+            96,
+            96
+          ],
+          "sha256": "b26eefad0a6da41b6f3d7a235d46584bcacf486331e93db2b646a4c9e94d1c1f"
+        },
+        {
+          "index": 14,
+          "duration_ms": 34,
+          "atlas_rect": [
+            192,
+            192,
+            96,
+            96
+          ],
+          "sha256": "8bea33b2a7dfad83156157b61932e55411385e28af67c37fa883fc4d6b21a698"
+        },
+        {
+          "index": 15,
+          "duration_ms": 34,
+          "atlas_rect": [
+            288,
+            192,
+            96,
+            96
+          ],
+          "sha256": "546b62bce6e8cae9acec16402f39bd554c835e2e577d1dccb2a30548b4539cb4"
+        },
+        {
+          "index": 16,
+          "duration_ms": 34,
+          "atlas_rect": [
+            384,
+            192,
+            96,
+            96
+          ],
+          "sha256": "af68a30ae8fcd40b909f1cdb9f8ad234d41c86f81e8eb6313d038e1ee5e304cd"
+        },
+        {
+          "index": 17,
+          "duration_ms": 220,
+          "atlas_rect": [
+            480,
+            192,
+            96,
+            96
+          ],
+          "sha256": "1673a517796b5f1fc7308e39f2b7e9a5e64f076e7a0f475425462d1b592e470f"
+        }
+      ]
+    },
+    {
+      "id": "fx.dirt_clearing",
+      "canvas": {
+        "width": 96,
+        "height": 96
+      },
+      "duration_ms": 1262,
+      "atlas": {
+        "path": "assets/animations/dirt_clearing/dirt_clearing_spritesheet.png",
+        "width": 576,
+        "height": 480,
+        "columns": 6,
+        "rows": 5,
+        "sha256": "e116d78cd5b34a44fe15190bb62f722778af679aa1ca11c91d87da32c38f2056",
+        "asset_id": "fx.dirt_clearing.atlas"
+      },
+      "tile_rect_in_frame": [
+        8,
+        7,
+        80,
+        81
+      ],
+      "frames": [
+        {
+          "index": 0,
+          "duration_ms": 90,
+          "atlas_rect": [
+            0,
+            0,
+            96,
+            96
+          ],
+          "sha256": "2e1fb060c80c2fc46678c84adc8006b24bb94c682cdad4d7884f29da650bd552"
+        },
+        {
+          "index": 1,
+          "duration_ms": 34,
+          "atlas_rect": [
+            96,
+            0,
+            96,
+            96
+          ],
+          "sha256": "e722b99e620a2c8b45fa334ede257950eb2f3f7d18a46e107478af1c82f04ae4"
+        },
+        {
+          "index": 2,
+          "duration_ms": 34,
+          "atlas_rect": [
+            192,
+            0,
+            96,
+            96
+          ],
+          "sha256": "8216fce10009656ae5cec4d9d00ff9ecc452a9bb7a9fbeb1c628492959fe6876"
+        },
+        {
+          "index": 3,
+          "duration_ms": 34,
+          "atlas_rect": [
+            288,
+            0,
+            96,
+            96
+          ],
+          "sha256": "e8b2f916aaf62ae686b0c725eeba242c27826b7a43e789f42397e2f3f73426d6"
+        },
+        {
+          "index": 4,
+          "duration_ms": 34,
+          "atlas_rect": [
+            384,
+            0,
+            96,
+            96
+          ],
+          "sha256": "7c451e98e2aed5ff5d3eb5e5c3a899c6fcc0d103177dd1bf2f180b88afe2f6de"
+        },
+        {
+          "index": 5,
+          "duration_ms": 34,
+          "atlas_rect": [
+            480,
+            0,
+            96,
+            96
+          ],
+          "sha256": "5d683d5694d4913c11d315e4d8b81d3c4a366af9b4edf479c65045291235050e"
+        },
+        {
+          "index": 6,
+          "duration_ms": 34,
+          "atlas_rect": [
+            0,
+            96,
+            96,
+            96
+          ],
+          "sha256": "1673a517796b5f1fc7308e39f2b7e9a5e64f076e7a0f475425462d1b592e470f"
+        },
+        {
+          "index": 7,
+          "duration_ms": 34,
+          "atlas_rect": [
+            96,
+            96,
+            96,
+            96
+          ],
+          "sha256": "1673a517796b5f1fc7308e39f2b7e9a5e64f076e7a0f475425462d1b592e470f"
+        },
+        {
+          "index": 8,
+          "duration_ms": 34,
+          "atlas_rect": [
+            192,
+            96,
+            96,
+            96
+          ],
+          "sha256": "6d1ac56932533f434f26e79404b5ab2b749a746256cc8a57cf3b6e09c56fc87e"
+        },
+        {
+          "index": 9,
+          "duration_ms": 34,
+          "atlas_rect": [
+            288,
+            96,
+            96,
+            96
+          ],
+          "sha256": "fa1a8829bec3eeb30c6782ff1a71dad115b0c90bf973fae72561ce85b3856fb7"
+        },
+        {
+          "index": 10,
+          "duration_ms": 34,
+          "atlas_rect": [
+            384,
+            96,
+            96,
+            96
+          ],
+          "sha256": "763f42c4677edea9b58d334de4c40fc23ba49e569048ffbc64d631421e55445d"
+        },
+        {
+          "index": 11,
+          "duration_ms": 34,
+          "atlas_rect": [
+            480,
+            96,
+            96,
+            96
+          ],
+          "sha256": "ded68a5ec75da65d209ccae80e042f9e8ae911db07e96182df531cfc0bbfcccb"
+        },
+        {
+          "index": 12,
+          "duration_ms": 34,
+          "atlas_rect": [
+            0,
+            192,
+            96,
+            96
+          ],
+          "sha256": "bebc115113bc9a9b432a82cf5c8d7c6bee7f1b70b05f99aac2ac4d03705f5d66"
+        },
+        {
+          "index": 13,
+          "duration_ms": 34,
+          "atlas_rect": [
+            96,
+            192,
+            96,
+            96
+          ],
+          "sha256": "6488520c8f3fd924d8bdb47b65ef5681494230be0999cb44e0499a2def8e968a"
+        },
+        {
+          "index": 14,
+          "duration_ms": 34,
+          "atlas_rect": [
+            192,
+            192,
+            96,
+            96
+          ],
+          "sha256": "3748b4e28074efee3450b8329891572cb4c27cb27a37a8ba91ca0c31cfeb307f"
+        },
+        {
+          "index": 15,
+          "duration_ms": 34,
+          "atlas_rect": [
+            288,
+            192,
+            96,
+            96
+          ],
+          "sha256": "e87a7ef544193d152d1fc88bd31abc6d241e97810c659ce70a2d4f697aa1d2f5"
+        },
+        {
+          "index": 16,
+          "duration_ms": 34,
+          "atlas_rect": [
+            384,
+            192,
+            96,
+            96
+          ],
+          "sha256": "f4c960c1cf8eee55070cc123d454f0ff0a4ef713523520897cc86e9ad8164f29"
+        },
+        {
+          "index": 17,
+          "duration_ms": 34,
+          "atlas_rect": [
+            480,
+            192,
+            96,
+            96
+          ],
+          "sha256": "9d1714164ea78be7988583df466e1d11b48b344d68bdb74bf6c2071c736221c2"
+        },
+        {
+          "index": 18,
+          "duration_ms": 34,
+          "atlas_rect": [
+            0,
+            288,
+            96,
+            96
+          ],
+          "sha256": "c7d533fb36dbf41d54e6b11d54200b60f0a5d54c3d5325593455efac834f24d4"
+        },
+        {
+          "index": 19,
+          "duration_ms": 34,
+          "atlas_rect": [
+            96,
+            288,
+            96,
+            96
+          ],
+          "sha256": "e372635c99fa48b3a58a024267386c798ee4e0bca15c4aa20b7c8952341a5bda"
+        },
+        {
+          "index": 20,
+          "duration_ms": 34,
+          "atlas_rect": [
+            192,
+            288,
+            96,
+            96
+          ],
+          "sha256": "2158f9894cb453e86206a984716825e5145478ebcab9e602ece5482a8457f4cc"
+        },
+        {
+          "index": 21,
+          "duration_ms": 34,
+          "atlas_rect": [
+            288,
+            288,
+            96,
+            96
+          ],
+          "sha256": "3a532e73c981ec5bf08072f454e8da3e987dbf0ef431c4b62d41facdc36405fb"
+        },
+        {
+          "index": 22,
+          "duration_ms": 34,
+          "atlas_rect": [
+            384,
+            288,
+            96,
+            96
+          ],
+          "sha256": "7611320a90c2e7329fb0e01b7fecd02020fd6e069c5ec8b5b7839f056675f433"
+        },
+        {
+          "index": 23,
+          "duration_ms": 34,
+          "atlas_rect": [
+            480,
+            288,
+            96,
+            96
+          ],
+          "sha256": "3b2fb65750060698c648886e34e35d7290585255cac37ce01634e5f16b608fc4"
+        },
+        {
+          "index": 24,
+          "duration_ms": 34,
+          "atlas_rect": [
+            0,
+            384,
+            96,
+            96
+          ],
+          "sha256": "d95ec4366cec5385d871b7ec5d58c5ad40af818a27117cfa239aeda89ef2100e"
+        },
+        {
+          "index": 25,
+          "duration_ms": 34,
+          "atlas_rect": [
+            96,
+            384,
+            96,
+            96
+          ],
+          "sha256": "2fdc05c92c351ac05013c8c4cd05e5db519f07cbe566431bb3cd85beaa129a28"
+        },
+        {
+          "index": 26,
+          "duration_ms": 34,
+          "atlas_rect": [
+            192,
+            384,
+            96,
+            96
+          ],
+          "sha256": "a18d828ab90b0e3c2cf130416d5bb88ef191159355402947bf584fc97c03f96e"
+        },
+        {
+          "index": 27,
+          "duration_ms": 34,
+          "atlas_rect": [
+            288,
+            384,
+            96,
+            96
+          ],
+          "sha256": "1e92e1436d455f03f92c5068fd639adda9490714d0b75887079666484a2a57ff"
+        },
+        {
+          "index": 28,
+          "duration_ms": 34,
+          "atlas_rect": [
+            384,
+            384,
+            96,
+            96
+          ],
+          "sha256": "984d67e10b75bec5df089042f90d6addae733396fb827f659e0e8c2c15c1227f"
+        },
+        {
+          "index": 29,
+          "duration_ms": 220,
+          "atlas_rect": [
+            480,
+            384,
+            96,
+            96
+          ],
+          "sha256": "5acb2e3dca69a1f3876f8c614d77c8e9e357c0d0aa60607dccf5dbdc1276db7e"
+        }
+      ]
+    },
+    {
+      "id": "fx.copper_discovery",
+      "canvas": {
+        "width": 96,
+        "height": 96
+      },
+      "duration_ms": 1330,
+      "atlas": {
+        "path": "assets/animations/copper_discovery/copper_discovery_spritesheet.png",
+        "width": 576,
+        "height": 576,
+        "columns": 6,
+        "rows": 6,
+        "sha256": "00738a7797085bb82ca045d88f8352e3b88bf687c72262f5f31ae406bab153f6",
+        "asset_id": "fx.copper_discovery.atlas"
+      },
+      "tile_rect_in_frame": [
+        8,
+        7,
+        80,
+        81
+      ],
+      "frames": [
+        {
+          "index": 0,
+          "duration_ms": 90,
+          "atlas_rect": [
+            0,
+            0,
+            96,
+            96
+          ],
+          "sha256": "2e1fb060c80c2fc46678c84adc8006b24bb94c682cdad4d7884f29da650bd552"
+        },
+        {
+          "index": 1,
+          "duration_ms": 34,
+          "atlas_rect": [
+            96,
+            0,
+            96,
+            96
+          ],
+          "sha256": "e722b99e620a2c8b45fa334ede257950eb2f3f7d18a46e107478af1c82f04ae4"
+        },
+        {
+          "index": 2,
+          "duration_ms": 34,
+          "atlas_rect": [
+            192,
+            0,
+            96,
+            96
+          ],
+          "sha256": "8216fce10009656ae5cec4d9d00ff9ecc452a9bb7a9fbeb1c628492959fe6876"
+        },
+        {
+          "index": 3,
+          "duration_ms": 34,
+          "atlas_rect": [
+            288,
+            0,
+            96,
+            96
+          ],
+          "sha256": "e8b2f916aaf62ae686b0c725eeba242c27826b7a43e789f42397e2f3f73426d6"
+        },
+        {
+          "index": 4,
+          "duration_ms": 34,
+          "atlas_rect": [
+            384,
+            0,
+            96,
+            96
+          ],
+          "sha256": "7c451e98e2aed5ff5d3eb5e5c3a899c6fcc0d103177dd1bf2f180b88afe2f6de"
+        },
+        {
+          "index": 5,
+          "duration_ms": 34,
+          "atlas_rect": [
+            480,
+            0,
+            96,
+            96
+          ],
+          "sha256": "5d683d5694d4913c11d315e4d8b81d3c4a366af9b4edf479c65045291235050e"
+        },
+        {
+          "index": 6,
+          "duration_ms": 34,
+          "atlas_rect": [
+            0,
+            96,
+            96,
+            96
+          ],
+          "sha256": "1673a517796b5f1fc7308e39f2b7e9a5e64f076e7a0f475425462d1b592e470f"
+        },
+        {
+          "index": 7,
+          "duration_ms": 34,
+          "atlas_rect": [
+            96,
+            96,
+            96,
+            96
+          ],
+          "sha256": "1673a517796b5f1fc7308e39f2b7e9a5e64f076e7a0f475425462d1b592e470f"
+        },
+        {
+          "index": 8,
+          "duration_ms": 34,
+          "atlas_rect": [
+            192,
+            96,
+            96,
+            96
+          ],
+          "sha256": "c288a80743f961d431258cc6d67b95eadde5484bef31e8f8e2943e2d38bd0f17"
+        },
+        {
+          "index": 9,
+          "duration_ms": 34,
+          "atlas_rect": [
+            288,
+            96,
+            96,
+            96
+          ],
+          "sha256": "d8d8c2a66921e7ec57b7051b707b94cf4c5602d8babb6340d6e90a1a888ae6f9"
+        },
+        {
+          "index": 10,
+          "duration_ms": 34,
+          "atlas_rect": [
+            384,
+            96,
+            96,
+            96
+          ],
+          "sha256": "36c5ebaddd0074cb3cc6a5831f7654873efe02dff64896b934c01c386f9a5bd9"
+        },
+        {
+          "index": 11,
+          "duration_ms": 34,
+          "atlas_rect": [
+            480,
+            96,
+            96,
+            96
+          ],
+          "sha256": "7af4ff98e0be63408335672b07abe6e9d23c4ee5aea1815a7b1795fe9858eff2"
+        },
+        {
+          "index": 12,
+          "duration_ms": 34,
+          "atlas_rect": [
+            0,
+            192,
+            96,
+            96
+          ],
+          "sha256": "a1d26be38e14e74fcb129d5c2825c71b32c6432a7990a1fe96a9785e88f86cf0"
+        },
+        {
+          "index": 13,
+          "duration_ms": 34,
+          "atlas_rect": [
+            96,
+            192,
+            96,
+            96
+          ],
+          "sha256": "c90863838de684c405e543f6dbaf4d2291c96bf955d5b56373ce759e034f7283"
+        },
+        {
+          "index": 14,
+          "duration_ms": 34,
+          "atlas_rect": [
+            192,
+            192,
+            96,
+            96
+          ],
+          "sha256": "5443c7ad145855c61e6c3236c8af08ec5193c1e59b0764ea444d47b56e7bbdbe"
+        },
+        {
+          "index": 15,
+          "duration_ms": 34,
+          "atlas_rect": [
+            288,
+            192,
+            96,
+            96
+          ],
+          "sha256": "34c8766ad32fe82386af173fa6f1ceb4754ce80ad95b5815d6db8b3eb6b91bf5"
+        },
+        {
+          "index": 16,
+          "duration_ms": 34,
+          "atlas_rect": [
+            384,
+            192,
+            96,
+            96
+          ],
+          "sha256": "bbdb718af249a37389aa1864033cd03d7400c014358d81e74ae46eb685f408b1"
+        },
+        {
+          "index": 17,
+          "duration_ms": 34,
+          "atlas_rect": [
+            480,
+            192,
+            96,
+            96
+          ],
+          "sha256": "3824f30fe84abba102bdfb0423a4d674446eed6cfd39fe9db1d7c4ca49a8e298"
+        },
+        {
+          "index": 18,
+          "duration_ms": 34,
+          "atlas_rect": [
+            0,
+            288,
+            96,
+            96
+          ],
+          "sha256": "7a3235819d64f96635af33cd3f9160aad36c279b9843b955e5cae55da460fafa"
+        },
+        {
+          "index": 19,
+          "duration_ms": 34,
+          "atlas_rect": [
+            96,
+            288,
+            96,
+            96
+          ],
+          "sha256": "10cbb2f697595a3842f42f92d4fd3a9a972445b08a2baa3fdcbc26d1fd18a11c"
+        },
+        {
+          "index": 20,
+          "duration_ms": 34,
+          "atlas_rect": [
+            192,
+            288,
+            96,
+            96
+          ],
+          "sha256": "151ea99ed7255d8f0a7fd34b36eeb24d7f88926a425211a0cae268a4eb2d8ae8"
+        },
+        {
+          "index": 21,
+          "duration_ms": 34,
+          "atlas_rect": [
+            288,
+            288,
+            96,
+            96
+          ],
+          "sha256": "39ee9261d8310ba8ee454de3dba5ea201427833f546fdc7d6d81b61485f5ed46"
+        },
+        {
+          "index": 22,
+          "duration_ms": 34,
+          "atlas_rect": [
+            384,
+            288,
+            96,
+            96
+          ],
+          "sha256": "42d15aff19534c549d32b2273b8db3767cc243578ef1b731ccce4f167efb1469"
+        },
+        {
+          "index": 23,
+          "duration_ms": 34,
+          "atlas_rect": [
+            480,
+            288,
+            96,
+            96
+          ],
+          "sha256": "711c4e5e9a44804bed7ec802f82756d8ef917c0b9b1a4e03b813b178abe33dff"
+        },
+        {
+          "index": 24,
+          "duration_ms": 34,
+          "atlas_rect": [
+            0,
+            384,
+            96,
+            96
+          ],
+          "sha256": "265fba92be96926305b0a7b9cf31364376ba2f505495b6862fc96f577ce3a6af"
+        },
+        {
+          "index": 25,
+          "duration_ms": 34,
+          "atlas_rect": [
+            96,
+            384,
+            96,
+            96
+          ],
+          "sha256": "2fd94538ecc675b36b2f555930bcbc1ce4fbe9bebc798282f867889500ab5c9d"
+        },
+        {
+          "index": 26,
+          "duration_ms": 34,
+          "atlas_rect": [
+            192,
+            384,
+            96,
+            96
+          ],
+          "sha256": "ac095454c87760f0d19bb4403227995c30db38b71d57001d871cde9792e5d386"
+        },
+        {
+          "index": 27,
+          "duration_ms": 34,
+          "atlas_rect": [
+            288,
+            384,
+            96,
+            96
+          ],
+          "sha256": "d9a62fbcfefb0a63dde0cce06d4263cf324aea90a876f8a6f80a3bf44eee2437"
+        },
+        {
+          "index": 28,
+          "duration_ms": 34,
+          "atlas_rect": [
+            384,
+            384,
+            96,
+            96
+          ],
+          "sha256": "7d909d0fefbdd3c378c80a0d6ac8b43c0112e8d4a956a0b09aef5c71a29a2836"
+        },
+        {
+          "index": 29,
+          "duration_ms": 34,
+          "atlas_rect": [
+            480,
+            384,
+            96,
+            96
+          ],
+          "sha256": "a0a1544ba4ec2b0ba6986509fa02d63b5dc2cec9a4df9f0b170a1138d200e011"
+        },
+        {
+          "index": 30,
+          "duration_ms": 34,
+          "atlas_rect": [
+            0,
+            480,
+            96,
+            96
+          ],
+          "sha256": "c0a1780eba0c954d2795cef7083ee02117784ed932b24bde0039740f716b2036"
+        },
+        {
+          "index": 31,
+          "duration_ms": 220,
+          "atlas_rect": [
+            96,
+            480,
+            96,
+            96
+          ],
+          "sha256": "8e60f29328c1437d8b3684aba9302dcc08b4fd3e7530e0a06cc2e31b3877dfc7"
+        }
+      ]
+    },
+    {
+      "id": "fx.silver_discovery",
+      "canvas": {
+        "width": 96,
+        "height": 96
+      },
+      "duration_ms": 1330,
+      "atlas": {
+        "path": "assets/animations/silver_discovery/silver_discovery_spritesheet.png",
+        "width": 576,
+        "height": 576,
+        "columns": 6,
+        "rows": 6,
+        "sha256": "04aacffcffe3a5813a93a28ae2a6bb1288b341421160a873f2f8ae6b017b5260",
+        "asset_id": "fx.silver_discovery.atlas"
+      },
+      "tile_rect_in_frame": [
+        8,
+        7,
+        80,
+        81
+      ],
+      "frames": [
+        {
+          "index": 0,
+          "duration_ms": 90,
+          "atlas_rect": [
+            0,
+            0,
+            96,
+            96
+          ],
+          "sha256": "2e1fb060c80c2fc46678c84adc8006b24bb94c682cdad4d7884f29da650bd552"
+        },
+        {
+          "index": 1,
+          "duration_ms": 34,
+          "atlas_rect": [
+            96,
+            0,
+            96,
+            96
+          ],
+          "sha256": "e722b99e620a2c8b45fa334ede257950eb2f3f7d18a46e107478af1c82f04ae4"
+        },
+        {
+          "index": 2,
+          "duration_ms": 34,
+          "atlas_rect": [
+            192,
+            0,
+            96,
+            96
+          ],
+          "sha256": "8216fce10009656ae5cec4d9d00ff9ecc452a9bb7a9fbeb1c628492959fe6876"
+        },
+        {
+          "index": 3,
+          "duration_ms": 34,
+          "atlas_rect": [
+            288,
+            0,
+            96,
+            96
+          ],
+          "sha256": "e8b2f916aaf62ae686b0c725eeba242c27826b7a43e789f42397e2f3f73426d6"
+        },
+        {
+          "index": 4,
+          "duration_ms": 34,
+          "atlas_rect": [
+            384,
+            0,
+            96,
+            96
+          ],
+          "sha256": "7c451e98e2aed5ff5d3eb5e5c3a899c6fcc0d103177dd1bf2f180b88afe2f6de"
+        },
+        {
+          "index": 5,
+          "duration_ms": 34,
+          "atlas_rect": [
+            480,
+            0,
+            96,
+            96
+          ],
+          "sha256": "5d683d5694d4913c11d315e4d8b81d3c4a366af9b4edf479c65045291235050e"
+        },
+        {
+          "index": 6,
+          "duration_ms": 34,
+          "atlas_rect": [
+            0,
+            96,
+            96,
+            96
+          ],
+          "sha256": "1673a517796b5f1fc7308e39f2b7e9a5e64f076e7a0f475425462d1b592e470f"
+        },
+        {
+          "index": 7,
+          "duration_ms": 34,
+          "atlas_rect": [
+            96,
+            96,
+            96,
+            96
+          ],
+          "sha256": "1673a517796b5f1fc7308e39f2b7e9a5e64f076e7a0f475425462d1b592e470f"
+        },
+        {
+          "index": 8,
+          "duration_ms": 34,
+          "atlas_rect": [
+            192,
+            96,
+            96,
+            96
+          ],
+          "sha256": "1a98d81f38b3117ff194ebef6b05f6cd6deaf9a8a61843b1172270abfe57668d"
+        },
+        {
+          "index": 9,
+          "duration_ms": 34,
+          "atlas_rect": [
+            288,
+            96,
+            96,
+            96
+          ],
+          "sha256": "43c2baa1f45c4e920d7c6cfa6da2ae9f8707b5f9f1ed66d27a7b6e4cc6b6d960"
+        },
+        {
+          "index": 10,
+          "duration_ms": 34,
+          "atlas_rect": [
+            384,
+            96,
+            96,
+            96
+          ],
+          "sha256": "bb832cfd1aa3d654da7a0ac599636a0d99a2df2a6c29859ecb3374f0ae33472c"
+        },
+        {
+          "index": 11,
+          "duration_ms": 34,
+          "atlas_rect": [
+            480,
+            96,
+            96,
+            96
+          ],
+          "sha256": "cd97dc620669a5904e5e960b10b0ebbf02cf3a6fdbcc739b63f8ff54e1fa2695"
+        },
+        {
+          "index": 12,
+          "duration_ms": 34,
+          "atlas_rect": [
+            0,
+            192,
+            96,
+            96
+          ],
+          "sha256": "2c1df4f7d418ebc56e007a328ddc96f6afab5b8177ffe69e59bc41cc0361ae80"
+        },
+        {
+          "index": 13,
+          "duration_ms": 34,
+          "atlas_rect": [
+            96,
+            192,
+            96,
+            96
+          ],
+          "sha256": "9baa92ed920d4118dcb35cd0b75b380248017ec1b656d75d81dd1596637e9e88"
+        },
+        {
+          "index": 14,
+          "duration_ms": 34,
+          "atlas_rect": [
+            192,
+            192,
+            96,
+            96
+          ],
+          "sha256": "c05cb3561cd3a368b553f542924c7f349aae401d7c83792134f8d7e43a70dd4c"
+        },
+        {
+          "index": 15,
+          "duration_ms": 34,
+          "atlas_rect": [
+            288,
+            192,
+            96,
+            96
+          ],
+          "sha256": "603ccb924efbc6ba18ab9e00efa77817f18ded35f45a410ae750b6bc5d7061f0"
+        },
+        {
+          "index": 16,
+          "duration_ms": 34,
+          "atlas_rect": [
+            384,
+            192,
+            96,
+            96
+          ],
+          "sha256": "448cf773e98acf10c4e2c2a0f410e188071b012131fc0f6e700b20f0d01ed475"
+        },
+        {
+          "index": 17,
+          "duration_ms": 34,
+          "atlas_rect": [
+            480,
+            192,
+            96,
+            96
+          ],
+          "sha256": "44f1ca7143b2b82797786543baeea1c8c11faa855503e23bf8164c0821602237"
+        },
+        {
+          "index": 18,
+          "duration_ms": 34,
+          "atlas_rect": [
+            0,
+            288,
+            96,
+            96
+          ],
+          "sha256": "95167a3b9daed837c475773566228845eb4cd5ff12b7818256fa0bb762ec9ebd"
+        },
+        {
+          "index": 19,
+          "duration_ms": 34,
+          "atlas_rect": [
+            96,
+            288,
+            96,
+            96
+          ],
+          "sha256": "756f35b755ea26b22145de6ff91baeb7466032737041838ef78abff318b5f3f0"
+        },
+        {
+          "index": 20,
+          "duration_ms": 34,
+          "atlas_rect": [
+            192,
+            288,
+            96,
+            96
+          ],
+          "sha256": "1a67804a82a02b43707ffb765c2479e01b2bb09cb64f20e4ca7453807e1a0089"
+        },
+        {
+          "index": 21,
+          "duration_ms": 34,
+          "atlas_rect": [
+            288,
+            288,
+            96,
+            96
+          ],
+          "sha256": "62bc0122139b21772a5c74c8b2ece735a549a5d117c5b5b5cb92c15b078e8fe5"
+        },
+        {
+          "index": 22,
+          "duration_ms": 34,
+          "atlas_rect": [
+            384,
+            288,
+            96,
+            96
+          ],
+          "sha256": "54e921b65cc8b0308ef1843e952179d987ef31a684053735b17d68dde71bfa05"
+        },
+        {
+          "index": 23,
+          "duration_ms": 34,
+          "atlas_rect": [
+            480,
+            288,
+            96,
+            96
+          ],
+          "sha256": "9792a2172aaa172ee1e80e04559a74df8251450431ab4ef926d261cf27b91602"
+        },
+        {
+          "index": 24,
+          "duration_ms": 34,
+          "atlas_rect": [
+            0,
+            384,
+            96,
+            96
+          ],
+          "sha256": "075ebf5c6f9494a41128ebce3628afeac5c19e730bc87be60a7660885a2df678"
+        },
+        {
+          "index": 25,
+          "duration_ms": 34,
+          "atlas_rect": [
+            96,
+            384,
+            96,
+            96
+          ],
+          "sha256": "6370c7decadf24c17830428519a52a1702e9d8b20a6fa502f501889d1afc642f"
+        },
+        {
+          "index": 26,
+          "duration_ms": 34,
+          "atlas_rect": [
+            192,
+            384,
+            96,
+            96
+          ],
+          "sha256": "4e1a377d803fa329627f2ce57efd0fb84d1cc0d0472e629ddbb713f9d7817711"
+        },
+        {
+          "index": 27,
+          "duration_ms": 34,
+          "atlas_rect": [
+            288,
+            384,
+            96,
+            96
+          ],
+          "sha256": "2d56bf9bafef06f9b468821d03c377667723d13c6a10f1bc0d64863dbd310aa6"
+        },
+        {
+          "index": 28,
+          "duration_ms": 34,
+          "atlas_rect": [
+            384,
+            384,
+            96,
+            96
+          ],
+          "sha256": "1b5868ea37f718138a4fca9148d57a9bf286c6d80550c97eddf9e1ba42ecfdd2"
+        },
+        {
+          "index": 29,
+          "duration_ms": 34,
+          "atlas_rect": [
+            480,
+            384,
+            96,
+            96
+          ],
+          "sha256": "1a068b163a99e38749e136a2c3ccb1de1900a269af161fb868de3e88e5c6611b"
+        },
+        {
+          "index": 30,
+          "duration_ms": 34,
+          "atlas_rect": [
+            0,
+            480,
+            96,
+            96
+          ],
+          "sha256": "4c4d035ba586932ea8c632f8763df7e4d5fbc5512d058ddc4f86e3653b761337"
+        },
+        {
+          "index": 31,
+          "duration_ms": 220,
+          "atlas_rect": [
+            96,
+            480,
+            96,
+            96
+          ],
+          "sha256": "cc20332c7bd86338d7a121e962693de92b307e874a026ce81e99b0717c0e6990"
+        }
+      ]
+    },
+    {
+      "id": "fx.gold_discovery",
+      "canvas": {
+        "width": 96,
+        "height": 96
+      },
+      "duration_ms": 1466,
+      "atlas": {
+        "path": "assets/animations/gold_discovery/gold_discovery_spritesheet.png",
+        "width": 576,
+        "height": 576,
+        "columns": 6,
+        "rows": 6,
+        "sha256": "eca02b005d6738322da1ba6901c737f728237eae4227263343d372e4fdd770d8",
+        "asset_id": "fx.gold_discovery.atlas"
+      },
+      "tile_rect_in_frame": [
+        8,
+        7,
+        80,
+        81
+      ],
+      "frames": [
+        {
+          "index": 0,
+          "duration_ms": 90,
+          "atlas_rect": [
+            0,
+            0,
+            96,
+            96
+          ],
+          "sha256": "2e1fb060c80c2fc46678c84adc8006b24bb94c682cdad4d7884f29da650bd552"
+        },
+        {
+          "index": 1,
+          "duration_ms": 34,
+          "atlas_rect": [
+            96,
+            0,
+            96,
+            96
+          ],
+          "sha256": "e722b99e620a2c8b45fa334ede257950eb2f3f7d18a46e107478af1c82f04ae4"
+        },
+        {
+          "index": 2,
+          "duration_ms": 34,
+          "atlas_rect": [
+            192,
+            0,
+            96,
+            96
+          ],
+          "sha256": "8216fce10009656ae5cec4d9d00ff9ecc452a9bb7a9fbeb1c628492959fe6876"
+        },
+        {
+          "index": 3,
+          "duration_ms": 34,
+          "atlas_rect": [
+            288,
+            0,
+            96,
+            96
+          ],
+          "sha256": "e8b2f916aaf62ae686b0c725eeba242c27826b7a43e789f42397e2f3f73426d6"
+        },
+        {
+          "index": 4,
+          "duration_ms": 34,
+          "atlas_rect": [
+            384,
+            0,
+            96,
+            96
+          ],
+          "sha256": "7c451e98e2aed5ff5d3eb5e5c3a899c6fcc0d103177dd1bf2f180b88afe2f6de"
+        },
+        {
+          "index": 5,
+          "duration_ms": 34,
+          "atlas_rect": [
+            480,
+            0,
+            96,
+            96
+          ],
+          "sha256": "5d683d5694d4913c11d315e4d8b81d3c4a366af9b4edf479c65045291235050e"
+        },
+        {
+          "index": 6,
+          "duration_ms": 34,
+          "atlas_rect": [
+            0,
+            96,
+            96,
+            96
+          ],
+          "sha256": "1673a517796b5f1fc7308e39f2b7e9a5e64f076e7a0f475425462d1b592e470f"
+        },
+        {
+          "index": 7,
+          "duration_ms": 34,
+          "atlas_rect": [
+            96,
+            96,
+            96,
+            96
+          ],
+          "sha256": "1673a517796b5f1fc7308e39f2b7e9a5e64f076e7a0f475425462d1b592e470f"
+        },
+        {
+          "index": 8,
+          "duration_ms": 34,
+          "atlas_rect": [
+            192,
+            96,
+            96,
+            96
+          ],
+          "sha256": "5c84c7ba3eb0597ef3b15f9c7e77a654790b13eda58c9e9629a1e331430d6d78"
+        },
+        {
+          "index": 9,
+          "duration_ms": 34,
+          "atlas_rect": [
+            288,
+            96,
+            96,
+            96
+          ],
+          "sha256": "920fe85ee3aa16a81168075411646cd3ed9efbeb7105096bb2087cefe5dc0fb3"
+        },
+        {
+          "index": 10,
+          "duration_ms": 34,
+          "atlas_rect": [
+            384,
+            96,
+            96,
+            96
+          ],
+          "sha256": "8b429bc50cc897987400b5087f5418ab9f9aade5342ea6d52b06beeb8b7bfd2e"
+        },
+        {
+          "index": 11,
+          "duration_ms": 34,
+          "atlas_rect": [
+            480,
+            96,
+            96,
+            96
+          ],
+          "sha256": "d9acd14122de99822e7ccc80e294bedcbc8703d31137db61a015b973094aa9bf"
+        },
+        {
+          "index": 12,
+          "duration_ms": 34,
+          "atlas_rect": [
+            0,
+            192,
+            96,
+            96
+          ],
+          "sha256": "2000b1cd578bbc7dd26b8d9c1c46a251649f88d26daadb2642c2d7fe86b5414c"
+        },
+        {
+          "index": 13,
+          "duration_ms": 34,
+          "atlas_rect": [
+            96,
+            192,
+            96,
+            96
+          ],
+          "sha256": "f53c439efc34ee9cb6e2877c2440fb5e56561224a5e09b29e9802de74ee5ad73"
+        },
+        {
+          "index": 14,
+          "duration_ms": 34,
+          "atlas_rect": [
+            192,
+            192,
+            96,
+            96
+          ],
+          "sha256": "81c3613b6e035ad47746bf0c38003cd46c5866c0fbcddfa3c7cf5ce291d08d08"
+        },
+        {
+          "index": 15,
+          "duration_ms": 34,
+          "atlas_rect": [
+            288,
+            192,
+            96,
+            96
+          ],
+          "sha256": "46b773865c16d5e2a8b38bcad3cf6449aea2a4715fbb260c3d692b2fd0aa22c2"
+        },
+        {
+          "index": 16,
+          "duration_ms": 34,
+          "atlas_rect": [
+            384,
+            192,
+            96,
+            96
+          ],
+          "sha256": "1ca58c1f3ca6d95ad007f05a24e82817dbb81f5c6c5137b6e1a8f86278f9125f"
+        },
+        {
+          "index": 17,
+          "duration_ms": 34,
+          "atlas_rect": [
+            480,
+            192,
+            96,
+            96
+          ],
+          "sha256": "5bdc664e695564e6e588cd113d12758f3f05c4339aa50f2701e3f9db0872fd63"
+        },
+        {
+          "index": 18,
+          "duration_ms": 34,
+          "atlas_rect": [
+            0,
+            288,
+            96,
+            96
+          ],
+          "sha256": "e6e818a248cce3f73d2cad009ca0343f86cdcad1d8d988c8ce544ff2399b31b8"
+        },
+        {
+          "index": 19,
+          "duration_ms": 34,
+          "atlas_rect": [
+            96,
+            288,
+            96,
+            96
+          ],
+          "sha256": "9093844df956139200f11f8e8da9948f0d5762aa3b2712142e2584262aa5fe68"
+        },
+        {
+          "index": 20,
+          "duration_ms": 34,
+          "atlas_rect": [
+            192,
+            288,
+            96,
+            96
+          ],
+          "sha256": "f2218c5a3a3d53318181484e1b7354b634096ad225cb144c268fbad540c6013b"
+        },
+        {
+          "index": 21,
+          "duration_ms": 34,
+          "atlas_rect": [
+            288,
+            288,
+            96,
+            96
+          ],
+          "sha256": "84d23d140cd86f44dc716e5c5a64707c2d01055cfa5316f1d92e377dbab2e908"
+        },
+        {
+          "index": 22,
+          "duration_ms": 34,
+          "atlas_rect": [
+            384,
+            288,
+            96,
+            96
+          ],
+          "sha256": "3cff2437131d69abbd16f94fadb631275871022d8b574105b6e14200bd9bb534"
+        },
+        {
+          "index": 23,
+          "duration_ms": 34,
+          "atlas_rect": [
+            480,
+            288,
+            96,
+            96
+          ],
+          "sha256": "feafa869a34fefffbc12e72e1b72300d17bbd0f50129f2f3083fe7bf82381d72"
+        },
+        {
+          "index": 24,
+          "duration_ms": 34,
+          "atlas_rect": [
+            0,
+            384,
+            96,
+            96
+          ],
+          "sha256": "d9b81904fdac5774138e6f368f0509d6ededc56f51f9c1251c81207a933d88ea"
+        },
+        {
+          "index": 25,
+          "duration_ms": 34,
+          "atlas_rect": [
+            96,
+            384,
+            96,
+            96
+          ],
+          "sha256": "62e5b3693883a4b0de38ecb4bf0410ddf95e81b70cf3d011b56e46b702b50fe5"
+        },
+        {
+          "index": 26,
+          "duration_ms": 34,
+          "atlas_rect": [
+            192,
+            384,
+            96,
+            96
+          ],
+          "sha256": "f0e90f100cbe872aca533f8b1a45b17b560a5ded3ad3684ebbe15138e6c32452"
+        },
+        {
+          "index": 27,
+          "duration_ms": 34,
+          "atlas_rect": [
+            288,
+            384,
+            96,
+            96
+          ],
+          "sha256": "92cff957b960d5736689216d901cf81ac5e4cdca6a86ce5894e852585cef2079"
+        },
+        {
+          "index": 28,
+          "duration_ms": 34,
+          "atlas_rect": [
+            384,
+            384,
+            96,
+            96
+          ],
+          "sha256": "35540d3c5f98cec0d38258d1518928ba9ada51bbb795e0de64c53bfcf18c7329"
+        },
+        {
+          "index": 29,
+          "duration_ms": 34,
+          "atlas_rect": [
+            480,
+            384,
+            96,
+            96
+          ],
+          "sha256": "c621020f2137495763caff154665b482a58db17054f521dc78e394ee2780e6d8"
+        },
+        {
+          "index": 30,
+          "duration_ms": 34,
+          "atlas_rect": [
+            0,
+            480,
+            96,
+            96
+          ],
+          "sha256": "11064dbedca470790076e4ad33c9e44d595007d2a93567ba6da8acc880efc013"
+        },
+        {
+          "index": 31,
+          "duration_ms": 34,
+          "atlas_rect": [
+            96,
+            480,
+            96,
+            96
+          ],
+          "sha256": "e825938b122c33c30d1db797a2467d3cb09bc648b3fb3714424a37e1724b809d"
+        },
+        {
+          "index": 32,
+          "duration_ms": 34,
+          "atlas_rect": [
+            192,
+            480,
+            96,
+            96
+          ],
+          "sha256": "a5986645737c5b9fc59a8375c91258e13fa5c8c4143d5c9a4193a3f5ed298b3f"
+        },
+        {
+          "index": 33,
+          "duration_ms": 34,
+          "atlas_rect": [
+            288,
+            480,
+            96,
+            96
+          ],
+          "sha256": "2bde33e3727e008a9a0fb6262b817c09d3efe0924476bed9c66acfc6ca9e72f5"
+        },
+        {
+          "index": 34,
+          "duration_ms": 34,
+          "atlas_rect": [
+            384,
+            480,
+            96,
+            96
+          ],
+          "sha256": "755fd3f8eff401454b43b919122a255463deeba73bec1703a9ce437d9f094d09"
+        },
+        {
+          "index": 35,
+          "duration_ms": 220,
+          "atlas_rect": [
+            480,
+            480,
+            96,
+            96
+          ],
+          "sha256": "6ef7fdf6cfc243921ca1fb9f366757b9fecfdf6b7e12a3ed9266d30ff8ad8599"
+        }
+      ]
+    }
+  ]
+}

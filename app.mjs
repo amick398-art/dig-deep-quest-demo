@@ -1,8 +1,11 @@
-import { RULES, createGame, act, publicBoard, spendable, resolved, PICKAXE_PRICE } from './engine.mjs';
+import { RULES, createGame, restoreGame, act, publicBoard, spendable, resolved, PICKAXE_PRICE, balance, nativeSpendable, MYTHICS, COSMETICS, PLATES, RECHARGE, NATIVE_PRICES, DIG_ALTERNATIVES, amount, bulkTargets } from './game.mjs';
+import { MiningPresentation } from './effects.mjs';
 const $ = id => document.getElementById(id);
+const presentation=new MiningPresentation($('mining-stage'));
 const SAVE = 'dig-deep-quest-c29-demo-v1';
-let game, selected = null, bindings = {}, busy = false, storageReady = true;
-const fmt = n => n.toLocaleString('en-US',{maximumFractionDigits:4});
+let game, selected = null, bindings = {}, candidateBindings={}, boardLayout = null, busy = false, storageReady = true, shopFingerprint='', boardFingerprint='';
+let chargeTargets=[];
+const fmt = n => n.toLocaleString('en-US',{maximumFractionDigits:12});
 function transactionId() {
   // randomUUID requires a secure context; getRandomValues also supports a phone
   // accessing the local development server over ordinary HTTP.
@@ -14,6 +17,8 @@ try {
   const saved = localStorage.getItem(SAVE);
   game = saved ? JSON.parse(saved) : createGame();
   if (game.schema !== 1 || game.version !== RULES.version || !Array.isArray(game.board) || game.board.length !== 50) throw new Error('Save format does not match this demo. Existing save has been retained.');
+  if(saved&&!game.native&&!localStorage.getItem(SAVE+'-before-extensions'))localStorage.setItem(SAVE+'-before-extensions',saved);
+  game=restoreGame(game);
 } catch (error) {
   // Do not silently overwrite paid inventory or earned rights on a bad save.
   storageReady = false;
@@ -29,33 +34,39 @@ function save(s) {
 async function run(type, data={}) {
   if (busy) return;
   busy = true;
+  const context={expectedWallet:data.expectedWallet??game.account.receivingWallet};
+  if(['dig','pickaxe','bulk','light','detector','scanner','finder','depthPass','descend'].includes(type))context.expectedDepth=data.expectedDepth??game.depth;
   try {
     const next = await (navigator.locks?.request ? navigator.locks.request(SAVE, () => {
       const latest = storageReady && localStorage.getItem(SAVE);
       if (latest) game = JSON.parse(latest);
-      const next = act(game, {type,...data,id:transactionId()});
+      const next = act(game, {type,...data,...context,id:transactionId()});
       save(next);
       return next;
     }) : Promise.resolve().then(() => {
-      const next = act(game,{type,...data,id:transactionId()}); save(next); return next;
+      const next = act(game,{type,...data,...context,id:transactionId()}); save(next); return next;
     }));
-    game = next;
+    const previous=game;game = next;
     message(game.history[0]?.text || 'Ready.');
     render();
+    if(['dig','pickaxe','bulk','descend','light','detector','scanner','finder','breakCrystal'].includes(type))void presentAction(type,data,previous,next).catch(()=>{});
   } catch (error) { message(error.message,true); }
   finally { busy=false; }
 }
 function confirmAction(title,text,action) {
+  const expectedDepth=game.depth,expectedWallet=game.account.receivingWallet;
   const dialog=$('confirm-dialog');
   $('confirm-title').textContent=title; $('confirm-text').textContent=text;
   dialog.returnValue='';
-  dialog.addEventListener('close', () => { if(dialog.returnValue==='confirm') action(); }, {once:true});
+  dialog.addEventListener('close', () => { if(dialog.returnValue==='confirm'){if(game.depth!==expectedDepth||game.account.receivingWallet!==expectedWallet){message('Expedition or wallet changed while checkout was open. Review it again; no charge made.',true);return;}action();} }, {once:true});
   dialog.showModal();
 }
-function asset(id) { const binding=bindings[id]; return binding?.sourceVerified === true ? binding.file : null; }
+const assetAliases={'board.covered':'tile.covered','board.resolved_empty':'tile.empty','reward.shard.dig':'tile.dig_shard','reward.shard.fenn':'ui.fenn_shard','reward.crystal.nomo':'ui.nomo_crystal','reward.token.dig':'currency.selected_coins','reward.token.fenn':'currency.selected_coins','reward.token.nomo':'currency.selected_coins','reward.token.shovel':'shovel.basic.sprite'};
+function asset(id) { const binding=bindings[assetAliases[id]||id.replace('board.metal.','tile.')]; return binding?.sourceVerified === true ? binding.file : candidateBindings[id]?.allowedInDemo===true?candidateBindings[id].file:null; }
 function cellAsset(cell) {
-  if(cell.state==='covered') return cell.light ? null : asset('board.covered');
-  if(cell.state==='metal') return asset(`board.metal.${cell.kind}`);
+  if(cell.state==='covered'&&!cell.light)return asset('board.covered');
+  if(cell.state==='metal'||cell.light&&['copper','silver','gold','platinum'].includes(cell.kind)) return asset(`board.metal.${cell.kind}`);
+  if(cell.state==='resolved'&&['copper','silver','gold','platinum'].includes(cell.kind))return asset('board.resolved_empty');
   if(cell.kind==='empty') return asset('board.resolved_empty');
   if(cell.kind==='shard') return asset(`reward.shard.${cell.asset.toLowerCase()}`);
   if(cell.kind==='crystal') return asset(`reward.crystal.${cell.asset.toLowerCase()}`);
@@ -64,47 +75,82 @@ function cellAsset(cell) {
 const names={DIG:'DIG',FENN:'FENN',NOMO:'NOMO',empty:'Empty',shovel:'+1 shovel',shard:'Shard',crystal:'Crystal',copper:'Copper',silver:'Silver',gold:'Gold',platinum:'Platinum'};
 function renderBoard() {
   const board=$('board');
+  const cells=publicBoard(game);
+  const signature=JSON.stringify([game.depth,cells,selected,chargeTargets,boardLayout,Object.keys(bindings),Object.keys(candidateBindings)]);
+  if(signature===boardFingerprint)return;
+  boardFingerprint=signature;
   // Keep focus across state renders for keyboard users.
   const focusIndex=document.activeElement?.dataset.index;
   board.replaceChildren();
-  for(const cell of publicBoard(game)) {
+  for(const cell of cells) {
     const row=Math.floor(cell.index/5)+1,col=cell.index%5+1;
     const button=document.createElement('button');
     button.type='button';button.className='cell';button.dataset.index=cell.index;
+    button.dataset.kind=cell.kind||'';
+    if(boardLayout){const [x,y,w,h]=boardLayout.cells[cell.index].rect;Object.assign(button.style,{left:`${x/5}%`,top:`${y/9.46}%`,width:`${w/5}%`,height:`${h/9.46}%`});}
     button.dataset.state=cell.state;button.dataset.light=String(cell.light);
     button.setAttribute('aria-pressed',String(selected===cell.index));
-    const label=cell.kind ? `${names[cell.kind]}${cell.asset ? ` · ${cell.asset}` : ''}${cell.light&&cell.state==='covered'?' · lit, unexcavated':''}${cell.state==='metal'?' · unresolved':''}` : 'Covered';
-    const file=cellAsset(cell);
-    button.setAttribute('aria-label',`Row ${row}, column ${col}: ${label}${file?'':' · placeholder visual'}`);
+    const label=cell.kind ? `${names[cell.kind]}${cell.asset ? ` · ${cell.asset}` : ''}${cell.light&&cell.state==='covered'?' · lit, unexcavated':''}${cell.state==='metal'?' · unresolved':cell.state==='resolved'&&['copper','silver','gold','platinum'].includes(cell.kind)?' · collected':''}` : 'Covered';
+    const file=cell.state==='covered'&&!cell.light&&boardLayout?null:cellAsset(cell);
+    const officialCovered=cell.state==='covered'&&!cell.light&&boardLayout;
+    const candidate=cell.kind==='crystal'&&candidateBindings[`reward.crystal.${cell.asset.toLowerCase()}`];button.dataset.reviewArt=String(Boolean(candidate));
+    button.dataset.art=String(Boolean(file||officialCovered));
+    button.setAttribute('aria-label',`Row ${row}, column ${col}: ${label}${candidate?' · review visual':file||officialCovered?'':' · placeholder visual'}`);
     if(file) {
+      const artParent=cell.state==='covered'&&cell.light?document.createElement('span'):button;
+      if(artParent!==button){artParent.className='light-window';button.append(artParent);}
+      if(['DIG','FENN','NOMO'].includes(cell.kind)){
+        const coin=document.createElement('span');coin.className='coin-face';coin.dataset.token=cell.kind;artParent.append(coin);
+      }else{
       const img=document.createElement('img');img.src=file;img.alt='';
       img.addEventListener('error',()=>{img.remove();message(`Artwork file missing for ${label}; temporary text label retained.`,true);},{once:true});
-      button.append(img);
+      artParent.append(img);
+      }
     }
     const symbol=document.createElement('span');symbol.className='symbol'+(file?' over-art':'');
     symbol.textContent=cell.kind ? (cell.kind==='empty'?'·':cell.kind==='shovel'?'+1':cell.kind==='shard'?'◆':cell.kind==='crystal'?'◇':names[cell.kind].slice(0,2)) : '?';
     const caption=document.createElement('span');caption.textContent=cell.kind ? names[cell.kind] : `${row} · ${col}`; if(file) caption.className='over-art';
     button.append(symbol,caption);
-    button.onclick=()=>{selected=cell.index;render();};
+    if(cell.light&&cell.state==='covered'){const lit=document.createElement('small');lit.className='lit-label';lit.textContent='LIT · COVERED';button.append(lit);}
+    if(chargeTargets.includes(cell.index))button.dataset.charge='true';
+    button.onclick=()=>{selected=cell.index;if($('charge-mode').checked){chargeTargets=chargeTargets.includes(cell.index)?chargeTargets.filter(i=>i!==cell.index):[...chargeTargets,cell.index].slice(-3);}render();};
     button.onkeydown=event=>{
       const delta={ArrowUp:-5,ArrowDown:5,ArrowLeft:-1,ArrowRight:1}[event.key];
       if(delta!==undefined){event.preventDefault();const index=cell.index+delta;if(index>=0&&index<50){selected=index;render();board.querySelector(`[data-index="${index}"]`).focus();}}
     };
     board.append(button);
   }
-  if(focusIndex!==undefined) board.querySelector(`[data-index="${focusIndex}"]`)?.focus();
+  if(focusIndex!==undefined) board.querySelector(`[data-index="${focusIndex}"]`)?.focus({preventScroll:true});
+}
+function renderTimeStatus() {
+  const cooldown=game.boost.endedAt===null?0:Math.max(0,Math.ceil((game.boost.endedAt+RULES.cooldown-Date.now())/1000));
+  $('boost-status').textContent=game.boost.active?`Boost ${game.boost.id} active · covered DIG 90%`:cooldown?`Boost cooldown · ${cooldown}s remaining`:'Boost inactive · normal DIG 75%';
+  document.body.dataset.boost=String(game.boost.active);
+  const freeWait=game.lastFreeClaim===null?0:Math.max(0,game.lastFreeClaim+RULES.freeInterval-Date.now());
+  const designated=game.account.designatedWallet===game.account.receivingWallet?game.wallet:game.account.wallets.find(w=>w.id===game.account.designatedWallet)?.DIG||0;
+  $('free-status').textContent=designated<RULES.freeGate?'Daily claim requires 500,000 DIG held in the designated demo wallet.':freeWait?`Daily pair available in ${Math.ceil(freeWait/3600000)} hours.`:'Eligible: refill free balance to 2 once per 24 hours.';
+  $('free').disabled=freeWait>0||designated<RULES.freeGate||!game.account.eligible;
+  $('quick-free').disabled=$('free').disabled;
 }
 function render() {
   $('wallet').textContent=fmt(game.wallet);$('shovels').textContent=fmt(game.shovels);
   $('earned').textContent=fmt(game.earned);$('rewards').textContent=fmt(game.profileRewards);
+  $('free-balance').textContent=game.freeShovels;$('stored-balance').textContent=game.storedShovels;
+  for(const native of ['FENN','NOMO']){
+    $(`wallet-${native}`).textContent=fmt(balance(game,native));$(`rewards-${native}`).textContent=fmt(balance(game,native,'profileRewards'));
+    $(`pool-${native}`).textContent=`${fmt(nativeSpendable(game,native))} spendable · ${game.controllers[native].rate}% yield${game.controllers[native].paused?' · PAUSED':''}`;
+    $(`claim-${native}`).disabled=balance(game,native,'profileRewards')===0||balance(game,native)>=({FENN:30e9,NOMO:300}[native]);
+  }
   $('pass').textContent=fmt(game.pass.remaining);$('depth').textContent=game.depth;
   $('progress').textContent=`${resolved(game)} / 35`;$('progress-bar').value=Math.min(35,resolved(game));
   $('spendable').textContent=fmt(spendable(game));$('reserved').textContent=fmt(game.reserved);$('treasury').textContent=fmt(game.treasury);
-  const cooldown=game.boost.endedAt===null?0:Math.max(0,Math.ceil((game.boost.endedAt+RULES.cooldown-Date.now())/1000));
-  $('boost-status').textContent=game.boost.active?`Boost ${game.boost.id} active · covered DIG 90%`:cooldown?`Boost cooldown · ${cooldown}s remaining`:'Boost inactive · normal DIG 75%';
-  const freeWait=game.lastFreeClaim===null?0:Math.max(0,game.lastFreeClaim+RULES.freeInterval-Date.now());
-  $('free-status').textContent=game.wallet<RULES.freeGate?'Daily claim requires 500,000 DIG held in this demo wallet.':freeWait?`Daily pair available in ${Math.ceil(freeWait/3600000)} hours.`:'Eligible: 2 free shovels once per 24 hours.';
-  $('free').disabled=freeWait>0||game.wallet<RULES.freeGate;
+  $('ledger-monitor').replaceChildren();
+  for(const token of ['DIG','FENN','NOMO']){
+    const b=token==='DIG'?{vault:game.vault,reserved:game.reserved,treasury:game.treasury,...game.buckets}:Object.fromEntries(['vault','reserved','treasury','burn','liquidity','oso','bebe'].map(k=>[k,balance(game,token,k)]));
+    const p=document.createElement('p');p.className='hint';p.textContent=`${token} · actual pool ${fmt(b.vault)} · protected ${fmt(b.reserved)} · spendable ${fmt(b.vault-b.reserved)} · treasury ${fmt(b.treasury)} · burn ${fmt(b.burn)} · liquidity ${fmt(b.liquidity)} · Oso ${fmt(b.oso)} · Bebe ${fmt(b.bebe)}`;$('ledger-monitor').append(p);
+  }
+  $('equipped-plate').replaceChildren();if(game.equippedPlate){$('equipped-plate').append(platePreview(game.equippedPlate));$('equipped-plate').setAttribute('aria-label',`${game.equippedPlate} decorative plate · new art awaiting review`);}
+  renderTimeStatus();
   $('descend').disabled=resolved(game)<35&&!game.earlyDescent;
   $('depth-pass').disabled=game.earlyDescent||resolved(game)>=35;
   $('claim-rewards').disabled=game.profileRewards===0||game.wallet>=RULES.cap;
@@ -112,58 +158,135 @@ function render() {
   $('target').textContent=cell?`Selected row ${Math.floor(selected/5)+1}, column ${selected%5+1} · ${cell.kind?names[cell.kind]:'covered'}`:'Select a covered position.';
   $('dig').disabled=!cell||cell.state!=='covered'||game.shovels<1;
   $('pickaxe').disabled=!cell||cell.state!=='metal';
-  $('pickaxe').textContent=cell?.state==='metal'?`DIG ${names[cell.kind]} pickaxe · ${fmt(PICKAXE_PRICE[cell.kind])} DIG`:'DIG pickaxe · select discovered metal';
+  const family=$('reward-family').value,payment=$('pay-currency').value;
+  const validPayment=family==='DIG'?payment==='DIG':payment===family||payment==='DIG';
+  const quoteBlocked=family==='NOMO'&&payment==='DIG'&&!game.quoteReady;
+  $('pickaxe').disabled=!cell||cell.state!=='metal'||!validPayment||quoteBlocked;
+  const price=cell?.state==='metal'?(family==='DIG'?PICKAXE_PRICE[cell.kind]:payment==='DIG'?DIG_ALTERNATIVES[family][cell.kind]:NATIVE_PRICES[family][cell.kind]):0;
+  $('pickaxe').textContent=cell?.state==='metal'?validPayment?`${family} ${names[cell.kind]} pickaxe · ${fmt(price)} ${payment}${quoteBlocked?' · quote unavailable':''}`:'Choose a supported payment currency':'Pickaxe · select discovered metal';
+  $('pickaxe-preview').replaceChildren();if(cell?.state==='metal'){const file=asset(`pickaxe.${family.toLowerCase()}.${cell.kind}.card`);if(file){const img=document.createElement('img');img.src=file;img.alt=`Approved ${family} ${cell.kind} pickaxe`;img.loading='lazy';$('pickaxe-preview').append(img);}}
   $('light').disabled=!cell||cell.state!=='covered'||cell.light;
   $('detector').disabled=game.info.detector!==null;
   $('scanner').disabled=!cell||Object.hasOwn(game.info.rows,Math.floor(selected/5));
+  $('finder').disabled=true;$('finder').title='Cross-token highest-value policy is pending; no unpaid board information is exposed.';
+  $('small-charge').disabled=chargeTargets.length!==3;
+  $('small-charge').title=chargeTargets.length===3?'Validate and excavate selected targets':'Enable charge selection, then select three connected blocks';
+  for(const [id,kind] of [['power-strike','powerStrike'],['drill','drill'],['dynamite','dynamite']]){try{const targets=bulkTargets(kind,{index:selected});$(id).disabled=targets.some(i=>game.board[i].state!=='covered');}catch{$(id).disabled=true;}}
   $('info').replaceChildren();
   const info=[];
   if(game.info.detector!==null)info.push(`Depth detector: ${game.info.detector?'metal remains':'no undiscovered metal'}`);
   for(const [row,present] of Object.entries(game.info.rows))info.push(`Row ${Number(row)+1}: ${present?'metal present':'no undiscovered metal'}`);
   $('info').textContent=info.join(' · ');
+  if(game.info.finder)$('info').textContent+=game.info.finder.status==='none'?' · NO CRYSTALS DETECTED':` · ${game.info.finder.asset} crystal: row ${Math.floor(game.info.finder.index/5)+1}, column ${game.info.finder.index%5+1}`;
   $('shards').textContent=`Shards · DIG ${game.shards.DIG.length}/10 · FENN ${game.shards.FENN.length}/10`;
   $('crystals').replaceChildren();
   for(const crystal of game.crystals.filter(x=>x.state==='owned')) {
     const div=document.createElement('div');div.className='inventory-item';
     const text=document.createElement('span');text.textContent=`Owned ${crystal.asset} ${crystal.origin==='shards'?'shard-formed ':''}crystal`;
     div.append(text);
-    if(crystal.asset==='DIG'&&crystal.origin==='whole'){
-      const button=document.createElement('button');button.textContent='Break and settle simulated DIG';button.onclick=()=>run('breakCrystal',{crystalId:crystal.id});div.append(button);
+    if(crystal.origin==='whole'&&(crystal.asset==='DIG'||crystal.nativeNominal)){
+      const button=document.createElement('button');button.textContent=`Break and settle simulated ${crystal.asset}`;button.onclick=()=>run('breakCrystal',{crystalId:crystal.id});div.append(button);
     } else { const hint=document.createElement('p');hint.className='hint';hint.textContent='Owned right retained. Settlement policy/controller pending.';div.append(hint); }
     $('crystals').append(div);
   }
   if(!$('crystals').childElementCount)$('crystals').textContent='No owned crystals yet.';
-  $('supplemental').textContent=`${game.supplemental.length} FENN/NOMO discoveries held for native settlement. Their yield/safety controllers are pending; no live balances or quotes are fabricated.`;
+  $('supplemental').textContent=`${game.supplemental.length} historical native discoveries held. Native runway estimation, canonical paused-pool fallback and shard-formed settlement remain pending; new native settlements use available funded pools.`;
+  renderShop();
   $('activity').replaceChildren();
   for(const entry of game.history.slice(0,8)){const li=document.createElement('li');li.textContent=entry.text;$('activity').append(li);}
   renderBoard();
 }
 $('buy-shovels').onclick=()=>run('buyShovels',{count:Number($('pack').value)});
 $('free').onclick=()=>run('free');
-$('buy-pass').onclick=()=>confirmAction('Buy a simulated Boost Pass?', '260,000 DIG for 250 eligible future covered positions. Digging actions cost extra. NO REFUNDS. Uses carry forward; activation, timing, utilization, and profit are not guaranteed.',()=>run('buyPass',{acceptNoRefunds:true}));
+$('quick-free').onclick=()=>run('free');$('quick-buy').onclick=()=>run('buyShovels',{count:5});
+$('buy-pass').onclick=()=>confirmAction('Buy a simulated Boost Pass?', `260,000 DIG for 250 eligible future covered positions. Digging costs extra. NO REFUNDS. Uses carry forward; activation, timing, utilization and profit are not guaranteed. Current vault: ${fmt(game.vault)} actual, ${fmt(game.reserved)} reserved, ${fmt(spendable(game))} spendable. Activation 114,063,300; exit 100,000,000; five-minute post-event cooldown. Allocation: 104,000 pool, 91,000 treasury, 39,000 burn, 13,000 each Oso/Bebe. Covered DIG 90%; native yields unchanged.`,()=>run('buyPass',{acceptNoRefunds:true}));
 $('dig').onclick=()=>run('dig',{index:selected});
-$('pickaxe').onclick=()=>run('pickaxe',{index:selected,family:'DIG'});
+$('pickaxe').onclick=()=>{
+ const family=$('reward-family').value,currency=$('pay-currency').value,cell=game.board[selected];if(!cell||cell.state!=='metal')return;
+ const price=family==='DIG'?PICKAXE_PRICE[cell.kind]:currency==='DIG'?DIG_ALTERNATIVES[family][cell.kind]:NATIVE_PRICES[family][cell.kind];
+ const minima={DIG:{copper:4000,silver:8000,gold:16000,platinum:35000},FENN:{copper:5000000,silver:10000000,gold:20000000,platinum:40000000},NOMO:{copper:0.025,silver:0.025,gold:0.05,platinum:0.10}},maximum={DIG:75000,FENN:80000000,NOMO:0.2},yieldRate=family==='DIG'?cell.rate:game.controllers[family].rate;
+ confirmAction(`Use the ${family} ${cell.kind} pickaxe?`,`${fmt(price)} ${currency}. Possible ${family} payout: ${fmt(minima[family][cell.kind]*yieldRate/100)}–${fmt(maximum[family]*yieldRate/100)} at current ${yieldRate}% yield. No profit guarantee; excavation and any Boost pass cost extra. Metal gets no shovel bonus. Fees fund only ${currency}; no automatic conversion.`,()=>run('pickaxe',{index:selected,family,currency}));
+};
+$('reward-family').onchange=()=>{$('pay-currency').value=$('reward-family').value;render();};$('pay-currency').onchange=()=>render();
 $('light').onclick=()=>run('light',{index:selected});
 $('detector').onclick=()=>run('detector');
 $('scanner').onclick=()=>run('scanner',{row:Math.floor(selected/5)});
+$('finder').onclick=()=>run('finder');
+$('small-charge').onclick=()=>confirmBulk('smallCharge',{indices:[...chargeTargets]});
+for(const [id,kind] of [['power-strike','powerStrike'],['drill','drill'],['dynamite','dynamite']])$(id).onclick=()=>confirmBulk(kind,{index:selected});
+$('charge-mode').onchange=()=>{chargeTargets=[];render();};
+for(const native of ['FENN','NOMO'])$(`claim-${native}`).onclick=()=>run('claimRewards',{asset:native});
 $('depth-pass').onclick=()=>run('depthPass');
 $('descend').onclick=()=>confirmAction('Close this depth?', 'This depth cannot reopen. Unexcavated positions and unresolved metal are abandoned. Owned crystals, shards, held discoveries, shovels, and unused Boost coverage persist.',()=>{selected=null;run('descend',{confirmed:true});});
 $('claim-rewards').onclick=()=>run('claimRewards');
 $('deposit').onclick=()=>run('deposit',{amount:20000000});
+$('deposit-FENN').onclick=()=>run('deposit',{asset:'FENN',amount:1000000000});$('deposit-NOMO').onclick=()=>run('deposit',{asset:'NOMO',amount:10});
+$('link-wallet').onclick=()=>{const id=$('wallet-id').value.trim();if(id)run('linkWallet',{walletId:id});};
+$('wallet-selection').onchange=()=>run('selectWallet',{walletId:$('wallet-selection').value});
+function confirmBulk(kind,data){try{const indices=bulkTargets(kind,data),price={smallCharge:'13,500 DIG',powerStrike:'18,000 DIG',drill:'45,000 DIG',dynamite:'0.05 NOMO'}[kind];confirmAction(`Use ${kind}?`,`${price} for ${indices.length} covered positions: ${indices.map(i=>`${Math.floor(i/5)+1}:${i%5+1}`).join(', ')} (row:column). Every target and settlement must validate; failure rolls back the whole purchase. Metal remains unresolved until its matching pickaxe. Inventory shovels are not consumed; Boost coverage uses one eligible position at a time.`,()=>run('bulk',{kind,...data}).then(()=>{chargeTargets=[];render();}));}catch(error){message(error.message,true);}}
+$('sound-toggle').onclick=()=>{const on=presentation.enableSound();$('sound-toggle').textContent=on?'Sound on · new effect preview':'Sound off · new effect preview';$('sound-toggle').setAttribute('aria-pressed',String(on));};
+function renderShop(){
+ const signature=JSON.stringify([game.equipped,game.cosmetics,game.plates,game.equippedPlate,game.mythics,game.releaseStock,game.account.wallets.map(w=>w.id),game.account.receivingWallet,Object.keys(bindings),Object.keys(candidateBindings)]);
+ if(signature===shopFingerprint)return;shopFingerprint=signature;
+ const shop=$('shovel-shop');shop.replaceChildren();
+ for(const [key,price] of Object.entries(COSMETICS)){
+  const card=document.createElement('div');card.className='shop-card';
+  const file=asset(`shovel.${key}.card`);if(file){const img=document.createElement('img');img.src=file;img.alt=`${key} cosmetic`;img.loading='lazy';card.append(img);}
+  const button=document.createElement('button'),owned=game.cosmetics.includes(key);
+  button.textContent=owned?`${game.equipped===key?'Equipped':'Equip'} ${key}`:`${key} · ${fmt(price)} DIG`;
+  button.disabled=game.equipped===key;button.onclick=()=>owned?run('equip',{key}):confirmAction('Buy a permanent cosmetic?',`${key} · ${fmt(price)} DIG. Cosmetic only; no actions, odds or reward bonus.`,()=>run('buyCosmetic',{key}));card.append(button);shop.append(card);
+ }
+ const plates=$('plate-shop');plates.replaceChildren();
+ for(const [key,price] of Object.entries(PLATES)){
+  const card=document.createElement('div');card.className='shop-card';card.append(platePreview(key));
+  const owned=game.plates.includes(key),button=document.createElement('button');button.textContent=owned?`${game.equippedPlate===key?'Equipped':'Equip'} ${key} plate`:`${key} plate · ${fmt(price)} DIG`;button.disabled=game.equippedPlate===key;
+  button.onclick=()=>owned?run('equipPlate',{key}):confirmAction('Buy a decorative plate?',`${key} standalone plate · ${fmt(price)} DIG. Permanent cosmetic only; no actions or reward bonus. Allocation: 90% DIG pool, 5% Oso, 5% Bebe. NEW ART AWAITING REVIEW.`,()=>run('buyPlate',{key}));card.append(button);plates.append(card);
+ }
+ const removePlate=document.createElement('button');removePlate.textContent='Remove decorative plate';removePlate.disabled=!game.equippedPlate;removePlate.onclick=()=>run('equipPlate',{key:null});plates.append(removePlate);
+ const mythics=$('mythic-shop');mythics.replaceChildren();
+ for(const [key,prices] of Object.entries(MYTHICS)){
+  const div=document.createElement('div');div.className='mythic-card';
+  const concept=candidateBindings[`shovel.${key}.sprite`];if(concept?.region){const preview=document.createElement('div');preview.className='concept-tool';const scale=120/concept.height;Object.assign(preview.style,{width:`${concept.width*concept.region[2]*scale}px`,height:'120px',backgroundImage:`url('${concept.file}')`,backgroundSize:`${concept.width*scale}px 120px`,backgroundPosition:`${-concept.width*concept.region[0]*scale}px 0`});preview.setAttribute('role','img');preview.setAttribute('aria-label',`${key} new Mythic shovel concept for review`);div.append(preview);}
+  const label=document.createElement('strong');label.textContent=`${key} Mythic · ${['Oso','Bebe'].includes(key)?'+15% regular DIG/FENN/NOMO':'+10% regular '+key} · NEW VISUAL FOR REVIEW${game.releaseStock[key]!==undefined?' · '+game.releaseStock[key]+' first-release copies remaining':''}`;
+  const text=Object.entries(prices).map(([a,p])=>`${fmt(p)} ${a}`).join(' + ');
+  const button=document.createElement('button'),owned=Boolean(game.mythics[key]);button.textContent=owned?`${game.equipped===key?'Equipped':'Equip'} ${key}`:`Buy · ${text}`;button.disabled=game.equipped===key;
+  const purchase=()=>confirmAction('Buy a functional Mythic?',`${text}. Included native allowances: ${Object.entries(prices).map(([a,p])=>fmt(p*0.35)+' '+a).join(' + ')}. All payment legs required. Permanent ownership; finite funded extras only. Extra = min(rate × payable eligible reward, remaining allowance); base unchanged. Metals, shards and crystals excluded. No DIG extra on covered Boost. No actions included. ${['Oso','Bebe'].includes(key)?'Premium class: 65% pool (35% reserved, 30% ordinary), 10% burn, 10% liquidity, 7.5% each Oso/Bebe, zero treasury. First release 100 copies, one per eligible profile.':'Ordinary class: 65% pool (35% reserved, 30% ordinary), 10% burn, 10% liquidity, 5% treasury, 5% each Oso/Bebe.'}`,()=>run('buyMythic',{key}));button.onclick=owned?()=>run('equip',{key}):purchase;div.append(label,button);if(owned&&!['Oso','Bebe'].includes(key)){const another=document.createElement('button');another.textContent='Buy another '+key+' Mythic';another.onclick=purchase;div.append(another);}mythics.append(div);
+ }
+ const allowance=$('allowances');allowance.replaceChildren();
+ for(const [key,m] of Object.entries(game.mythics))for(const [asset,remaining] of Object.entries(m.allowances)){
+  const equip=document.createElement('button');equip.textContent=(game.equipped===key?'Equipped ':'Equip ')+key;equip.disabled=game.equipped===key;equip.onclick=()=>run('equip',{key});allowance.append(equip);const p=document.createElement('p');p.className='hint';p.textContent=`${key}: ${fmt(amount(remaining))} ${asset} bonus allowance remaining`;
+  const b=document.createElement('button');b.textContent=`Recharge ${key} · ${fmt(RECHARGE[asset])} ${asset}`;b.onclick=()=>confirmAction('Recharge this allowance?',`${key} only: ${fmt(RECHARGE[asset])} ${asset} adds ${fmt(RECHARGE[asset]*0.35)} ${asset} bonus allowance. Optional; no new actions, ownership or percentage.`,()=>run('recharge',{key,asset}));allowance.append(p,b);
+ }
+ const wallets=$('wallet-selection');wallets.replaceChildren();for(const wallet of game.account.wallets){const option=document.createElement('option');option.value=wallet.id;option.textContent=wallet.id;wallets.append(option);}wallets.value=game.account.receivingWallet;
+}
+function platePreview(key){const wrapper=document.createElement('div');wrapper.className='plate-preview';const file=asset('plate.'+key);if(file){const img=document.createElement('img');img.src=file;img.alt=key+' new decorative plate';img.loading='lazy';wrapper.append(img);if(['DIG','FENN','NOMO'].includes(key)){const coin=document.createElement('span');coin.className='coin-face';coin.dataset.token=key;wrapper.append(coin);}}const label=document.createElement('small');label.textContent='NEW ART · REVIEW';wrapper.append(label);return wrapper;}
+async function presentAction(type,data,previous,next){
+ // Presentation only; authorized engine state and saved receipt already committed.
+ const indices=type==='bulk'?bulkTargets(data.kind,data):Number.isInteger(data.index)?[data.index]:[];
+ const tool=type==='pickaxe'?asset(`pickaxe.${(data.family||'DIG').toLowerCase()}.${previous.board[data.index].kind}.sprite`):data.kind==='drill'?asset('tool.fenn_drill'):data.kind==='dynamite'?asset('tool.nomo_dynamite'):data.kind==='powerStrike'?asset('fx.power_strike'):data.kind==='smallCharge'?asset('tool.small_charge'):asset(`shovel.${game.mythics[game.equipped]?.brand||game.equipped}.sprite`);
+ const region=type==='dig'?candidateBindings[`shovel.${game.mythics[game.equipped]?.brand||game.equipped}.sprite`]?.region:null;
+ await presentation.present(type,{...data,indices,toolRegion:region},next,tool);
+}
 window.addEventListener('storage',event=>{if(event.key===SAVE&&event.newValue){try{game=JSON.parse(event.newValue);render();}catch{message('Another tab produced an unreadable save. Reload after resolving it.',true);}}});
 try {
   const response=await fetch('./assets/bindings.json');
   if(!response.ok)throw new Error('Missing asset bindings.');
   bindings=(await response.json()).assets||{};
+  const candidateResponse=await fetch('./assets/candidate-bindings.json');if(candidateResponse.ok)candidateBindings=(await candidateResponse.json()).assets||{};
+  await presentation.load();
+  for(const node of document.querySelectorAll('[data-art-id]')){const file=asset(node.dataset.artId);if(file){const img=document.createElement('img');img.src=file;img.alt='';img.className='control-art';img.loading='lazy';img.decoding='async';node.prepend(img);}}
+  const layoutResponse=await fetch('./assets/board-layout.json');
+  if(layoutResponse.ok&&asset('board.covered_viewport')){boardLayout=await layoutResponse.json();$('board').dataset.layout='approved';}
   const count=Object.values(bindings).filter(x=>x.sourceVerified===true).length;
   if(count)$('art-status').textContent=`${count} original asset bindings available. Missing visuals remain explicitly labeled placeholders; new UI remains a development treatment.`;
 } catch { message('Asset map unavailable. Temporary labeled visuals retained.',true); }
 render();
+save(game);
 // Timer evaluation is local simulation, not a live economic service.
 setInterval(()=>{
   if(document.hidden||busy)return;
-  const before=JSON.stringify(game.boost);
+  const before=JSON.stringify([game.boost,game.controllers]);
   const next=act(game,{type:'tick',id:transactionId()});
-  if(JSON.stringify(next.boost)!==before)run('tick');
-  else render();
+  if(JSON.stringify([next.boost,next.controllers])!==before)run('tick');
+  else renderTimeStatus();
 },1000);

@@ -1,0 +1,198 @@
+{
+  "assets": {
+    "reward.crystal.dig": {
+      "file": "assets/review/emerald.png",
+      "sha256": "3e5b96ce1401037aff798a910ecbf5a7285259e307cc0bf619eb39bd3f29f199",
+      "status": "RECOVERED_REFERENCE_OR_REVIEW_CANDIDATE",
+      "production_ready": false,
+      "allowedInDemo": true,
+      "pixels": "unchanged recovered source",
+      "note": "Source reference only; new placement/motion awaits review. No approval inferred."
+    },
+    "reward.crystal.fenn": {
+      "file": "assets/review/ruby.png",
+      "sha256": "b18ae0a7ae27c71b29d48a54bdaf33b67d2b0e7c8c7f90aabac81bd860746305",
+      "status": "RECOVERED_REFERENCE_OR_REVIEW_CANDIDATE",
+      "production_ready": false,
+      "allowedInDemo": true,
+      "pixels": "unchanged recovered source",
+      "note": "Source reference only; new placement/motion awaits review. No approval inferred."
+    },
+    "tool.fenn_drill": {
+      "file": "assets/review/fenn_drill.png",
+      "sha256": "665fdbd0164ec9e6cb4b9bed6439bdc53f8541e4d4ea78706d4ec0dadd9020ab",
+      "status": "RECOVERED_REFERENCE_OR_REVIEW_CANDIDATE",
+      "production_ready": false,
+      "allowedInDemo": true,
+      "pixels": "unchanged recovered source",
+      "note": "Source reference only; new placement/motion awaits review. No approval inferred."
+    },
+    "tool.nomo_dynamite": {
+      "file": "assets/review/nomo_dynamite.jpg",
+      "sha256": "9d2e72bae17d6a8327b48c1ceb3c53019a46d616fb80d1b71f07eed212557cbc",
+      "status": "RECOVERED_REFERENCE_OR_REVIEW_CANDIDATE",
+      "production_ready": false,
+      "allowedInDemo": true,
+      "pixels": "unchanged recovered source",
+      "note": "Source reference only; new placement/motion awaits review. No approval inferred."
+    },
+    "fx.boost": {
+      "file": "assets/new/boost-ring.svg",
+      "sha256": "cf480a08c2ab33f5c855b504c620e0df85e90beefc521e33090ba2b8440b1901",
+      "status": "NEW_WORK_AWAITING_REVIEW",
+      "production_ready": false,
+      "allowedInDemo": true
+    },
+    "fx.descent": {
+      "file": "assets/new/descent-tunnel.svg",
+      "sha256": "f9f01f40a0eaf98006bf5b052d91e9f3765b93f01c9702915ee0be56a3a3e006",
+      "status": "NEW_WORK_AWAITING_REVIEW",
+      "production_ready": false,
+      "allowedInDemo": true
+    },
+    "plate.silver": {
+      "file": "assets/new/plate-silver.svg",
+      "sha256": "baa52d3d924ec519ea9892609af26b9ae9fbbd47c8bf47c61814c70f137d08ab",
+      "status": "NEW_WORK_AWAITING_REVIEW",
+      "production_ready": false,
+      "allowedInDemo": true,
+      "note": "New demo presentation candidate. No original or approved status replaced."
+    },
+    "plate.gold": {
+      "file": "assets/new/plate-gold.svg",
+      "sha256": "0cd10ff55555221ad539ad8ed66ec2bfc40fce082bb29b60d0240ec09de67e91",
+      "status": "NEW_WORK_AWAITING_REVIEW",
+      "production_ready": false,
+      "allowedInDemo": true,
+      "note": "New demo presentation candidate. No original or approved status replaced."
+    },
+    "plate.platinum": {
+      "file": "assets/new/plate-platinum.svg",
+      "sha256": "438b49c977a925026f18b1ed84fa23892b811d22a846ec9442f72f2740e5f318",
+      "status": "NEW_WORK_AWAITING_REVIEW",
+      "production_ready": false,
+      "allowedInDemo": true,
+      "note": "New demo presentation candidate. No original or approved status replaced."
+    },
+    "plate.DIG": {
+      "file": "assets/new/plate-dig.svg",
+      "sha256": "63e51fc508e2f1d1f6f280ee2aabd0a062d0cf9bd108f5c2072d954dea9d5c4c",
+      "status": "NEW_WORK_AWAITING_REVIEW",
+      "production_ready": false,
+      "allowedInDemo": true,
+      "note": "New demo presentation candidate. No original or approved status replaced."
+    },
+    "plate.FENN": {
+      "file": "assets/new/plate-fenn.svg",
+      "sha256": "3949443718e9561e6bcd481479d6ba9f8f6439202458c51bb25ccac600a7104d",
+      "status": "NEW_WORK_AWAITING_REVIEW",
+      "production_ready": false,
+      "allowedInDemo": true,
+      "note": "New demo presentation candidate. No original or approved status replaced."
+    },
+    "plate.NOMO": {
+      "file": "assets/new/plate-nomo.svg",
+      "sha256": "2c6958131dcdbb0993c1358d6afbdeef89d9502c0ad08c02e3ee087f1d7bc547",
+      "status": "NEW_WORK_AWAITING_REVIEW",
+      "production_ready": false,
+      "allowedInDemo": true,
+      "note": "New demo presentation candidate. No original or approved status replaced."
+    },
+    "fx.power_strike": {
+      "file": "assets/new/power-strike.svg",
+      "sha256": "451d37c58395969457712397fa0422ea2b98d693e3e77e63e111f8a0a37d748d",
+      "status": "NEW_WORK_AWAITING_REVIEW",
+      "production_ready": false,
+      "allowedInDemo": true,
+      "note": "New demo presentation candidate. No original or approved status replaced."
+    },
+    "scene.cavern": {
+      "file": "assets/new/cavern-environment.png",
+      "sha256": "e754c2185b5d9211c9198a581089b968e0c0b6679ceb142ecf28caabd6a4f799",
+      "status": "NEW_WORK_AWAITING_REVIEW",
+      "production_ready": false,
+      "allowedInDemo": true,
+      "note": "New demo presentation candidate. No original or approved status replaced."
+    },
+    "shovel.DIG.sprite": {
+      "file": "assets/new/mythic-shovel-concepts.png",
+      "sha256": "fabf3e81cb0e9fa6c7101297c323275ef7d1966b732f26aab18ff63dc002ba2e",
+      "status": "NEW_WORK_AWAITING_REVIEW",
+      "production_ready": false,
+      "allowedInDemo": true,
+      "region": [
+        0.0,
+        0,
+        0.2,
+        1
+      ],
+      "width": 1983,
+      "height": 793,
+      "note": "New equipment-only concept; no original character or approved design replaced."
+    },
+    "shovel.FENN.sprite": {
+      "file": "assets/new/mythic-shovel-concepts.png",
+      "sha256": "fabf3e81cb0e9fa6c7101297c323275ef7d1966b732f26aab18ff63dc002ba2e",
+      "status": "NEW_WORK_AWAITING_REVIEW",
+      "production_ready": false,
+      "allowedInDemo": true,
+      "region": [
+        0.2,
+        0,
+        0.2,
+        1
+      ],
+      "width": 1983,
+      "height": 793,
+      "note": "New equipment-only concept; no original character or approved design replaced."
+    },
+    "shovel.NOMO.sprite": {
+      "file": "assets/new/mythic-shovel-concepts.png",
+      "sha256": "fabf3e81cb0e9fa6c7101297c323275ef7d1966b732f26aab18ff63dc002ba2e",
+      "status": "NEW_WORK_AWAITING_REVIEW",
+      "production_ready": false,
+      "allowedInDemo": true,
+      "region": [
+        0.4,
+        0,
+        0.2,
+        1
+      ],
+      "width": 1983,
+      "height": 793,
+      "note": "New equipment-only concept; no original character or approved design replaced."
+    },
+    "shovel.Oso.sprite": {
+      "file": "assets/new/mythic-shovel-concepts.png",
+      "sha256": "fabf3e81cb0e9fa6c7101297c323275ef7d1966b732f26aab18ff63dc002ba2e",
+      "status": "NEW_WORK_AWAITING_REVIEW",
+      "production_ready": false,
+      "allowedInDemo": true,
+      "region": [
+        0.6,
+        0,
+        0.2,
+        1
+      ],
+      "width": 1983,
+      "height": 793,
+      "note": "New equipment-only concept; no original character or approved design replaced."
+    },
+    "shovel.Bebe.sprite": {
+      "file": "assets/new/mythic-shovel-concepts.png",
+      "sha256": "fabf3e81cb0e9fa6c7101297c323275ef7d1966b732f26aab18ff63dc002ba2e",
+      "status": "NEW_WORK_AWAITING_REVIEW",
+      "production_ready": false,
+      "allowedInDemo": true,
+      "region": [
+        0.8,
+        0,
+        0.2,
+        1
+      ],
+      "width": 1983,
+      "height": 793,
+      "note": "New equipment-only concept; no original character or approved design replaced."
+    }
+  }
+}
