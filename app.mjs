@@ -1,7 +1,9 @@
 import { RULES, createGame, restoreGame, act, publicBoard, spendable, resolved, PICKAXE_PRICE, balance, nativeSpendable, MYTHICS, COSMETICS, PLATES, RECHARGE, NATIVE_PRICES, DIG_ALTERNATIVES, amount, bulkTargets } from './game.mjs';
 import { MiningPresentation } from './effects.mjs';
+import { DescentCinematic } from './descent.mjs';
 const $ = id => document.getElementById(id);
 const presentation=new MiningPresentation($('mining-stage'));
+const descentCinematic=new DescentCinematic($('descent-cinematic'),{onTunnelStart:()=>presentation.tone('descend')});
 const SAVE = 'dig-deep-quest-c29-demo-v1';
 let game, selected = null, bindings = {}, candidateBindings={}, boardLayout = null, busy = false, storageReady = true, shopFingerprint='', boardFingerprint='';
 let chargeTargets=[];
@@ -49,7 +51,8 @@ async function run(type, data={}) {
     const previous=game;game = next;
     message(game.history[0]?.text || 'Ready.');
     render();
-    if(['dig','pickaxe','bulk','descend','light','detector','scanner','finder','breakCrystal'].includes(type))void presentAction(type,data,previous,next).catch(()=>{});
+    if(type==='descend')await descentCinematic.play(previous,next);
+    else if(['dig','pickaxe','bulk','light','detector','scanner','finder','breakCrystal'].includes(type))void presentAction(type,data,previous,next).catch(()=>{});
   } catch (error) { message(error.message,true); }
   finally { busy=false; }
 }
