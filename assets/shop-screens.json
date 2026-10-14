@@ -24,6 +24,12 @@
       "sha256": "2eabbe7edde9400919411c0cfe68da4cf740327af6b46a3f3138dc3eaf1f2c2d",
       "width": 1280,
       "height": 853
+    },
+    "currencies": {
+      "file": "assets/shop/approved_currencies.jpg",
+      "sha256": "42314c44ef0616c38a9549b0aea5d70765b064ea8b47425c63074618eb6a22fd",
+      "width": 1280,
+      "height": 853
     }
   }
 }
