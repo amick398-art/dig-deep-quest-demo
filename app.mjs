@@ -174,7 +174,6 @@ function renderTimeStatus() {
   const designated=game.account.designatedWallet===game.account.receivingWallet?game.wallet:game.account.wallets.find(w=>w.id===game.account.designatedWallet)?.DIG||0;
   $('free-status').textContent=designated<RULES.freeGate?'Daily claim requires 500,000 DIG held in the designated demo wallet.':freeWait?`Daily pair available in ${Math.ceil(freeWait/3600000)} hours.`:'Eligible: refill free balance to 2 once per 24 hours.';
   $('free').disabled=freeWait>0||designated<RULES.freeGate||!game.account.eligible;
-  $('quick-free').disabled=$('free').disabled;
   $('scene-free').disabled=$('free').disabled;
   $('scene-refill').textContent=designated<RULES.freeGate?'Requires 500,000 DIG held':!game.account.eligible?'Profile ineligible':freeWait?`Daily pair in ${Math.ceil(freeWait/3600000)}h`:'Daily pair available';
   $('scene-yield-DIG').textContent=game.boost.active?'90% covered Boost':'75% normal yield';
@@ -183,7 +182,6 @@ function render() {
   approvedShop.refresh();
   $('wallet').textContent=fmt(game.wallet);$('shovels').textContent=fmt(game.shovels);
   $('earned').textContent=fmt(game.earned);$('rewards').textContent=fmt(game.profileRewards);
-  $('free-balance').textContent=game.freeShovels;$('stored-balance').textContent=game.storedShovels;
   $('scene-shovels').textContent=fmt(game.shovels);$('scene-free-count').textContent=game.freeShovels;$('scene-stored-count').textContent=game.storedShovels;
   for(const token of ['DIG','FENN','NOMO']){
     $(`scene-pool-${token}`).textContent=fmt(token==='DIG'?spendable(game):nativeSpendable(game,token));
@@ -254,7 +252,6 @@ function render() {
 }
 $('buy-shovels').onclick=()=>run('buyShovels',{count:Number($('pack').value)});
 $('free').onclick=()=>run('free');
-$('quick-free').onclick=()=>run('free');$('quick-buy').onclick=()=>run('buyShovels',{count:5});
 $('scene-free').onclick=()=>run('free');
 $('buy-pass').onclick=()=>confirmAction('Buy a DIG Boost Pass?', `Payment: DIG only. Boost Mode applies only to the DIG reward pool. 260,000 DIG for 250 eligible future covered positions. Digging costs extra. NO REFUNDS. Uses carry forward; activation, timing, utilization and profit are not guaranteed. Current vault: ${fmt(game.vault)} actual, ${fmt(game.reserved)} reserved, ${fmt(spendable(game))} spendable. Activation 114,063,300; exit 100,000,000; five-minute post-event cooldown. Allocation: 104,000 pool, 91,000 treasury, 39,000 burn, 13,000 each Oso/Bebe. Covered DIG 90%; normal FENN/NOMO yields and pauses stay unchanged. Oso/Bebe equipment allowances are separate from Boost Mode.`,()=>run('buyPass',{currency:'DIG',asset:'DIG',acceptNoRefunds:true}));
 $('dig').onclick=()=>run('dig',{index:selected});
@@ -268,7 +265,7 @@ $('reward-family').onchange=()=>{$('pay-currency').value=$('reward-family').valu
 $('light').onclick=()=>run('light',{index:selected});
 $('detector').onclick=()=>run('detector');
 $('scanner').onclick=()=>run('scanner',{row:Math.floor(selected/5)});
-$('finder').onclick=()=>{closeGamePanels();document.querySelector('.quick-links [data-open-panel="shop-panel"]').click();approvedShop.show('information');approvedShop.select(approvedShop.catalogue('information').find(i=>i.key==='finder'));};
+$('finder').onclick=()=>{closeGamePanels();document.querySelector('.scene-nav-shop').click();approvedShop.show('information');approvedShop.select(approvedShop.catalogue('information').find(i=>i.key==='finder'));};
 function bulkSelection(kind){return kind==='smallCharge'?{indices:[...chargeTargets]}:{index:selected};}
 function beginBulkTargeting(kind){bulkMode=kind;chargeTargets=[];$('charge-mode').checked=kind==='smallCharge';closeGamePanels();render();$('target').scrollIntoView({block:'nearest',behavior:'instant'});}
 function requestEquipment(kind){const data=bulkSelection(kind);if(bulkReadiness(game,kind,data).valid)confirmBulk(kind,data);else beginBulkTargeting(kind);}
