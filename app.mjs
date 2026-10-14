@@ -1,14 +1,15 @@
-import {BULK_TOOLS,bulkReadiness} from './bulk-controls.mjs?v=board-controls-20261014';
-import {restorePoolEmblems,restoreCleanBoard} from './board-presentation.mjs?v=board-controls-20261014';
-import { RULES, createGame, restoreGame, act, publicBoard, spendable, resolved, PICKAXE_PRICE, balance, nativeSpendable, COSMETICS, PLATES, NATIVE_PRICES, DIG_ALTERNATIVES, amount, bulkTargets } from './nft-game.mjs?v=board-controls-20261014';
-import { MiningPresentation } from './effects.mjs?v=board-controls-20261014';
-import { DescentCinematic } from './descent.mjs?v=board-controls-20261014';
-import { MythicShop } from './nft-shop.mjs?v=board-controls-20261014';
-import { ApprovedShop, approvedArtwork } from './approved-shop.mjs?v=board-controls-20261014';
-import { closeGamePanels, refreshChoices } from './interface.mjs?v=board-controls-20261014';
-import approvedBoardLayout from './approved-board-layout.mjs?v=board-controls-20261014';
-import {shardBindingId,rewardLabel} from './reward-visuals.mjs?v=board-controls-20261014';
-import {NomoRunCinematic} from './nomo-cinematic.mjs?v=board-controls-20261014';
+import {RewardReveals,COIN_REGIONS} from './reward-reveal.mjs?v=loot-reveal-20261014';
+import {BULK_TOOLS,bulkReadiness} from './bulk-controls.mjs?v=loot-reveal-20261014';
+import {restorePoolEmblems,restoreCleanBoard} from './board-presentation.mjs?v=loot-reveal-20261014';
+import { RULES, createGame, restoreGame, act, publicBoard, spendable, resolved, PICKAXE_PRICE, balance, nativeSpendable, COSMETICS, PLATES, NATIVE_PRICES, DIG_ALTERNATIVES, amount, bulkTargets } from './nft-game.mjs?v=loot-reveal-20261014';
+import { MiningPresentation } from './effects.mjs?v=loot-reveal-20261014';
+import { DescentCinematic } from './descent.mjs?v=loot-reveal-20261014';
+import { MythicShop } from './nft-shop.mjs?v=loot-reveal-20261014';
+import { ApprovedShop, approvedArtwork } from './approved-shop.mjs?v=loot-reveal-20261014';
+import { closeGamePanels, refreshChoices } from './interface.mjs?v=loot-reveal-20261014';
+import approvedBoardLayout from './approved-board-layout.mjs?v=loot-reveal-20261014';
+import {shardBindingId,rewardLabel} from './reward-visuals.mjs?v=loot-reveal-20261014';
+import {NomoRunCinematic} from './nomo-cinematic.mjs?v=loot-reveal-20261014';
 const $ = id => document.getElementById(id);
 const presentation=new MiningPresentation($('mining-stage'));
 const descentCinematic=new DescentCinematic($('descent-cinematic'),{onTunnelStart:()=>presentation.tone('descend')});
@@ -16,6 +17,7 @@ const nomoCinematic=new NomoRunCinematic($('nomo-cinematic'),{getArt:cell=>cellA
 const SAVE = 'dig-deep-quest-c29-demo-v1';
 let game, selected = null, bindings = {}, candidateBindings={}, boardLayout = approvedBoardLayout, busy = false, storageReady = true, shopFingerprint='', boardFingerprint='';
 let chargeTargets=[],bulkMode=null;
+const rewardReveals=new RewardReveals(()=>renderBoard());
 const nftShop=new MythicShop($('mythic-shop'),{getGame:()=>game,perform:run,confirm:confirmAction,message,getBindings:()=>bindings});
 const approvedShop=new ApprovedShop($('approved-shop'),{getGame:()=>game,getSelected:()=>selected,getChargeTargets:()=>[...chargeTargets],perform:run,confirm:confirmAction,requestBulk:confirmBulk,startBulk:beginBulkTargeting,setFamily:(family)=>{$('reward-family').value=family;$('pay-currency').value=family;render();refreshChoices();}});
 const fmt = n => n.toLocaleString('en-US',{maximumFractionDigits:12});
@@ -50,24 +52,28 @@ async function run(type, data={}) {
   const context={expectedWallet:data.expectedWallet??game.account.receivingWallet};
   if(['dig','pickaxe','bulk','light','detector','scanner','finder','depthPass','descend'].includes(type))context.expectedDepth=data.expectedDepth??game.depth;
   try {
+    let discoveries=[];
+    const onDiscovery=items=>{discoveries=items;};
     const next = await (navigator.locks?.request ? navigator.locks.request(SAVE, () => {
       const latest = storageReady && localStorage.getItem(SAVE);
       if (latest) game = JSON.parse(latest);
-      const next = act(game, {type,...data,...context,id:transactionId()},{authority:nftShop.authority()});
+      const next = act(game, {type,...data,...context,id:transactionId()},{authority:nftShop.authority(),onDiscovery});
       nftShop.commit(next);
       save(next);
       return next;
     }) : Promise.resolve().then(() => {
-      const next = act(game,{type,...data,...context,id:transactionId()},{authority:nftShop.authority()}); nftShop.commit(next); save(next); return next;
+      const next = act(game,{type,...data,...context,id:transactionId()},{authority:nftShop.authority(),onDiscovery}); nftShop.commit(next); save(next); return next;
     }));
     const previous=game;game = next;
+    rewardReveals.context(game.depth,game.account.receivingWallet);
+    const revealTicket=rewardReveals.prepare(discoveries);
     message(game.history[0]?.text || 'Ready.');
     if(type==='bulk'){$('charge-mode').checked=false;chargeTargets=[];bulkMode=null;}
     render();
     if(['dig','pickaxe','bulk','light','detector','scanner','finder','breakCrystal','descend'].includes(type))closeGamePanels();
     if(type==='descend')await descentCinematic.play(previous,next);
-    else if(type==='bulk'&&data.kind==='dynamite')await nomoCinematic.play(previous,next,data);
-    else if(['dig','pickaxe','bulk','light','detector','scanner','finder','breakCrystal'].includes(type))void presentAction(type,data,previous,next).catch(()=>{});
+    else if(type==='bulk'&&data.kind==='dynamite'){await nomoCinematic.play(previous,next,data);rewardReveals.show(revealTicket);}
+    else if(['dig','pickaxe','bulk','light','detector','scanner','finder','breakCrystal'].includes(type))void presentAction(type,data,previous,next,revealTicket).catch(()=>{});
   } catch (error) { message(error.message,true); }
   finally { busy=false; }
 }
@@ -93,14 +99,17 @@ function cellAsset(cell) {
 const names={DIG:'DIG',FENN:'FENN',NOMO:'NOMO',empty:'Empty',shovel:'+1 shovel',shard:'Shard',crystal:'Crystal',copper:'Copper',silver:'Silver',gold:'Gold',platinum:'Platinum'};
 function renderBoard() {
   const board=$('board');
+  rewardReveals.context(game.depth,game.account.receivingWallet);
   const cells=publicBoard(game);
-  const signature=JSON.stringify([game.depth,cells,selected,chargeTargets,bulkMode,boardLayout,Object.keys(bindings),Object.keys(candidateBindings)]);
+  const signature=JSON.stringify([game.depth,cells,selected,chargeTargets,bulkMode,boardLayout,Object.keys(bindings),Object.keys(candidateBindings),rewardReveals.signature()]);
   if(signature===boardFingerprint)return;
   boardFingerprint=signature;
   // Retain the actual touch/keyboard target across selection and settlement.
   // Replacing the button between taps can cancel native mobile click synthesis.
   const existing=new Map([...board.children].map(node=>[Number(node.dataset.index),node]));
-  for(const cell of cells) {
+  for(const sourceCell of cells) {
+    const reveal=rewardReveals.get(sourceCell.index);
+    const cell=sourceCell.state==='resolved'&&reveal?.visible&&['copper','silver','gold','platinum'].includes(sourceCell.kind)?{...sourceCell,kind:reveal.receipt.amounts[0]?.token||sourceCell.kind}:sourceCell;
     const row=Math.floor(cell.index/5)+1,col=cell.index%5+1;
     const button=existing.get(cell.index)||document.createElement('button');
     button.replaceChildren();
@@ -112,19 +121,22 @@ function renderBoard() {
     button.dataset.rewardForm=cell.kind==='shard'?'fragment':cell.kind==='crystal'?'whole':'';
     button.setAttribute('aria-pressed',String(selected===cell.index));
     const label=cell.kind ? `${rewardLabel(cell)||names[cell.kind]}${cell.asset&&!rewardLabel(cell) ? ` · ${cell.asset}` : ''}${cell.light&&cell.state==='covered'?' · lit, unexcavated':''}${cell.state==='metal'?' · unresolved':cell.state==='resolved'&&['copper','silver','gold','platinum'].includes(cell.kind)?' · collected':''}` : 'Covered';
-    const file=cell.state==='covered'&&!cell.light&&boardLayout?null:cellAsset(cell);
+    const collected=cell.state==='resolved';
+    const showReward=collected&&reveal?.visible;
+    button.dataset.rewardVisible=String(Boolean(showReward));
+    const file=collected&&!showReward?asset('board.resolved_empty'):cell.state==='covered'&&!cell.light&&boardLayout?null:cellAsset(cell);
     const officialCovered=cell.state==='covered'&&!cell.light&&boardLayout;
-    const candidate=cell.kind==='crystal'?candidateBindings[`reward.crystal.${cell.asset.toLowerCase()}`]:cell.kind==='shard'?candidateBindings[shardBindingId(cell.asset)]:null;button.dataset.reviewArt=String(Boolean(candidate));
+    const candidate=collected&&!showReward?null:cell.kind==='crystal'?candidateBindings[`reward.crystal.${cell.asset.toLowerCase()}`]:cell.kind==='shard'?candidateBindings[shardBindingId(cell.asset)]:null;button.dataset.reviewArt=String(Boolean(candidate));
     button.dataset.art=String(Boolean(file||officialCovered));
     button.setAttribute('aria-label',`Row ${row}, column ${col}: ${label}${candidate?' · review visual':file||officialCovered?'':' · placeholder visual'}`);
     if(file) {
       const artParent=cell.state==='covered'&&cell.light?document.createElement('span'):button;
       if(artParent!==button){artParent.className='light-window';button.append(artParent);}
-      if(['DIG','FENN','NOMO'].includes(cell.kind)){
-        const coin=document.createElement('span');coin.className='coin-face';coin.dataset.token=cell.kind;artParent.append(coin);
+      if(['DIG','FENN','NOMO'].includes(cell.kind)&&(!collected||showReward)){
+        const coin=document.createElement('span');coin.className='coin-face';coin.dataset.token=cell.kind;const [x,y,w,h]=COIN_REGIONS[cell.kind],img=document.createElement('img');coin.style.aspectRatio=w+'/'+h;img.src=file;img.alt='';Object.assign(img.style,{width:1536/w*100+'%',height:512/h*100+'%',left:-x/w*100+'%',top:-y/h*100+'%'});coin.append(img);artParent.append(coin);
       }else{
       const img=document.createElement('img');img.src=file;img.alt='';
-      if(cell.kind==='shard')img.className='fragment-art';
+      if(cell.kind==='shard'&&(!collected||showReward))img.className='fragment-art';
       img.addEventListener('error',()=>{img.remove();message(`Artwork file missing for ${label}; temporary text label retained.`,true);},{once:true});
       artParent.append(img);
       }
@@ -132,8 +144,9 @@ function renderBoard() {
     const symbol=document.createElement('span');symbol.className='symbol'+(file?' over-art':'');
     symbol.textContent=cell.kind ? (cell.kind==='empty'?'·':cell.kind==='shovel'?'+1':cell.kind==='shard'?'◆':cell.kind==='crystal'?'◇':names[cell.kind].slice(0,2)) : '?';
     const caption=document.createElement('span');caption.textContent=cell.kind ? names[cell.kind] : `${row} · ${col}`; if(file) caption.className='over-art';
-    button.append(symbol,caption);
-    if(['shard','crystal'].includes(cell.kind)){const shape=document.createElement('small');shape.className='reward-shape-label';shape.textContent=cell.kind==='shard'?'SHARD':'WHOLE';button.append(shape);}
+    if(!collected||showReward)button.append(symbol,caption);
+    if(showReward){const popup=document.createElement('span');popup.className='reward-amount';popup.textContent=reveal.receipt.text;popup.setAttribute('role','status');button.append(popup);const edge=Math.min(innerWidth,$('board').closest('.scene-viewport').getBoundingClientRect().right)-4;if(popup.getBoundingClientRect().right>edge){popup.style.left='auto';popup.style.right='60%';}}
+    if(['shard','crystal'].includes(cell.kind)&&(!collected||showReward)){const shape=document.createElement('small');shape.className='reward-shape-label';shape.textContent=cell.kind==='shard'?'SHARD':'WHOLE';button.append(shape);}
     if(cell.light&&cell.state==='covered'){const lit=document.createElement('small');lit.className='lit-label';lit.textContent='LIT · COVERED';button.append(lit);}
     if(chargeTargets.includes(cell.index))button.dataset.charge='true';if(bulkMode&&bulkReadiness(game,bulkMode,bulkSelection(bulkMode)).indices.includes(cell.index))button.dataset.bulkTarget='true';
     button.onclick=()=>{
@@ -296,12 +309,12 @@ function renderShop(){
  const wallets=$('wallet-selection'),choices=$('wallet-selection-choices');choices.replaceChildren();for(const wallet of game.account.wallets){const option=document.createElement('button');option.type='button';option.dataset.value=wallet.id;option.textContent=wallet.id;choices.append(option);}wallets.value=game.account.receivingWallet;
 }
 function platePreview(key){const wrapper=document.createElement('div');wrapper.className='plate-preview';const file=asset('plate.'+key);if(file){const img=document.createElement('img');img.src=file;img.alt=key+' new decorative plate';img.loading='lazy';wrapper.append(img);if(['DIG','FENN','NOMO'].includes(key)){const coin=document.createElement('span');coin.className='coin-face';coin.dataset.token=key;wrapper.append(coin);}}const label=document.createElement('small');label.textContent='NEW ART · REVIEW';wrapper.append(label);return wrapper;}
-async function presentAction(type,data,previous,next){
+async function presentAction(type,data,previous,next,revealTicket){
  // Presentation only; authorized engine state and saved receipt already committed.
  const indices=type==='bulk'?bulkTargets(data.kind,data):Number.isInteger(data.index)?[data.index]:[];
  const tool=type==='pickaxe'?asset(`pickaxe.${(data.family||'DIG').toLowerCase()}.${previous.board[data.index].kind}.sprite`):data.kind==='drill'?asset('tool.fenn_drill'):data.kind==='dynamite'?asset('tool.nomo_dynamite'):data.kind==='powerStrike'?asset('fx.power_strike'):data.kind==='smallCharge'?asset('tool.small_charge'):asset(`shovel.${game.mythics[game.equipped]?.brand||game.equipped}.sprite`);
  const region=type==='dig'?candidateBindings[`shovel.${game.mythics[game.equipped]?.brand||game.equipped}.sprite`]?.region:null;
- await presentation.present(type,{...data,indices,toolRegion:region},next,tool);
+ try{await presentation.present(type,{...data,indices,toolRegion:region},next,tool);}finally{rewardReveals.show(revealTicket);}
 }
 window.addEventListener('storage',event=>{if(event.key===SAVE&&event.newValue){try{game=JSON.parse(event.newValue);render();}catch{message('Another tab produced an unreadable save. Reload after resolving it.',true);}}});
 // The approved board is essential. Optional effect maps cannot prevent its setup.

@@ -1,4 +1,5 @@
 // Current NFT-aware simulation. Verified production benefits must run behind server authority.
+import {earnedSnapshot,discoveryReceipt} from './reward-reveal.mjs';
 import * as legacy from './game.mjs?v=nomo-finder-20261014';
 import {getEdition,bonusPlan,mintAllocation} from './mythic-nft.mjs';
 export const {RULES,publicBoard,resolved,spendable,PICKAXE_PRICE,balance,nativeSpendable,units,amount,bulkTargets,COSMETICS,PLATES,NATIVE_PRICES,DIG_ALTERNATIVES}=legacy;
@@ -18,9 +19,10 @@ function payBonus(s,cell,entitlement){if(!entitlement||!assets.includes(cell.kin
 function applyMintAllocation(s,type,legs){const bps=mintAllocation(type);for(const leg of legs){const paid=BigInt(leg.amountUnits),parts={};let other=0n;for(const key of ['burn','liquidity','treasury','oso','bebe']){parts[key]=paid*BigInt(bps[key])/10000n;other+=parts[key];}parts.pool=paid-other; // Base-unit dust stays in the matching reward pool; percentages unchanged.
  for(const [field,n] of Object.entries(parts)){const key=field==='pool'?'vault':field;if(leg.asset==='DIG'){if(['oso','bebe','burn','liquidity'].includes(key))s.buckets[key]+=a(n);else s[key]+=a(n);}else s.native[leg.asset][key]=String(BigInt(s.native[leg.asset][key])+n);}
 }}
-export function act(current,action,{authority=null,now=Date.now(),rng}={}){
+export function act(current,action,{authority=null,now=Date.now(),rng,onDiscovery}={}){
  if(!action.id||typeof action.id!=='string')throw Error('A unique transaction ID is required.');if(current.transactions.includes(action.id))return current;
  if(['buyMythic','recharge'].includes(action.type))throw Error('Legacy copies and recharges are retired. Mythics require their own limited NFT mint and verified ownership.');
+ const discoveries=[];
  const execute=()=>{
  let s=restoreGame(current,rng),wallet=s.account.receivingWallet;delete s.nftSandbox;
  if(action.expectedWallet!==undefined&&action.expectedWallet!==wallet||action.expectedDepth!==undefined&&action.expectedDepth!==s.depth)throw Error('Wallet or depth changed; no charge made.');
@@ -42,8 +44,11 @@ export function act(current,action,{authority=null,now=Date.now(),rng}={}){
  }
  // The authority is queried at settlement, never read from saved nftEquipped/mythics.
  // Current release has owner-approved Shadow Forge artwork; historical callers retain their pre-release guard.
- s=legacy.act(s,action,{now,rng,approvedShadowForge:true,finderDemoRates:action.type==='finder'?(action.testUsdPrices??null):null,afterRegularReward:(next,cell)=>payBonus(next,cell,entitled())});wallet=s.account.receivingWallet;s.nftEquipped=entitled()?.id||null;return s;
+ let earnedBefore=earnedSnapshot(s);
+ s=legacy.act(s,action,{now,rng,approvedShadowForge:true,finderDemoRates:action.type==='finder'?(action.testUsdPrices??null):null,afterRegularReward:(next,cell)=>{payBonus(next,cell,entitled());const receipt=discoveryReceipt(cell,earnedBefore,earnedSnapshot(next));if(receipt)discoveries.push(receipt);earnedBefore=earnedSnapshot(next);}});if(action.type==='pickaxe'){const receipt=discoveryReceipt(s.board[action.index],earnedBefore,earnedSnapshot(s));if(receipt)discoveries.push(receipt);}
+ wallet=s.account.receivingWallet;s.nftEquipped=entitled()?.id||null;return s;
  };
  const settle=()=>authority?.settleOnce?authority.settleOnce(current.account.receivingWallet,action.id,()=>execute()):execute();
- return authority?.transact?authority.transact(settle):settle();
+ const result=authority?.transact?authority.transact(settle):settle();
+ if(discoveries.length)onDiscovery?.(discoveries);return result;
 }
