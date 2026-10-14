@@ -19,7 +19,7 @@ function transactionId() {
   if (crypto.randomUUID) return crypto.randomUUID();
   return Array.from(crypto.getRandomValues(new Uint32Array(4)), n=>n.toString(16).padStart(8,'0')).join('');
 }
-function message(text, error=false) { $('message').textContent=text; $('message').dataset.error=String(error); }
+function message(text, error=false) { $('message').textContent=text; $('message').dataset.error=String(error);const shopMessage=$('approved-shop-message');if(shopMessage){shopMessage.textContent=text;shopMessage.dataset.error=String(error);} }
 try {
   const saved = localStorage.getItem(SAVE);
   game = saved ? JSON.parse(saved) : createGame();

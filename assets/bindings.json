@@ -751,6 +751,16 @@
         221
       ],
       "regionUnits": "source-pixels"
+    },
+    "shop.screen.pickaxes": {
+      "file": "assets/shop/approved_pickaxes.jpg",
+      "sourceVerified": true,
+      "sha256": "1d9dac2c00d5ab65ceb4763690c9f0169b99c70886f81afc2ec435161075fbc9",
+      "approval": "approved-original",
+      "sourceId": "2-1000011073.jpg",
+      "batch": "approved-shop-pickaxes",
+      "width": 1280,
+      "height": 853
     }
   }
 }
