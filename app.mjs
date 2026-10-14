@@ -129,7 +129,7 @@ function renderBoard() {
 }
 function renderTimeStatus() {
   const cooldown=game.boost.endedAt===null?0:Math.max(0,Math.ceil((game.boost.endedAt+RULES.cooldown-Date.now())/1000));
-  $('boost-status').textContent=game.boost.active?`Boost ${game.boost.id} active · covered DIG 90%`:cooldown?`Boost cooldown · ${cooldown}s remaining`:'Boost inactive · normal DIG 75%';
+  $('boost-status').textContent=game.boost.active?`DIG Boost ${game.boost.id} active · covered DIG 90%`:cooldown?`DIG Boost cooldown · ${cooldown}s remaining`:'DIG Boost inactive · normal DIG 75%';
   document.body.dataset.boost=String(game.boost.active);
   const freeWait=game.lastFreeClaim===null?0:Math.max(0,game.lastFreeClaim+RULES.freeInterval-Date.now());
   const designated=game.account.designatedWallet===game.account.receivingWallet?game.wallet:game.account.wallets.find(w=>w.id===game.account.designatedWallet)?.DIG||0;
@@ -215,7 +215,7 @@ $('buy-shovels').onclick=()=>run('buyShovels',{count:Number($('pack').value)});
 $('free').onclick=()=>run('free');
 $('quick-free').onclick=()=>run('free');$('quick-buy').onclick=()=>run('buyShovels',{count:5});
 $('scene-free').onclick=()=>run('free');
-$('buy-pass').onclick=()=>confirmAction('Buy a simulated Boost Pass?', `260,000 DIG for 250 eligible future covered positions. Digging costs extra. NO REFUNDS. Uses carry forward; activation, timing, utilization and profit are not guaranteed. Current vault: ${fmt(game.vault)} actual, ${fmt(game.reserved)} reserved, ${fmt(spendable(game))} spendable. Activation 114,063,300; exit 100,000,000; five-minute post-event cooldown. Allocation: 104,000 pool, 91,000 treasury, 39,000 burn, 13,000 each Oso/Bebe. Covered DIG 90%; native yields unchanged.`,()=>run('buyPass',{acceptNoRefunds:true}));
+$('buy-pass').onclick=()=>confirmAction('Buy a DIG Boost Pass?', `Payment: DIG only. Boost Mode applies only to the DIG reward pool. 260,000 DIG for 250 eligible future covered positions. Digging costs extra. NO REFUNDS. Uses carry forward; activation, timing, utilization and profit are not guaranteed. Current vault: ${fmt(game.vault)} actual, ${fmt(game.reserved)} reserved, ${fmt(spendable(game))} spendable. Activation 114,063,300; exit 100,000,000; five-minute post-event cooldown. Allocation: 104,000 pool, 91,000 treasury, 39,000 burn, 13,000 each Oso/Bebe. Covered DIG 90%; normal FENN/NOMO yields and pauses stay unchanged. Oso/Bebe equipment allowances are separate from Boost Mode.`,()=>run('buyPass',{currency:'DIG',asset:'DIG',acceptNoRefunds:true}));
 $('dig').onclick=()=>run('dig',{index:selected});
 $('pickaxe').onclick=()=>{
  const family=$('reward-family').value,currency=$('pay-currency').value,cell=game.board[selected];if(!cell||cell.state!=='metal')return;

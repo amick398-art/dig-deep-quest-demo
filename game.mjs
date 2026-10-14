@@ -150,6 +150,8 @@ function assertLedger(s){
 export function act(current,action,{now=Date.now(),rng=base.random}={}){
  if(!action.id||typeof action.id!=='string')throw Error('A unique transaction ID is required.');
  if(current.transactions.includes(action.id))return current;
+ // Owner clarification: reject foreign payment/pool labels before any controller or ledger mutation.
+ if(action.type==='buyPass'&&['currency','paymentCurrency','asset','family','pool','rewardPool'].some(key=>action[key]!==undefined&&action[key]!=='DIG'))throw Error('DIG Boost Passes require DIG payment and the DIG reward pool. No charge made.');
  if(action.expectedDepth!==undefined&&action.expectedDepth!==current.depth)throw Error('Depth changed while this action was open. Review the target again; no charge made.');
  if(action.expectedWallet!==undefined&&action.expectedWallet!==(current.account?.receivingWallet||'demo-wallet'))throw Error('Receiving wallet changed. Review checkout again; no charge made.');
  let s=restoreGame(current,rng);syncShovels(s);
