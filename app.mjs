@@ -123,7 +123,14 @@ function renderBoard() {
     button.append(symbol,caption);
     if(cell.light&&cell.state==='covered'){const lit=document.createElement('small');lit.className='lit-label';lit.textContent='LIT · COVERED';button.append(lit);}
     if(chargeTargets.includes(cell.index))button.dataset.charge='true';
-    button.onclick=()=>{selected=cell.index;if($('charge-mode').checked){chargeTargets=chargeTargets.includes(cell.index)?chargeTargets.filter(i=>i!==cell.index):[...chargeTargets,cell.index].slice(-3);}render();};
+    button.onclick=()=>{
+      if(busy)return;
+      const repeat=selected===cell.index;
+      selected=cell.index;
+      if($('charge-mode').checked){chargeTargets=chargeTargets.includes(cell.index)?chargeTargets.filter(i=>i!==cell.index):[...chargeTargets,cell.index].slice(-3);render();return;}
+      if(repeat&&game.board[cell.index]?.state==='covered'){void run('dig',{index:cell.index});return;}
+      render();
+    };
     button.onkeydown=event=>{
       const delta={ArrowUp:-5,ArrowDown:5,ArrowLeft:-1,ArrowRight:1}[event.key];
       if(delta!==undefined){event.preventDefault();const index=cell.index+delta;if(index>=0&&index<50){selected=index;render();board.querySelector(`[data-index="${index}"]`).focus();}}
@@ -176,7 +183,7 @@ function render() {
   $('depth-pass').disabled=game.earlyDescent||resolved(game)>=35;
   $('claim-rewards').disabled=game.profileRewards===0||game.wallet>=RULES.cap;
   const cell=selected===null?null:publicBoard(game)[selected];
-  $('target').textContent=cell?`Selected row ${Math.floor(selected/5)+1}, column ${selected%5+1} · ${cell.kind?names[cell.kind]:'covered'}`:'Select a covered position.';
+  $('target').textContent=cell?`Selected row ${Math.floor(selected/5)+1}, column ${selected%5+1} · ${cell.kind?names[cell.kind]:'covered'}${cell.state==='covered'&&!$('charge-mode').checked?' · tap again to mine':''}`:'Tap a covered block to select it; tap it again to mine.';
   $('dig').disabled=!cell||cell.state!=='covered'||game.shovels<1;
   $('pickaxe').disabled=!cell||cell.state!=='metal';
   const family=$('reward-family').value,payment=$('pay-currency').value;
