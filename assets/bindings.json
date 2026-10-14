@@ -761,6 +761,16 @@
       "batch": "approved-shop-pickaxes",
       "width": 1280,
       "height": 853
+    },
+    "shop.screen.special": {
+      "file": "assets/shop/approved_special.jpg",
+      "sourceVerified": true,
+      "sha256": "710fff249bb473a4d7db934a5efeb9fd00f015ff07493670c9b875c496f3e73d",
+      "approval": "approved-original",
+      "sourceId": "3-1000011074.jpg",
+      "batch": "approved-shop-special",
+      "width": 1280,
+      "height": 853
     }
   }
 }

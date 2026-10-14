@@ -12,6 +12,12 @@
       "sha256": "1d9dac2c00d5ab65ceb4763690c9f0169b99c70886f81afc2ec435161075fbc9",
       "width": 1280,
       "height": 853
+    },
+    "special": {
+      "file": "assets/shop/approved_special.jpg",
+      "sha256": "710fff249bb473a4d7db934a5efeb9fd00f015ff07493670c9b875c496f3e73d",
+      "width": 1280,
+      "height": 853
     }
   }
 }
