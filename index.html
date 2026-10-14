@@ -7,11 +7,11 @@
   <meta name="referrer" content="no-referrer">
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'">
   <title>DIG: Deep Quest — gameplay preview</title>
-  <link rel="stylesheet" href="style.css?v=nomo-finder-20261014">
-  <link rel="stylesheet" href="approved-board.css?v=nomo-finder-20261014">
-  <link rel="stylesheet" href="approved-shop.css?v=nomo-finder-20261014">
-  <script type="module" src="interface.mjs?v=nomo-finder-20261014"></script>
-  <script type="module" src="app.mjs?v=nomo-finder-20261014"></script>
+  <link rel="stylesheet" href="style.css?v=board-controls-20261014">
+  <link rel="stylesheet" href="approved-board.css?v=board-controls-20261014">
+  <link rel="stylesheet" href="approved-shop.css?v=board-controls-20261014">
+  <script type="module" src="interface.mjs?v=board-controls-20261014"></script>
+  <script type="module" src="app.mjs?v=board-controls-20261014"></script>
 </head>
 <body>
   <header><div><p class="eyebrow">NOMO SUPPLY · DEVELOPMENT DEMO</p><h1>DIG: Deep Quest</h1></div><span class="tag">Simulated currency</span></header>
@@ -24,7 +24,7 @@
     <section class="mine" id="mine" aria-label="Mining board">
       <div class="approved-board-logo" role="img" aria-label="Approved DIG: Deep Quest shovel and emerald emblem"></div>
       <div class="mine-supplies"><span>Free <b id="free-balance">0</b> · stored <b id="stored-balance">0</b></span><button id="quick-free">Daily pair</button><button id="quick-buy">5 shovels · 22,500 DIG</button></div>
-      <div class="target-panel"><p id="target">Select a covered position.</p><button id="dig" class="primary">Excavate · 1 shovel</button><button id="pickaxe">Resolve metal with DIG pickaxe</button><button type="button" data-open-panel="equipment-panel">Equipment</button></div>
+      <div class="target-panel"><p id="target">Select a covered position.</p><button id="dig" class="primary">Excavate · 1 shovel</button><button id="pickaxe">Resolve metal with DIG pickaxe</button><button type="button" data-open-panel="equipment-panel">Equipment</button><div id="bulk-target-controls" hidden><button id="bulk-use" class="primary">Use selected tool</button><button id="bulk-cancel">Cancel tool targeting</button></div></div>
       <p class="board-pan-hint">Approved mining board · on a phone, swipe sideways to reach the board and side panels.</p>
       <div class="scene-viewport" data-board-source="assets/boards/approved_full_board.jpg" tabindex="0" aria-label="Approved mining scene; scroll horizontally on a phone"><div class="scene-stage">
         <img class="board-source" src="assets/boards/approved_full_board.jpg" width="853" height="1280" alt="Approved DIG: Deep Quest cave scenery, emerald mining emblem, lanterns, wooden and metal frame, and mining cart" decoding="async">
@@ -39,9 +39,9 @@
         <img class="scene-shard-icon scene-right-hud" data-token="DIG" src="assets/new/dig-shard-fragment.png" alt="DIG emerald fragment · new artwork for review">
         <div class="scene-shard scene-shard-fenn scene-right-hud"><span>FENN shards</span><strong id="scene-shards-FENN">0 / 10</strong></div>
         <img class="scene-shard-icon scene-right-hud" data-token="FENN" src="assets/new/fenn-shard-fragment.png" alt="FENN ruby fragment · new artwork for review">
-        <div class="scene-pool scene-pool-dig scene-right-hud"><span>DIG pool</span><strong id="scene-pool-DIG">—</strong><small id="scene-yield-DIG">—</small></div>
-        <div class="scene-pool scene-pool-fenn scene-right-hud"><span>FENN pool</span><strong id="scene-pool-FENN">—</strong><small id="scene-yield-FENN">—</small></div>
-        <div class="scene-pool scene-pool-nomo scene-right-hud"><span>NOMO pool</span><strong id="scene-pool-NOMO">—</strong><small id="scene-yield-NOMO">—</small></div>
+        <div class="scene-pool scene-pool-dig scene-right-hud" aria-label="DIG reward pool"><span class="scene-pool-emblem"></span><span class="scene-pool-values"><span>DIG pool</span><strong id="scene-pool-DIG">—</strong><small id="scene-yield-DIG">—</small></span></div>
+        <div class="scene-pool scene-pool-fenn scene-right-hud" aria-label="FENN reward pool"><span class="scene-pool-emblem"></span><span class="scene-pool-values"><span>FENN pool</span><strong id="scene-pool-FENN">—</strong><small id="scene-yield-FENN">—</small></span></div>
+        <div class="scene-pool scene-pool-nomo scene-right-hud" aria-label="NOMO reward pool"><span class="scene-pool-emblem"></span><span class="scene-pool-values"><span>NOMO pool</span><strong id="scene-pool-NOMO">—</strong><small id="scene-yield-NOMO">—</small></span></div>
         <div class="scene-legend scene-right-hud" data-kind="covered"><strong>Dirt block</strong><small>Unknown reward</small></div>
         <div class="scene-legend scene-right-hud" data-kind="copper"><strong>Copper</strong><small>Matching pickaxe required</small></div>
         <div class="scene-legend scene-right-hud" data-kind="silver"><strong>Silver</strong><small>Matching pickaxe required</small></div>
@@ -52,7 +52,7 @@
         <div class="scene-legend scene-right-hud" data-kind="fenn-shard"><strong>FENN shard</strong><small>Collected into inventory</small></div>
         <img class="scene-shard-icon scene-right-hud" data-place="legend" data-token="FENN" src="assets/new/fenn-shard-fragment.png" alt="FENN shard piece · new artwork for review">
         <div class="scene-legend scene-right-hud" data-kind="nomo-crystal"><strong>NOMO crystal</strong><small>Whole crystal discovery</small></div>
-        <div id="mining-stage"><div id="board" class="board" aria-label="50 mining positions"></div></div>
+        <div id="mining-stage"><canvas id="board-clean-underlay" aria-hidden="true"></canvas><div id="board" class="board" aria-label="50 mining positions"></div></div>
         <div class="scene-progress"><strong id="progress">0 / 35</strong><progress id="progress-bar" max="35" value="0" aria-label="Resolved positions toward descent"></progress><button id="descend">Descend to next depth</button></div>
       </div></div>
       <div class="scene-panorama" role="img" aria-label="Approved mining cart, emeralds and underground scenery"></div>
@@ -83,7 +83,7 @@
   <dialog id="equipment-panel" class="game-panel" aria-labelledby="equipment-panel-title"><div class="panel-heading"><h2 id="equipment-panel-title">Equipment</h2><button type="button" data-close-panel aria-label="Close Equipment">Close</button></div>    <aside class="panel tools" id="tools">
       <h2>Information tools</h2><button id="light" data-art-id="tool.miners_light">Miner’s Light · 2,000 DIG</button><button id="detector" data-art-id="tool.metal_detector">Metal Detector · 3,000 DIG</button><button id="scanner" data-art-id="tool.prospector_scanner">Scan selected row · 4,000 DIG</button><button id="finder" data-art-id="tool.crystal_finder">Crystal Finder · 2,750 DIG</button>
       <p class="hint">Information tools reveal existing outcomes. They do not excavate, reroll, or consume shovels.</p><div id="info" class="hint"></div>
-      <h2>Bulk equipment</h2><label class="charge-toggle"><input type="checkbox" id="charge-mode"> Select three connected Charge targets</label><button id="small-charge" data-art-id="tool.small_charge">Small Charge · 3 positions · 13,500 DIG</button><button id="power-strike">Power Strike · 2×2 · 18,000 DIG</button><button id="drill">FENN Deep Drill · column · 45,000 DIG</button><button id="dynamite">NOMO Dynamite · two rows · 0.05 NOMO</button><p class="hint">For Power Strike or Dynamite, select the upper-left position. Every affected position must be unexcavated; the whole purchase rolls back if any settlement fails.</p>
+      <h2>Bulk equipment</h2><p id="bulk-equipment-help" class="hint" aria-live="polite">Choose a tool to select its targets. No payment until confirmation.</p><label class="charge-toggle"><input type="checkbox" id="charge-mode"> Select three connected Charge targets</label><button id="small-charge" data-art-id="tool.small_charge">Small Charge · 3 positions · 13,500 DIG</button><button id="power-strike">Power Strike · 2×2 · 18,000 DIG</button><button id="drill">FENN Deep Drill · column · 45,000 DIG</button><button id="dynamite">NOMO Dynamite · two rows · 0.05 NOMO</button><p class="hint">For Power Strike or Dynamite, select the upper-left position. Every affected position must be unexcavated; the whole purchase rolls back if any settlement fails.</p>
       <div class="reward-choice"><span class="choice-label">Metal reward family</span><input type="hidden" id="reward-family" value="DIG"><div id="reward-family-choices" class="choice-buttons" data-choice="reward-family" role="group" aria-label="Metal reward family"><button type="button" data-value="DIG" aria-pressed="true">DIG</button><button type="button" data-value="FENN" aria-pressed="false">FENN</button><button type="button" data-value="NOMO" aria-pressed="false">NOMO</button></div><span class="choice-label">Payment currency</span><input type="hidden" id="pay-currency" value="DIG"><div id="pay-currency-choices" class="choice-buttons" data-choice="pay-currency" role="group" aria-label="Payment currency"><button type="button" data-value="DIG" aria-pressed="true">DIG</button><button type="button" data-value="FENN" aria-pressed="false">FENN</button><button type="button" data-value="NOMO" aria-pressed="false">NOMO</button></div><p class="hint">Metal prices remain fixed. DIG-paid native rewards fund DIG only; unavailable NOMO quotes cannot be bypassed.</p></div>      <div id="pickaxe-preview"></div><button id="sound-toggle" aria-pressed="false">Sound off · new effect preview</button>      <div id="equipped-plate"></div>    </aside></dialog>
   <dialog id="rewards-panel" class="game-panel" aria-labelledby="rewards-panel-title"><div class="panel-heading"><h2 id="rewards-panel-title">Rewards</h2><button type="button" data-close-panel aria-label="Close Rewards">Close</button></div>      <h2>Inventory</h2><p id="shards"></p><div id="crystals"></div><p id="supplemental" class="hint"></p>
       <h2>Reward vault · DIG</h2><dl class="metrics compact"><div><dt>Spendable</dt><dd id="spendable">—</dd></div><div><dt>Protected obligations</dt><dd id="reserved">—</dd></div><div><dt>Unreserved treasury</dt><dd id="treasury">—</dd></div></dl>

@@ -53,3 +53,16 @@ main{display:block;max-width:1070px}.mine{margin:0 auto}.game-panel{width:min(94
 
 .choice-label{display:block;font-size:12px;color:var(--muted);margin-top:10px}.choice-buttons{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0 12px}.choice-buttons button{flex:1 1 70px;width:auto;min-height:44px;margin:0;font-size:12px;padding:8px}.choice-buttons button[aria-pressed="true"]{border-color:#b8f293;background:#24563c;color:#e2ffd8;box-shadow:inset 0 0 0 1px #92c87b}.choice-buttons button:focus-visible{outline:3px solid #f7dfa1;outline-offset:2px}
 .nft-catalogue{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.nft-card{margin:0;padding:12px;min-width:0}.nft-card h3{margin:0 0 8px;color:#f3db94}.nft-card p{font-size:12px;overflow-wrap:anywhere}.nft-card img{width:100%;height:140px;object-fit:contain}.nft-status{padding:10px;border:1px solid #7c9d65;background:#173824;font-size:12px}.nft-art-pending{min-height:80px;display:flex;align-items:center;padding:10px;border:1px dashed #867044;background:#15271e;color:#d5c48b}.nft-owned{padding:12px 0;border-bottom:1px solid #806738;overflow-wrap:anywhere;font-size:12px}.nft-wallets{display:flex;flex-wrap:wrap;gap:6px}.nft-wallets button{width:auto;flex:1}#mythic-shop fieldset{margin-top:12px;border:1px solid #806738;min-width:0}#mythic-shop fieldset input{width:100%;margin:4px 0 9px}.nft-quote{color:#c2eea7}@media(max-width:420px){.nft-catalogue{grid-template-columns:minmax(0,1fr)}}
+
+/* Preserve printed trim/emblems while restoring live content without selection ghosts. */
+#board-clean-underlay{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+.scene-pool{left:76.2%;width:21.9%;height:6.25%;padding:3px 4px;display:grid;grid-template-columns:32% minmax(0,1fr);gap:6px;border-radius:3px}
+.scene-pool-dig{top:31.8%}.scene-pool-fenn{top:39.1%}.scene-pool-nomo{top:46.5%}
+.scene-pool-emblem{display:block;position:relative;width:100%;overflow:hidden;align-self:center}
+.scene-pool-emblem img{position:absolute;height:auto;max-width:none;display:block}
+.scene-pool-values{min-width:0;display:flex;flex-direction:column;align-items:flex-start;gap:3px;text-align:left}
+.scene-pool-values>span{font-size:clamp(9px,1.2cqw,14px);font-weight:700;color:#f8dc81;text-transform:uppercase}
+.scene-pool-values>strong{font-size:clamp(9px,1.15cqw,13px);white-space:nowrap;font-variant-numeric:tabular-nums;max-width:100%}
+.scene-pool-values>small{font-size:clamp(8px,1cqw,11px);color:#74edae}
+#bulk-target-controls{grid-column:1/-1;display:flex;gap:6px}#bulk-target-controls button{flex:1;min-width:0}
+.board[data-layout="approved"] .cell[data-bulk-target="true"]{box-shadow:inset 0 0 0 2px #69e6ce}

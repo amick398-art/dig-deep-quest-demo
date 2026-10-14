@@ -1,21 +1,23 @@
-import { RULES, createGame, restoreGame, act, publicBoard, spendable, resolved, PICKAXE_PRICE, balance, nativeSpendable, COSMETICS, PLATES, NATIVE_PRICES, DIG_ALTERNATIVES, amount, bulkTargets } from './nft-game.mjs?v=nomo-finder-20261014';
-import { MiningPresentation } from './effects.mjs?v=nomo-finder-20261014';
-import { DescentCinematic } from './descent.mjs?v=nomo-finder-20261014';
-import { MythicShop } from './nft-shop.mjs?v=nomo-finder-20261014';
-import { ApprovedShop, approvedArtwork } from './approved-shop.mjs?v=nomo-finder-20261014';
-import { closeGamePanels, refreshChoices } from './interface.mjs?v=nomo-finder-20261014';
-import approvedBoardLayout from './approved-board-layout.mjs?v=nomo-finder-20261014';
-import {shardBindingId,rewardLabel} from './reward-visuals.mjs?v=nomo-finder-20261014';
-import {NomoRunCinematic} from './nomo-cinematic.mjs?v=nomo-finder-20261014';
+import {BULK_TOOLS,bulkReadiness} from './bulk-controls.mjs?v=board-controls-20261014';
+import {restorePoolEmblems,restoreCleanBoard} from './board-presentation.mjs?v=board-controls-20261014';
+import { RULES, createGame, restoreGame, act, publicBoard, spendable, resolved, PICKAXE_PRICE, balance, nativeSpendable, COSMETICS, PLATES, NATIVE_PRICES, DIG_ALTERNATIVES, amount, bulkTargets } from './nft-game.mjs?v=board-controls-20261014';
+import { MiningPresentation } from './effects.mjs?v=board-controls-20261014';
+import { DescentCinematic } from './descent.mjs?v=board-controls-20261014';
+import { MythicShop } from './nft-shop.mjs?v=board-controls-20261014';
+import { ApprovedShop, approvedArtwork } from './approved-shop.mjs?v=board-controls-20261014';
+import { closeGamePanels, refreshChoices } from './interface.mjs?v=board-controls-20261014';
+import approvedBoardLayout from './approved-board-layout.mjs?v=board-controls-20261014';
+import {shardBindingId,rewardLabel} from './reward-visuals.mjs?v=board-controls-20261014';
+import {NomoRunCinematic} from './nomo-cinematic.mjs?v=board-controls-20261014';
 const $ = id => document.getElementById(id);
 const presentation=new MiningPresentation($('mining-stage'));
 const descentCinematic=new DescentCinematic($('descent-cinematic'),{onTunnelStart:()=>presentation.tone('descend')});
 const nomoCinematic=new NomoRunCinematic($('nomo-cinematic'),{getArt:cell=>cellAsset(cell),onBlast:()=>presentation.tone('dynamite')});
 const SAVE = 'dig-deep-quest-c29-demo-v1';
 let game, selected = null, bindings = {}, candidateBindings={}, boardLayout = approvedBoardLayout, busy = false, storageReady = true, shopFingerprint='', boardFingerprint='';
-let chargeTargets=[];
+let chargeTargets=[],bulkMode=null;
 const nftShop=new MythicShop($('mythic-shop'),{getGame:()=>game,perform:run,confirm:confirmAction,message,getBindings:()=>bindings});
-const approvedShop=new ApprovedShop($('approved-shop'),{getGame:()=>game,getSelected:()=>selected,getChargeTargets:()=>[...chargeTargets],perform:run,confirm:confirmAction,requestBulk:confirmBulk,setFamily:(family)=>{$('reward-family').value=family;$('pay-currency').value=family;render();refreshChoices();}});
+const approvedShop=new ApprovedShop($('approved-shop'),{getGame:()=>game,getSelected:()=>selected,getChargeTargets:()=>[...chargeTargets],perform:run,confirm:confirmAction,requestBulk:confirmBulk,startBulk:beginBulkTargeting,setFamily:(family)=>{$('reward-family').value=family;$('pay-currency').value=family;render();refreshChoices();}});
 const fmt = n => n.toLocaleString('en-US',{maximumFractionDigits:12});
 function transactionId() {
   // randomUUID requires a secure context; getRandomValues also supports a phone
@@ -60,7 +62,7 @@ async function run(type, data={}) {
     }));
     const previous=game;game = next;
     message(game.history[0]?.text || 'Ready.');
-    if(type==='bulk'&&data.kind==='smallCharge'){$('charge-mode').checked=false;chargeTargets=[];}
+    if(type==='bulk'){$('charge-mode').checked=false;chargeTargets=[];bulkMode=null;}
     render();
     if(['dig','pickaxe','bulk','light','detector','scanner','finder','breakCrystal','descend'].includes(type))closeGamePanels();
     if(type==='descend')await descentCinematic.play(previous,next);
@@ -92,7 +94,7 @@ const names={DIG:'DIG',FENN:'FENN',NOMO:'NOMO',empty:'Empty',shovel:'+1 shovel',
 function renderBoard() {
   const board=$('board');
   const cells=publicBoard(game);
-  const signature=JSON.stringify([game.depth,cells,selected,chargeTargets,boardLayout,Object.keys(bindings),Object.keys(candidateBindings)]);
+  const signature=JSON.stringify([game.depth,cells,selected,chargeTargets,bulkMode,boardLayout,Object.keys(bindings),Object.keys(candidateBindings)]);
   if(signature===boardFingerprint)return;
   boardFingerprint=signature;
   // Retain the actual touch/keyboard target across selection and settlement.
@@ -102,7 +104,7 @@ function renderBoard() {
     const row=Math.floor(cell.index/5)+1,col=cell.index%5+1;
     const button=existing.get(cell.index)||document.createElement('button');
     button.replaceChildren();
-    delete button.dataset.charge;
+    delete button.dataset.charge;delete button.dataset.bulkTarget;
     button.type='button';button.className='cell';button.dataset.index=cell.index;
     button.dataset.kind=cell.kind||'';
     if(boardLayout){const [x,y,w,h]=boardLayout.cells[cell.index].rect;Object.assign(button.style,{left:`${x/boardLayout.width*100}%`,top:`${y/boardLayout.height*100}%`,width:`${w/boardLayout.width*100}%`,height:`${h/boardLayout.height*100}%`});}
@@ -133,12 +135,13 @@ function renderBoard() {
     button.append(symbol,caption);
     if(['shard','crystal'].includes(cell.kind)){const shape=document.createElement('small');shape.className='reward-shape-label';shape.textContent=cell.kind==='shard'?'SHARD':'WHOLE';button.append(shape);}
     if(cell.light&&cell.state==='covered'){const lit=document.createElement('small');lit.className='lit-label';lit.textContent='LIT · COVERED';button.append(lit);}
-    if(chargeTargets.includes(cell.index))button.dataset.charge='true';
+    if(chargeTargets.includes(cell.index))button.dataset.charge='true';if(bulkMode&&bulkReadiness(game,bulkMode,bulkSelection(bulkMode)).indices.includes(cell.index))button.dataset.bulkTarget='true';
     button.onclick=()=>{
       if(busy)return;
       const repeat=selected===cell.index;
       selected=cell.index;
       if($('charge-mode').checked){chargeTargets=chargeTargets.includes(cell.index)?chargeTargets.filter(i=>i!==cell.index):[...chargeTargets,cell.index].slice(-3);render();return;}
+      if(bulkMode){render();return;}
       if(repeat&&game.board[cell.index]?.state==='covered'){void run('dig',{index:cell.index});return;}
       render();
     };
@@ -207,9 +210,10 @@ function render() {
   $('detector').disabled=game.info.detector!==null;
   $('scanner').disabled=!cell||Object.hasOwn(game.info.rows,Math.floor(selected/5));
   $('finder').disabled=Boolean(game.info.finder);$('finder').title='Open Crystal Finder in Shop and enter simulated USD prices.';
-  $('small-charge').disabled=chargeTargets.length!==3;
-  $('small-charge').title=chargeTargets.length===3?'Validate and excavate selected targets':'Enable charge selection, then select three connected blocks';
-  for(const [id,kind] of [['power-strike','powerStrike'],['drill','drill'],['dynamite','dynamite']]){try{const targets=bulkTargets(kind,{index:selected});$(id).disabled=targets.some(i=>game.board[i].state!=='covered');}catch{$(id).disabled=true;}}
+  for(const [id,kind]of [['small-charge','smallCharge'],['power-strike','powerStrike'],['drill','drill'],['dynamite','dynamite']]){const ready=bulkReadiness(game,kind,bulkSelection(kind));$(id).disabled=false;$(id).title=ready.valid?'Confirm purchase and use':ready.reason+' Tap to choose targets.';$(id).dataset.targetReady=String(ready.valid);}
+  $('bulk-target-controls').hidden=!bulkMode;
+  if(bulkMode){const spec=BULK_TOOLS[bulkMode],ready=bulkReadiness(game,bulkMode,bulkSelection(bulkMode));$('target').textContent=spec.label+' · '+ready.reason;$('bulk-use').textContent='Use '+spec.label+' · '+spec.price;$('bulk-use').disabled=!ready.valid;$('dig').disabled=true;$('pickaxe').disabled=true;}
+  $('bulk-equipment-help').textContent=bulkMode?BULK_TOOLS[bulkMode].label+' · '+bulkReadiness(game,bulkMode,bulkSelection(bulkMode)).reason:'Choose a tool to select its targets. Excavated blocks cannot be included; no payment until confirmation.';
   $('info').replaceChildren();
   const info=[];
   if(game.info.detector!==null)info.push(`Depth detector: ${game.info.detector?'metal remains':'no undiscovered metal'}`);
@@ -252,9 +256,13 @@ $('light').onclick=()=>run('light',{index:selected});
 $('detector').onclick=()=>run('detector');
 $('scanner').onclick=()=>run('scanner',{row:Math.floor(selected/5)});
 $('finder').onclick=()=>{closeGamePanels();document.querySelector('.quick-links [data-open-panel="shop-panel"]').click();approvedShop.show('information');approvedShop.select(approvedShop.catalogue('information').find(i=>i.key==='finder'));};
-$('small-charge').onclick=()=>confirmBulk('smallCharge',{indices:[...chargeTargets]});
-for(const [id,kind] of [['power-strike','powerStrike'],['drill','drill'],['dynamite','dynamite']])$(id).onclick=()=>confirmBulk(kind,{index:selected});
-$('charge-mode').onchange=()=>{chargeTargets=[];render();};
+function bulkSelection(kind){return kind==='smallCharge'?{indices:[...chargeTargets]}:{index:selected};}
+function beginBulkTargeting(kind){bulkMode=kind;chargeTargets=[];$('charge-mode').checked=kind==='smallCharge';closeGamePanels();render();$('target').scrollIntoView({block:'nearest',behavior:'instant'});}
+function requestEquipment(kind){const data=bulkSelection(kind);if(bulkReadiness(game,kind,data).valid)confirmBulk(kind,data);else beginBulkTargeting(kind);}
+for(const [id,kind]of [['small-charge','smallCharge'],['power-strike','powerStrike'],['drill','drill'],['dynamite','dynamite']])$(id).onclick=()=>requestEquipment(kind);
+$('bulk-use').onclick=()=>{if(bulkMode)confirmBulk(bulkMode,bulkSelection(bulkMode));};
+$('bulk-cancel').onclick=()=>{bulkMode=null;chargeTargets=[];$('charge-mode').checked=false;render();};
+$('charge-mode').onchange=()=>{chargeTargets=[];bulkMode=$('charge-mode').checked?'smallCharge':null;render();};
 for(const native of ['FENN','NOMO'])$(`claim-${native}`).onclick=()=>run('claimRewards',{asset:native});
 $('depth-pass').onclick=()=>run('depthPass');
 $('descend').onclick=()=>confirmAction('Close this depth?', 'This depth cannot reopen. Unexcavated positions and unresolved metal are abandoned. Owned crystals, shards, held discoveries, shovels, and unused Boost coverage persist.',()=>{selected=null;run('descend',{confirmed:true});});
@@ -263,7 +271,7 @@ $('deposit').onclick=()=>run('deposit',{amount:20000000});
 $('deposit-FENN').onclick=()=>run('deposit',{asset:'FENN',amount:1000000000});$('deposit-NOMO').onclick=()=>run('deposit',{asset:'NOMO',amount:10});
 $('link-wallet').onclick=()=>{const id=$('wallet-id').value.trim();if(id)run('linkWallet',{walletId:id});};
 $('wallet-selection').onchange=()=>run('selectWallet',{walletId:$('wallet-selection').value});
-function confirmBulk(kind,data){try{const indices=bulkTargets(kind,data),price={smallCharge:'13,500 DIG',powerStrike:'18,000 DIG',drill:'45,000 DIG',dynamite:'0.05 NOMO'}[kind];confirmAction(`Use ${kind}?`,`${price} for ${indices.length} covered positions: ${indices.map(i=>`${Math.floor(i/5)+1}:${i%5+1}`).join(', ')} (row:column). Every target and settlement must validate; failure rolls back the whole purchase. Metal remains unresolved until its matching pickaxe. Inventory shovels are not consumed; Boost coverage uses one eligible position at a time.`,()=>run('bulk',{kind,...data}).then(()=>{chargeTargets=[];render();}));}catch(error){message(error.message,true);}}
+function confirmBulk(kind,data){try{const ready=bulkReadiness(game,kind,data);if(!ready.valid)throw Error(ready.reason);const indices=ready.indices,price={smallCharge:'13,500 DIG',powerStrike:'18,000 DIG',drill:'45,000 DIG',dynamite:'0.05 NOMO'}[kind];confirmAction(`Use ${kind}?`,`${price} for ${indices.length} covered positions: ${indices.map(i=>`${Math.floor(i/5)+1}:${i%5+1}`).join(', ')} (row:column). Every target and settlement must validate; failure rolls back the whole purchase. Metal remains unresolved until its matching pickaxe. Inventory shovels are not consumed; Boost coverage uses one eligible position at a time.`,()=>run('bulk',{kind,...data}).then(()=>{chargeTargets=[];render();}));}catch(error){message(error.message,true);}}
 $('sound-toggle').onclick=()=>{const on=presentation.enableSound();$('sound-toggle').textContent=on?'Sound on · new effect preview':'Sound off · new effect preview';$('sound-toggle').setAttribute('aria-pressed',String(on));};
 function renderShop(){
  const signature=JSON.stringify([game.equipped,game.cosmetics,game.plates,game.equippedPlate,game.mythics,game.releaseStock,game.account.wallets.map(w=>w.id),game.account.receivingWallet,game.nftSandbox,game.nftEquipped,nftShop.enabled,Object.keys(bindings),Object.keys(candidateBindings)]);
@@ -299,6 +307,8 @@ window.addEventListener('storage',event=>{if(event.key===SAVE&&event.newValue){t
 // The approved board is essential. Optional effect maps cannot prevent its setup.
 $('board').dataset.layout='approved';$('board').dataset.surface='full-approved';document.body.classList.add('full-board');
 // Complete restore/migration persistence before exposing interactive cells.
+restorePoolEmblems();
+const cleanBoardReady=restoreCleanBoard($('board-clean-underlay'),boardLayout);
 save(game);
 render();
 try {
@@ -316,6 +326,7 @@ try {
   await presentation.load();
 } catch {message('Optional effect previews unavailable; approved board and mining remain available.',true);}
 await approvedShop.load().catch(error=>message(error.message,true));
+await cleanBoardReady;
 document.body.dataset.runtimeReady='true';
 // Timer evaluation is local simulation, not a live economic service.
 setInterval(()=>{
