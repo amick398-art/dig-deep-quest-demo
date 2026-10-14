@@ -133,6 +133,7 @@ function renderBoard() {
   if(focusIndex!==undefined) board.querySelector(`[data-index="${focusIndex}"]`)?.focus({preventScroll:true});
 }
 function renderTimeStatus() {
+  approvedShop.refreshTimeStatus();
   const cooldown=game.boost.endedAt===null?0:Math.max(0,Math.ceil((game.boost.endedAt+RULES.cooldown-Date.now())/1000));
   $('boost-status').textContent=game.boost.active?`DIG Boost ${game.boost.id} active · covered DIG 90%`:cooldown?`DIG Boost cooldown · ${cooldown}s remaining`:'DIG Boost inactive · normal DIG 75%';
   document.body.dataset.boost=String(game.boost.active);

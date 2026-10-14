@@ -791,6 +791,16 @@
       "batch": "approved-shop-currencies",
       "width": 1280,
       "height": 853
+    },
+    "shop.screen.boost": {
+      "file": "assets/shop/approved_boost.jpg",
+      "sourceVerified": true,
+      "sha256": "d67989c1419d6873dc291014855328e3569d4d57dcb647a67e66651c977dc6e9",
+      "approval": "approved-original",
+      "sourceId": "1-1000011077.jpg",
+      "batch": "approved-shop-boost",
+      "width": 1280,
+      "height": 853
     }
   }
 }

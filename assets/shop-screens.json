@@ -30,6 +30,12 @@
       "sha256": "42314c44ef0616c38a9549b0aea5d70765b064ea8b47425c63074618eb6a22fd",
       "width": 1280,
       "height": 853
+    },
+    "boost": {
+      "file": "assets/shop/approved_boost.jpg",
+      "sha256": "d67989c1419d6873dc291014855328e3569d4d57dcb647a67e66651c977dc6e9",
+      "width": 1280,
+      "height": 853
     }
   }
 }
