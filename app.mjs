@@ -1,12 +1,12 @@
-import { RULES, createGame, restoreGame, act, publicBoard, spendable, resolved, PICKAXE_PRICE, balance, nativeSpendable, COSMETICS, PLATES, NATIVE_PRICES, DIG_ALTERNATIVES, amount, bulkTargets } from './nft-game.mjs';
-import { MiningPresentation } from './effects.mjs?v=nomo-run-20261014';
-import { DescentCinematic } from './descent.mjs?v=nomo-run-20261014';
-import { MythicShop } from './nft-shop.mjs?v=nomo-run-20261014';
-import { ApprovedShop, approvedArtwork } from './approved-shop.mjs?v=nomo-run-20261014';
-import { closeGamePanels, refreshChoices } from './interface.mjs?v=nomo-run-20261014';
-import approvedBoardLayout from './approved-board-layout.mjs?v=nomo-run-20261014';
-import {shardBindingId,rewardLabel} from './reward-visuals.mjs?v=nomo-run-20261014';
-import {NomoRunCinematic} from './nomo-cinematic.mjs?v=nomo-run-20261014';
+import { RULES, createGame, restoreGame, act, publicBoard, spendable, resolved, PICKAXE_PRICE, balance, nativeSpendable, COSMETICS, PLATES, NATIVE_PRICES, DIG_ALTERNATIVES, amount, bulkTargets } from './nft-game.mjs?v=nomo-finder-20261014';
+import { MiningPresentation } from './effects.mjs?v=nomo-finder-20261014';
+import { DescentCinematic } from './descent.mjs?v=nomo-finder-20261014';
+import { MythicShop } from './nft-shop.mjs?v=nomo-finder-20261014';
+import { ApprovedShop, approvedArtwork } from './approved-shop.mjs?v=nomo-finder-20261014';
+import { closeGamePanels, refreshChoices } from './interface.mjs?v=nomo-finder-20261014';
+import approvedBoardLayout from './approved-board-layout.mjs?v=nomo-finder-20261014';
+import {shardBindingId,rewardLabel} from './reward-visuals.mjs?v=nomo-finder-20261014';
+import {NomoRunCinematic} from './nomo-cinematic.mjs?v=nomo-finder-20261014';
 const $ = id => document.getElementById(id);
 const presentation=new MiningPresentation($('mining-stage'));
 const descentCinematic=new DescentCinematic($('descent-cinematic'),{onTunnelStart:()=>presentation.tone('descend')});
@@ -206,7 +206,7 @@ function render() {
   $('light').disabled=!cell||cell.state!=='covered'||cell.light;
   $('detector').disabled=game.info.detector!==null;
   $('scanner').disabled=!cell||Object.hasOwn(game.info.rows,Math.floor(selected/5));
-  $('finder').disabled=true;$('finder').title='Cross-token highest-value policy is pending; no unpaid board information is exposed.';
+  $('finder').disabled=Boolean(game.info.finder);$('finder').title='Open Crystal Finder in Shop and enter simulated USD prices.';
   $('small-charge').disabled=chargeTargets.length!==3;
   $('small-charge').title=chargeTargets.length===3?'Validate and excavate selected targets':'Enable charge selection, then select three connected blocks';
   for(const [id,kind] of [['power-strike','powerStrike'],['drill','drill'],['dynamite','dynamite']]){try{const targets=bulkTargets(kind,{index:selected});$(id).disabled=targets.some(i=>game.board[i].state!=='covered');}catch{$(id).disabled=true;}}
@@ -215,7 +215,7 @@ function render() {
   if(game.info.detector!==null)info.push(`Depth detector: ${game.info.detector?'metal remains':'no undiscovered metal'}`);
   for(const [row,present] of Object.entries(game.info.rows))info.push(`Row ${Number(row)+1}: ${present?'metal present':'no undiscovered metal'}`);
   $('info').textContent=info.join(' · ');
-  if(game.info.finder)$('info').textContent+=game.info.finder.status==='none'?' · NO CRYSTALS DETECTED':` · ${game.info.finder.asset} crystal: row ${Math.floor(game.info.finder.index/5)+1}, column ${game.info.finder.index%5+1}`;
+  if(game.info.finder)$('info').textContent+=game.info.finder.status==='none'?' · NO CRYSTALS DETECTED':` · ${game.info.finder.status==='multiple'?'MULTIPLE CRYSTALS ARE PRESENT · highest simulated value: ':''}${game.info.finder.asset} crystal: row ${Math.floor(game.info.finder.index/5)+1}, column ${game.info.finder.index%5+1}`;
   $('shards').textContent=`Shards · DIG ${game.shards.DIG.length}/10 · FENN ${game.shards.FENN.length}/10`;
   $('crystals').replaceChildren();
   for(const crystal of game.crystals.filter(x=>x.state==='owned')) {
@@ -251,7 +251,7 @@ $('reward-family').onchange=()=>{$('pay-currency').value=$('reward-family').valu
 $('light').onclick=()=>run('light',{index:selected});
 $('detector').onclick=()=>run('detector');
 $('scanner').onclick=()=>run('scanner',{row:Math.floor(selected/5)});
-$('finder').onclick=()=>run('finder');
+$('finder').onclick=()=>{closeGamePanels();document.querySelector('.quick-links [data-open-panel="shop-panel"]').click();approvedShop.show('information');approvedShop.select(approvedShop.catalogue('information').find(i=>i.key==='finder'));};
 $('small-charge').onclick=()=>confirmBulk('smallCharge',{indices:[...chargeTargets]});
 for(const [id,kind] of [['power-strike','powerStrike'],['drill','drill'],['dynamite','dynamite']])$(id).onclick=()=>confirmBulk(kind,{index:selected});
 $('charge-mode').onchange=()=>{chargeTargets=[];render();};

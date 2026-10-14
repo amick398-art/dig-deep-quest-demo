@@ -7,11 +7,11 @@
   <meta name="referrer" content="no-referrer">
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'">
   <title>DIG: Deep Quest — gameplay preview</title>
-  <link rel="stylesheet" href="style.css?v=nomo-run-20261014">
-  <link rel="stylesheet" href="approved-board.css?v=nomo-run-20261014">
-  <link rel="stylesheet" href="approved-shop.css?v=nomo-run-20261014">
-  <script type="module" src="interface.mjs?v=nomo-run-20261014"></script>
-  <script type="module" src="app.mjs?v=nomo-run-20261014"></script>
+  <link rel="stylesheet" href="style.css?v=nomo-finder-20261014">
+  <link rel="stylesheet" href="approved-board.css?v=nomo-finder-20261014">
+  <link rel="stylesheet" href="approved-shop.css?v=nomo-finder-20261014">
+  <script type="module" src="interface.mjs?v=nomo-finder-20261014"></script>
+  <script type="module" src="app.mjs?v=nomo-finder-20261014"></script>
 </head>
 <body>
   <header><div><p class="eyebrow">NOMO SUPPLY · DEVELOPMENT DEMO</p><h1>DIG: Deep Quest</h1></div><span class="tag">Simulated currency</span></header>
@@ -95,7 +95,7 @@
   <dialog id="qa-panel" class="game-panel" aria-labelledby="qa-panel-title"><div class="panel-heading"><h2 id="qa-panel-title">Demo testing</h2><button type="button" data-close-panel aria-label="Close Demo testing">Close</button></div>      <details><summary>Allocation monitor</summary><p class="hint">Read-only simulated balances. Protected obligations are part of the actual pool, not additional funding. No withdrawal controls.</p><div id="ledger-monitor"></div></details>
       <details><summary>Simulation fixture</summary><p class="hint">Test funding only; no live token transfer. Deposits enter native vaults at 100%. There is no withdrawal action.</p><button id="deposit">Funder deposit · 20M simulated DIG</button><button id="deposit-FENN">Deposit · 1B simulated FENN</button><button id="deposit-NOMO">Deposit · 10 simulated NOMO</button></details>
       <details><summary>Simulated profile &amp; wallets</summary><p class="hint">One local profile; up to ten linked mock wallets. Linking never duplicates daily or first-release entitlements. Real NOMO Supply identity and Rewards integration are not connected.</p><span class="choice-label">Reward destination</span><input type="hidden" id="wallet-selection" value=""><div id="wallet-selection-choices" class="choice-buttons" data-choice="wallet-selection" role="group" aria-label="Reward destination"></div><label for="wallet-id">New mock wallet name</label><input id="wallet-id" maxlength="40"><button id="link-wallet">Link mock wallet</button></details>
-<p class="hint">Local simulation only. Native runway estimation, paused-pool fallback, crystal ranking and shard-formed settlement remain pending. Physical-device QA remains pending.</p></dialog>
+<p class="hint">Local simulation only. Native runway estimation, paused-pool fallback and shard-formed settlement remain pending; Crystal Finder ranks nominal values at entered test USD prices. Physical-device QA remains pending.</p></dialog>
   <dialog id="confirm-dialog"><form method="dialog"><h2 id="confirm-title"></h2><p id="confirm-text"></p><div class="dialog-actions"><button value="cancel">Cancel</button><button value="confirm" class="primary">Confirm</button></div></form></dialog>
   <dialog id="descent-cinematic" class="descent-cinematic" aria-labelledby="descent-title" data-phase="idle">
     <canvas class="descent-tunnel" aria-hidden="true" hidden></canvas>

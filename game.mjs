@@ -1,3 +1,4 @@
+import {scanCrystals} from './crystal-finder.mjs?v=nomo-finder-20261014';
 // C29 simulated gameplay extensions. The recovered engine.mjs remains immutable.
 import * as base from './engine.mjs';
 export const { RULES, publicBoard, resolved, spendable, PICKAXE_PRICE } = base;
@@ -147,7 +148,7 @@ function assertLedger(s){
  if(s.wallet<0||s.reserved<0||s.vault<s.reserved||s.pass.remaining<0||s.freeShovels<0||s.storedShovels<0)throw Error('DIG accounting invariant failed.');
  for(const asset of ['FENN','NOMO']){const b=s.native[asset];if(fields.some(k=>BigInt(b[k])<0n)||BigInt(b.vault)<BigInt(b.reserved))throw Error('Native accounting invariant failed.');}
 }
-export function act(current,action,{now=Date.now(),rng=base.random,afterRegularReward,approvedShadowForge=false}={}){
+export function act(current,action,{now=Date.now(),rng=base.random,afterRegularReward,approvedShadowForge=false,finderDemoRates=null}={}){
  if(!action.id||typeof action.id!=='string')throw Error('A unique transaction ID is required.');
  if(current.transactions.includes(action.id))return current;
  // Owner clarification: reject foreign payment/pool labels before any controller or ledger mutation.
@@ -216,9 +217,8 @@ export function act(current,action,{now=Date.now(),rng=base.random,afterRegularR
   pay(s,asset,RECHARGE[asset],['Oso','Bebe'].includes(m.brand||action.key)?'premium':'ordinary',true);m.allowances[asset]=String(BigInt(m.allowances[asset])+percent(RECHARGE[asset],3500));note(s,`Optional ${asset} allowance recharged for ${action.key}; no new stock or actions.`);
  }else if(action.type==='finder'){
   if(s.info.finder)throw Error('Finder information already persists for this depth.');
-  const cells=s.board.filter(c=>c.kind==='crystal'&&c.state==='covered');
-  if(cells.length>1)throw Error('Highest-value ranking across native tokens needs its authoritative valuation policy; Finder unavailable for this result. No charge made.');
-  pay(s,'DIG',2750);s.info.finder=cells.length?{status:'one',index:cells[0].index,asset:cells[0].asset}:{status:'none'};note(s,cells.length?`One ${cells[0].asset} crystal: row ${Math.floor(cells[0].index/5)+1}, column ${cells[0].index%5+1}.`:'NO CRYSTALS DETECTED');
+  const result=scanCrystals(s.board,finderDemoRates);
+  pay(s,'DIG',2750);s.info.finder=result;note(s,result.status==='none'?'NO CRYSTALS DETECTED':`${result.status==='multiple'?'MULTIPLE CRYSTALS ARE PRESENT · highest simulated USD value:':'One'} ${result.asset} crystal: row ${Math.floor(result.index/5)+1}, column ${result.index%5+1}.`);
  }else if(action.type==='linkWallet'){
   if(s.account.wallets.length>=10||!action.walletId||s.account.wallets.some(w=>w.id===action.walletId))throw Error('Link at most ten distinct simulated wallets.');
   s.account.wallets.push({id:action.walletId,DIG:0,FENN:'0',NOMO:'0'});note(s,'Linked simulated wallet; no additional account entitlement.');

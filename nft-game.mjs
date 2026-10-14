@@ -1,5 +1,5 @@
 // Current NFT-aware simulation. Verified production benefits must run behind server authority.
-import * as legacy from './game.mjs';
+import * as legacy from './game.mjs?v=nomo-finder-20261014';
 import {getEdition,bonusPlan,mintAllocation} from './mythic-nft.mjs';
 export const {RULES,publicBoard,resolved,spendable,PICKAXE_PRICE,balance,nativeSpendable,units,amount,bulkTargets,COSMETICS,PLATES,NATIVE_PRICES,DIG_ALTERNATIVES}=legacy;
 const u=legacy.units,a=legacy.amount,assets=['DIG','FENN','NOMO'];
@@ -42,7 +42,7 @@ export function act(current,action,{authority=null,now=Date.now(),rng}={}){
  }
  // The authority is queried at settlement, never read from saved nftEquipped/mythics.
  // Current release has owner-approved Shadow Forge artwork; historical callers retain their pre-release guard.
- s=legacy.act(s,action,{now,rng,approvedShadowForge:true,afterRegularReward:(next,cell)=>payBonus(next,cell,entitled())});wallet=s.account.receivingWallet;s.nftEquipped=entitled()?.id||null;return s;
+ s=legacy.act(s,action,{now,rng,approvedShadowForge:true,finderDemoRates:action.type==='finder'?(action.testUsdPrices??null):null,afterRegularReward:(next,cell)=>payBonus(next,cell,entitled())});wallet=s.account.receivingWallet;s.nftEquipped=entitled()?.id||null;return s;
  };
  const settle=()=>authority?.settleOnce?authority.settleOnce(current.account.receivingWallet,action.id,()=>execute()):execute();
  return authority?.transact?authority.transact(settle):settle();
