@@ -7,11 +7,11 @@
   <meta name="referrer" content="no-referrer">
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'">
   <title>DIG: Deep Quest — gameplay preview</title>
-  <link rel="stylesheet" href="style.css?v=board-touch-20261014">
-  <link rel="stylesheet" href="approved-board.css?v=board-touch-20261014">
-  <link rel="stylesheet" href="approved-shop.css?v=board-touch-20261014">
-  <script type="module" src="interface.mjs?v=board-touch-20261014"></script>
-  <script type="module" src="app.mjs?v=board-touch-20261014"></script>
+  <link rel="stylesheet" href="style.css?v=shard-pieces-20261014">
+  <link rel="stylesheet" href="approved-board.css?v=shard-pieces-20261014">
+  <link rel="stylesheet" href="approved-shop.css?v=shard-pieces-20261014">
+  <script type="module" src="interface.mjs?v=shard-pieces-20261014"></script>
+  <script type="module" src="app.mjs?v=shard-pieces-20261014"></script>
 </head>
 <body>
   <header><div><p class="eyebrow">NOMO SUPPLY · DEVELOPMENT DEMO</p><h1>DIG: Deep Quest</h1></div><span class="tag">Simulated currency</span></header>
@@ -36,7 +36,9 @@
         <a class="scene-nav scene-nav-rewards" href="#tools" data-open-panel="rewards-panel" aria-label="Rewards and inventory"></a>
         <a class="scene-nav scene-nav-journey" href="#statistics" data-open-panel="journey-panel" aria-label="Your local mining journey"><span>My journey</span></a>
         <div class="scene-shard scene-shard-dig scene-right-hud"><span>DIG shards</span><strong id="scene-shards-DIG">0 / 10</strong></div>
+        <img class="scene-shard-icon scene-right-hud" data-token="DIG" src="assets/new/dig-shard-fragment.png" alt="DIG emerald fragment · new artwork for review">
         <div class="scene-shard scene-shard-fenn scene-right-hud"><span>FENN shards</span><strong id="scene-shards-FENN">0 / 10</strong></div>
+        <img class="scene-shard-icon scene-right-hud" data-token="FENN" src="assets/new/fenn-shard-fragment.png" alt="FENN ruby fragment · new artwork for review">
         <div class="scene-pool scene-pool-dig scene-right-hud"><span>DIG pool</span><strong id="scene-pool-DIG">—</strong><small id="scene-yield-DIG">—</small></div>
         <div class="scene-pool scene-pool-fenn scene-right-hud"><span>FENN pool</span><strong id="scene-pool-FENN">—</strong><small id="scene-yield-FENN">—</small></div>
         <div class="scene-pool scene-pool-nomo scene-right-hud"><span>NOMO pool</span><strong id="scene-pool-NOMO">—</strong><small id="scene-yield-NOMO">—</small></div>
@@ -46,7 +48,9 @@
         <div class="scene-legend scene-right-hud" data-kind="gold"><strong>Gold</strong><small>Matching pickaxe required</small></div>
         <div class="scene-legend scene-right-hud" data-kind="platinum"><strong>Platinum</strong><small>Matching pickaxe required</small></div>
         <div class="scene-legend scene-right-hud" data-kind="dig-shard"><strong>DIG shard</strong><small>Collected into inventory</small></div>
+        <img class="scene-shard-icon scene-right-hud" data-place="legend" data-token="DIG" src="assets/new/dig-shard-fragment.png" alt="DIG shard piece · new artwork for review">
         <div class="scene-legend scene-right-hud" data-kind="fenn-shard"><strong>FENN shard</strong><small>Collected into inventory</small></div>
+        <img class="scene-shard-icon scene-right-hud" data-place="legend" data-token="FENN" src="assets/new/fenn-shard-fragment.png" alt="FENN shard piece · new artwork for review">
         <div class="scene-legend scene-right-hud" data-kind="nomo-crystal"><strong>NOMO crystal</strong><small>Whole crystal discovery</small></div>
         <div id="mining-stage"><div id="board" class="board" aria-label="50 mining positions"></div></div>
         <div class="scene-progress"><strong id="progress">0 / 35</strong><progress id="progress-bar" max="35" value="0" aria-label="Resolved positions toward descent"></progress><button id="descend">Descend to next depth</button></div>

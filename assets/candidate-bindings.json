@@ -193,6 +193,26 @@
       "width": 1983,
       "height": 793,
       "note": "New equipment-only concept; no original character or approved design replaced."
+    },
+    "reward.shard.dig.fragment": {
+      "file": "assets/new/dig-shard-fragment.png",
+      "sha256": "5767ee55886800fdacdab657dec254bea4c0f9bdfb04dddad2ce336f8722e053",
+      "status": "NEW_WORK_AWAITING_OWNER_REVIEW",
+      "production_ready": false,
+      "allowedInDemo": true,
+      "pixels": "new fragment sprite generated from approved color/style reference; original source unchanged",
+      "sourceReference": "assets/blocks/tile_dig_shard.png",
+      "note": "Broken-off piece for shard discoveries; not a whole crystal. No reward or economic change."
+    },
+    "reward.shard.fenn.fragment": {
+      "file": "assets/new/fenn-shard-fragment.png",
+      "sha256": "8cc2c9bd4599cb3ef102a96db3d79cbe1adac9fabbc44b96542aa85a5aef287f",
+      "status": "NEW_WORK_AWAITING_OWNER_REVIEW",
+      "production_ready": false,
+      "allowedInDemo": true,
+      "pixels": "new fragment sprite generated from approved color/style reference; original source unchanged",
+      "sourceReference": "assets/ui/approved/fenn_shard.png",
+      "note": "Broken-off piece for shard discoveries; not a whole crystal. No reward or economic change."
     }
   }
 }

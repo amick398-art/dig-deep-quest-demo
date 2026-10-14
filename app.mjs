@@ -1,10 +1,11 @@
 import { RULES, createGame, restoreGame, act, publicBoard, spendable, resolved, PICKAXE_PRICE, balance, nativeSpendable, COSMETICS, PLATES, NATIVE_PRICES, DIG_ALTERNATIVES, amount, bulkTargets } from './nft-game.mjs';
-import { MiningPresentation } from './effects.mjs?v=board-touch-20261014';
-import { DescentCinematic } from './descent.mjs?v=board-touch-20261014';
-import { MythicShop } from './nft-shop.mjs?v=board-touch-20261014';
-import { ApprovedShop, approvedArtwork } from './approved-shop.mjs?v=board-touch-20261014';
-import { closeGamePanels, refreshChoices } from './interface.mjs?v=board-touch-20261014';
-import approvedBoardLayout from './approved-board-layout.mjs?v=board-touch-20261014';
+import { MiningPresentation } from './effects.mjs?v=shard-pieces-20261014';
+import { DescentCinematic } from './descent.mjs?v=shard-pieces-20261014';
+import { MythicShop } from './nft-shop.mjs?v=shard-pieces-20261014';
+import { ApprovedShop, approvedArtwork } from './approved-shop.mjs?v=shard-pieces-20261014';
+import { closeGamePanels, refreshChoices } from './interface.mjs?v=shard-pieces-20261014';
+import approvedBoardLayout from './approved-board-layout.mjs?v=shard-pieces-20261014';
+import {shardBindingId,rewardLabel} from './reward-visuals.mjs?v=shard-pieces-20261014';
 const $ = id => document.getElementById(id);
 const presentation=new MiningPresentation($('mining-stage'));
 const descentCinematic=new DescentCinematic($('descent-cinematic'),{onTunnelStart:()=>presentation.tone('descend')});
@@ -79,7 +80,7 @@ function cellAsset(cell) {
   if(cell.state==='metal'||cell.light&&['copper','silver','gold','platinum'].includes(cell.kind)) return asset(`board.metal.${cell.kind}`);
   if(cell.state==='resolved'&&['copper','silver','gold','platinum'].includes(cell.kind))return asset('board.resolved_empty');
   if(cell.kind==='empty') return asset('board.resolved_empty');
-  if(cell.kind==='shard') return asset(`reward.shard.${cell.asset.toLowerCase()}`);
+  if(cell.kind==='shard'){const id=shardBindingId(cell.asset);return id?asset(id):null;}
   if(cell.kind==='crystal') return asset(`reward.crystal.${cell.asset.toLowerCase()}`);
   return asset(`reward.token.${(cell.kind||'').toLowerCase()}`);
 }
@@ -102,11 +103,12 @@ function renderBoard() {
     button.dataset.kind=cell.kind||'';
     if(boardLayout){const [x,y,w,h]=boardLayout.cells[cell.index].rect;Object.assign(button.style,{left:`${x/boardLayout.width*100}%`,top:`${y/boardLayout.height*100}%`,width:`${w/boardLayout.width*100}%`,height:`${h/boardLayout.height*100}%`});}
     button.dataset.state=cell.state;button.dataset.light=String(cell.light);
+    button.dataset.rewardForm=cell.kind==='shard'?'fragment':cell.kind==='crystal'?'whole':'';
     button.setAttribute('aria-pressed',String(selected===cell.index));
-    const label=cell.kind ? `${names[cell.kind]}${cell.asset ? ` · ${cell.asset}` : ''}${cell.light&&cell.state==='covered'?' · lit, unexcavated':''}${cell.state==='metal'?' · unresolved':cell.state==='resolved'&&['copper','silver','gold','platinum'].includes(cell.kind)?' · collected':''}` : 'Covered';
+    const label=cell.kind ? `${rewardLabel(cell)||names[cell.kind]}${cell.asset&&!rewardLabel(cell) ? ` · ${cell.asset}` : ''}${cell.light&&cell.state==='covered'?' · lit, unexcavated':''}${cell.state==='metal'?' · unresolved':cell.state==='resolved'&&['copper','silver','gold','platinum'].includes(cell.kind)?' · collected':''}` : 'Covered';
     const file=cell.state==='covered'&&!cell.light&&boardLayout?null:cellAsset(cell);
     const officialCovered=cell.state==='covered'&&!cell.light&&boardLayout;
-    const candidate=cell.kind==='crystal'&&candidateBindings[`reward.crystal.${cell.asset.toLowerCase()}`];button.dataset.reviewArt=String(Boolean(candidate));
+    const candidate=cell.kind==='crystal'?candidateBindings[`reward.crystal.${cell.asset.toLowerCase()}`]:cell.kind==='shard'?candidateBindings[shardBindingId(cell.asset)]:null;button.dataset.reviewArt=String(Boolean(candidate));
     button.dataset.art=String(Boolean(file||officialCovered));
     button.setAttribute('aria-label',`Row ${row}, column ${col}: ${label}${candidate?' · review visual':file||officialCovered?'':' · placeholder visual'}`);
     if(file) {
@@ -116,6 +118,7 @@ function renderBoard() {
         const coin=document.createElement('span');coin.className='coin-face';coin.dataset.token=cell.kind;artParent.append(coin);
       }else{
       const img=document.createElement('img');img.src=file;img.alt='';
+      if(cell.kind==='shard')img.className='fragment-art';
       img.addEventListener('error',()=>{img.remove();message(`Artwork file missing for ${label}; temporary text label retained.`,true);},{once:true});
       artParent.append(img);
       }
@@ -124,6 +127,7 @@ function renderBoard() {
     symbol.textContent=cell.kind ? (cell.kind==='empty'?'·':cell.kind==='shovel'?'+1':cell.kind==='shard'?'◆':cell.kind==='crystal'?'◇':names[cell.kind].slice(0,2)) : '?';
     const caption=document.createElement('span');caption.textContent=cell.kind ? names[cell.kind] : `${row} · ${col}`; if(file) caption.className='over-art';
     button.append(symbol,caption);
+    if(['shard','crystal'].includes(cell.kind)){const shape=document.createElement('small');shape.className='reward-shape-label';shape.textContent=cell.kind==='shard'?'SHARD':'WHOLE';button.append(shape);}
     if(cell.light&&cell.state==='covered'){const lit=document.createElement('small');lit.className='lit-label';lit.textContent='LIT · COVERED';button.append(lit);}
     if(chargeTargets.includes(cell.index))button.dataset.charge='true';
     button.onclick=()=>{
@@ -185,7 +189,7 @@ function render() {
   $('depth-pass').disabled=game.earlyDescent||resolved(game)>=35;
   $('claim-rewards').disabled=game.profileRewards===0||game.wallet>=RULES.cap;
   const cell=selected===null?null:publicBoard(game)[selected];
-  $('target').textContent=cell?`Selected row ${Math.floor(selected/5)+1}, column ${selected%5+1} · ${cell.kind?names[cell.kind]:'covered'}${cell.state==='covered'&&!$('charge-mode').checked?' · tap again to mine':''}`:'Tap a covered block to select it; tap it again to mine.';
+  $('target').textContent=cell?`Selected row ${Math.floor(selected/5)+1}, column ${selected%5+1} · ${cell.kind?(rewardLabel(cell)||names[cell.kind]):'covered'}${cell.state==='covered'&&!$('charge-mode').checked?' · tap again to mine':''}`:'Tap a covered block to select it; tap it again to mine.';
   $('dig').disabled=!cell||cell.state!=='covered'||game.shovels<1;
   $('pickaxe').disabled=!cell||cell.state!=='metal';
   const family=$('reward-family').value,payment=$('pay-currency').value;
