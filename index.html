@@ -7,11 +7,11 @@
   <meta name="referrer" content="no-referrer">
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'">
   <title>DIG: Deep Quest — gameplay preview</title>
-  <link rel="stylesheet" href="style.css">
-  <link rel="stylesheet" href="approved-board.css">
-  <link rel="stylesheet" href="approved-shop.css">
-  <script type="module" src="interface.mjs"></script>
-  <script type="module" src="app.mjs"></script>
+  <link rel="stylesheet" href="style.css?v=board-touch-20261014">
+  <link rel="stylesheet" href="approved-board.css?v=board-touch-20261014">
+  <link rel="stylesheet" href="approved-shop.css?v=board-touch-20261014">
+  <script type="module" src="interface.mjs?v=board-touch-20261014"></script>
+  <script type="module" src="app.mjs?v=board-touch-20261014"></script>
 </head>
 <body>
   <header><div><p class="eyebrow">NOMO SUPPLY · DEVELOPMENT DEMO</p><h1>DIG: Deep Quest</h1></div><span class="tag">Simulated currency</span></header>
@@ -25,7 +25,8 @@
       <div class="approved-board-logo" role="img" aria-label="Approved DIG: Deep Quest shovel and emerald emblem"></div>
       <div class="mine-supplies"><span>Free <b id="free-balance">0</b> · stored <b id="stored-balance">0</b></span><button id="quick-free">Daily pair</button><button id="quick-buy">5 shovels · 22,500 DIG</button></div>
       <div class="target-panel"><p id="target">Select a covered position.</p><button id="dig" class="primary">Excavate · 1 shovel</button><button id="pickaxe">Resolve metal with DIG pickaxe</button><button type="button" data-open-panel="equipment-panel">Equipment</button></div>
-      <div class="scene-viewport" data-board-source="assets/boards/approved_full_board.jpg"><div class="scene-stage">
+      <p class="board-pan-hint">Approved mining board · on a phone, swipe sideways to reach the board and side panels.</p>
+      <div class="scene-viewport" data-board-source="assets/boards/approved_full_board.jpg" tabindex="0" aria-label="Approved mining scene; scroll horizontally on a phone"><div class="scene-stage">
         <img class="board-source" src="assets/boards/approved_full_board.jpg" width="853" height="1280" alt="Approved DIG: Deep Quest cave scenery, emerald mining emblem, lanterns, wooden and metal frame, and mining cart" decoding="async">
         <div class="board-heading scene-depth"><h2>Depth <span id="depth">1</span></h2><p>5 columns × 10 rows</p><small>Resolve 35 positions to descend</small></div>
         <div class="scene-shovel-main scene-left-hud"><strong id="scene-shovels">0</strong><button id="scene-free" aria-label="Claim daily shovel pair">+</button><small>Free <span id="scene-free-count">0</span> · stored <span id="scene-stored-count">0</span></small></div>

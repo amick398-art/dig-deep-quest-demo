@@ -11,6 +11,8 @@ main{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
 .target-panel{position:sticky;top:8px;bottom:auto;z-index:20;margin-bottom:12px;display:grid;grid-template-columns:1fr 1fr;gap:6px;padding:10px 12px;box-shadow:0 4px 24px #000c}.target-panel p{grid-column:1/-1;margin:0;font-size:12px}.target-panel button{margin:0;font-size:12px;min-height:44px;padding:8px}
 .scene-viewport{width:100%;overflow:clip;isolation:isolate;border-radius:10px;background:#07100b;box-shadow:0 12px 38px #0009;container-type:inline-size}
 .scene-stage{position:relative;width:100%;aspect-ratio:853/1280}
+.board-pan-hint{display:none;margin:8px 0;color:#e3d7b6;font-size:12px}
+@media(max-width:620px){.board-pan-hint{display:block}}
 .board-source{display:block;position:absolute;inset:0;width:100%;height:100%;pointer-events:none;user-select:none;object-fit:fill}
 .scene-stage>#mining-stage{position:absolute;left:26.143024619%;top:12.34375%;width:48.886283705%;height:61.640625%;margin:0}
 .scene-stage .board[data-layout="approved"]{aspect-ratio:417/789;width:100%;height:100%;background:none}
@@ -31,11 +33,12 @@ main{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
 @media(max-width:620px){
  main{display:flex}.mine{width:100%;max-width:none;order:0}.account,.tools{width:100%}.account{order:1}.tools{order:2}
  .brand-scene{max-width:170px;margin:0 auto 6px}.brand-scene img{height:40px;max-height:40px}
- .approved-board-logo{display:block;width:150px;aspect-ratio:245/238;margin:0 auto 8px;background:url('assets/boards/approved_full_board.jpg') left top/348.163265306% auto no-repeat}
- .scene-stage{width:204.556354916%;margin-left:-53.477218225%}.scene-left-hud,.scene-right-hud,.scene-nav{display:none}
+ .approved-board-logo{display:none}
+ .scene-viewport{overflow-x:auto;overflow-y:hidden;touch-action:pan-x pan-y pinch-zoom}
+ .scene-stage{width:100%;min-width:600px;margin-left:0}
  .scene-depth h2{font-size:clamp(23px,6cqw,33px)}.scene-depth p{font-size:clamp(11px,3cqw,16px)}.scene-depth small{font-size:clamp(10px,2.8cqw,14px)}
  .scene-progress>strong{font-size:14px}.scene-progress button{font-size:11px}.scene-progress{padding:3px 6px}
- .scene-panorama{display:block;width:100%;aspect-ratio:853/180;background:url('assets/boards/approved_full_board.jpg') center bottom/100% auto no-repeat;margin-top:8px;border-radius:8px}
+ .scene-panorama{display:none}
  .target-panel{top:6px;font-size:11px}.mine-supplies{padding:8px;margin-bottom:8px}
 }
 /* Player-facing panels replace the long development dashboard. */

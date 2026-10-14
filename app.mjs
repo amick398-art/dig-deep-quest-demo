@@ -1,14 +1,15 @@
 import { RULES, createGame, restoreGame, act, publicBoard, spendable, resolved, PICKAXE_PRICE, balance, nativeSpendable, COSMETICS, PLATES, NATIVE_PRICES, DIG_ALTERNATIVES, amount, bulkTargets } from './nft-game.mjs';
-import { MiningPresentation } from './effects.mjs';
-import { DescentCinematic } from './descent.mjs';
-import { MythicShop } from './nft-shop.mjs';
-import { ApprovedShop, approvedArtwork } from './approved-shop.mjs';
-import { closeGamePanels, refreshChoices } from './interface.mjs';
+import { MiningPresentation } from './effects.mjs?v=board-touch-20261014';
+import { DescentCinematic } from './descent.mjs?v=board-touch-20261014';
+import { MythicShop } from './nft-shop.mjs?v=board-touch-20261014';
+import { ApprovedShop, approvedArtwork } from './approved-shop.mjs?v=board-touch-20261014';
+import { closeGamePanels, refreshChoices } from './interface.mjs?v=board-touch-20261014';
+import approvedBoardLayout from './approved-board-layout.mjs?v=board-touch-20261014';
 const $ = id => document.getElementById(id);
 const presentation=new MiningPresentation($('mining-stage'));
 const descentCinematic=new DescentCinematic($('descent-cinematic'),{onTunnelStart:()=>presentation.tone('descend')});
 const SAVE = 'dig-deep-quest-c29-demo-v1';
-let game, selected = null, bindings = {}, candidateBindings={}, boardLayout = null, busy = false, storageReady = true, shopFingerprint='', boardFingerprint='';
+let game, selected = null, bindings = {}, candidateBindings={}, boardLayout = approvedBoardLayout, busy = false, storageReady = true, shopFingerprint='', boardFingerprint='';
 let chargeTargets=[];
 const nftShop=new MythicShop($('mythic-shop'),{getGame:()=>game,perform:run,confirm:confirmAction,message,getBindings:()=>bindings});
 const approvedShop=new ApprovedShop($('approved-shop'),{getGame:()=>game,getSelected:()=>selected,getChargeTargets:()=>[...chargeTargets],perform:run,confirm:confirmAction,requestBulk:confirmBulk,setFamily:(family)=>{$('reward-family').value=family;$('pay-currency').value=family;render();refreshChoices();}});
@@ -89,12 +90,14 @@ function renderBoard() {
   const signature=JSON.stringify([game.depth,cells,selected,chargeTargets,boardLayout,Object.keys(bindings),Object.keys(candidateBindings)]);
   if(signature===boardFingerprint)return;
   boardFingerprint=signature;
-  // Keep focus across state renders for keyboard users.
-  const focusIndex=document.activeElement?.dataset.index;
-  board.replaceChildren();
+  // Retain the actual touch/keyboard target across selection and settlement.
+  // Replacing the button between taps can cancel native mobile click synthesis.
+  const existing=new Map([...board.children].map(node=>[Number(node.dataset.index),node]));
   for(const cell of cells) {
     const row=Math.floor(cell.index/5)+1,col=cell.index%5+1;
-    const button=document.createElement('button');
+    const button=existing.get(cell.index)||document.createElement('button');
+    button.replaceChildren();
+    delete button.dataset.charge;
     button.type='button';button.className='cell';button.dataset.index=cell.index;
     button.dataset.kind=cell.kind||'';
     if(boardLayout){const [x,y,w,h]=boardLayout.cells[cell.index].rect;Object.assign(button.style,{left:`${x/boardLayout.width*100}%`,top:`${y/boardLayout.height*100}%`,width:`${w/boardLayout.width*100}%`,height:`${h/boardLayout.height*100}%`});}
@@ -135,9 +138,8 @@ function renderBoard() {
       const delta={ArrowUp:-5,ArrowDown:5,ArrowLeft:-1,ArrowRight:1}[event.key];
       if(delta!==undefined){event.preventDefault();const index=cell.index+delta;if(index>=0&&index<50){selected=index;render();board.querySelector(`[data-index="${index}"]`).focus();}}
     };
-    board.append(button);
+    if(!button.isConnected)board.append(button);
   }
-  if(focusIndex!==undefined) board.querySelector(`[data-index="${focusIndex}"]`)?.focus({preventScroll:true});
 }
 function renderTimeStatus() {
   approvedShop.refreshTimeStatus();
@@ -286,23 +288,27 @@ async function presentAction(type,data,previous,next){
  await presentation.present(type,{...data,indices,toolRegion:region},next,tool);
 }
 window.addEventListener('storage',event=>{if(event.key===SAVE&&event.newValue){try{game=JSON.parse(event.newValue);render();}catch{message('Another tab produced an unreadable save. Reload after resolving it.',true);}}});
+// The approved board is essential. Optional effect maps cannot prevent its setup.
+$('board').dataset.layout='approved';$('board').dataset.surface='full-approved';document.body.classList.add('full-board');
+// Complete restore/migration persistence before exposing interactive cells.
+save(game);
+render();
 try {
-  const response=await fetch('./assets/bindings.json');
+  const response=await fetch('./assets/bindings.json',{cache:'no-store'});
   if(!response.ok)throw new Error('Missing asset bindings.');
   bindings=(await response.json()).assets||{};
-  const candidateResponse=await fetch('./assets/candidate-bindings.json');if(candidateResponse.ok)candidateBindings=(await candidateResponse.json()).assets||{};
-  await presentation.load();
   for(const node of document.querySelectorAll('[data-art-id]')){const file=asset(node.dataset.artId);if(file){const img=document.createElement('img');img.src=file;img.alt='';img.className='control-art';img.loading='lazy';img.decoding='async';node.prepend(img);}}
-  const fullBoard=asset('board.approved_full');
-  const layoutResponse=await fetch(fullBoard?'./assets/board-full-layout.json':'./assets/board-layout.json');
-  if(layoutResponse.ok&&asset('board.covered_viewport')){boardLayout=await layoutResponse.json();$('board').dataset.layout='approved';}
-  if(fullBoard&&boardLayout?.source?.file===fullBoard){$('board').dataset.surface='full-approved';document.body.classList.add('full-board');}
   const count=Object.values(bindings).filter(x=>x.sourceVerified===true).length;
   if(count)$('art-status').textContent=`${count} original asset bindings available. Missing visuals remain explicitly labeled placeholders; new UI remains a development treatment.`;
 } catch { message('Asset map unavailable. Temporary labeled visuals retained.',true); }
 render();
-approvedShop.load().catch(error=>message(error.message,true));
-save(game);
+try {
+  const candidateResponse=await fetch('./assets/candidate-bindings.json',{cache:'no-store'});if(candidateResponse.ok)candidateBindings=(await candidateResponse.json()).assets||{};
+  render();
+  await presentation.load();
+} catch {message('Optional effect previews unavailable; approved board and mining remain available.',true);}
+await approvedShop.load().catch(error=>message(error.message,true));
+document.body.dataset.runtimeReady='true';
 // Timer evaluation is local simulation, not a live economic service.
 setInterval(()=>{
   if(document.hidden||busy)return;
