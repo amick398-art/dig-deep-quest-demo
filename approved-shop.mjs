@@ -1,6 +1,7 @@
 // Original approved shop scenes with accessible hit regions. All purchases use the existing engine.
 import {RULES,COSMETICS,PICKAXE_PRICE,NATIVE_PRICES,DIG_ALTERNATIVES,balance,spendable,amount,bulkTargets,resolved} from './nft-game.mjs';
 import {NFT_TYPES,mintAllocation} from './mythic-nft.mjs';
+import {itemPrice,priceCatalogue} from './shop-prices.mjs';
 export const CATEGORIES=[['shovels','Shovels'],['pickaxes','Pickaxes'],['special','Special Tools'],['information','Information Tools'],['boost','DIG Boost Pass'],['currencies','Currencies']];
 const el=(tag,text,cls)=>{const e=document.createElement(tag);if(text!==undefined)e.textContent=text;if(cls)e.className=cls;return e;};
 const fmt=n=>n.toLocaleString('en-US',{maximumFractionDigits:12});
@@ -15,6 +16,8 @@ export class ApprovedShop{
   this.items=el('div',undefined,'approved-shop-items');this.items.setAttribute('role','group');this.items.setAttribute('aria-label','Items on the selected shop screen');
   this.detail=el('section',undefined,'approved-shop-detail');this.detail.setAttribute('aria-label','Selected shop item');this.notice=el('p',undefined,'approved-shop-notice');this.notice.setAttribute('role','status');
   this.feedback=el('p',undefined,'approved-shop-feedback');this.feedback.id='approved-shop-message';this.feedback.setAttribute('role','status');this.feedback.setAttribute('aria-live','polite');root.append(this.nav,hint,this.feedback,this.viewport,this.items,this.detail,this.notice);
+  this.priceList=el('details',undefined,'shop-full-prices');this.priceList.append(el('summary','Complete shop price list'),el('p','Fixed shop prices. Mythic NFT mints use USD-equivalent token quotes; all demo payments are simulated.'));
+  const groups=new Map();for(const price of priceCatalogue()){if(!groups.has(price.group)){const section=el('section');section.append(el('h4',price.group));const list=el('dl',undefined,'shop-price-list');section.append(list);groups.set(price.group,list);this.priceList.append(section);}const row=el('div');row.dataset.shopPriceRow=price.id;row.append(el('dt',price.name),el('dd',price.text),el('dd',price.note,'hint'));groups.get(price.group).append(row);}root.append(this.priceList);
  }
  button(label,action){const b=el('button',label);b.type='button';b.onclick=action;return b;}
  async load(){const response=await fetch('./assets/shop-screens.json');if(!response.ok)throw Error('Approved shop screen index unavailable.');this.screens=(await response.json()).screens;this.show(this.screen);}
@@ -25,10 +28,10 @@ export class ApprovedShop{
    this.hotspot('Back to mine',[17,754,163,66],()=>document.getElementById('shop-panel').close());
    this.hotspot('Connect simulated wallet',[1044,114,199,44],()=>this.wallets());
   }else{this.viewport.hidden=true;this.detail.append(el('p',category==='boost'?'Approved DIG Boost Pass image has not arrived. Existing DIG-only pass purchase and status controls remain below.':'This approved shop image is awaiting its own verified integration checkpoint.'));}
-  for(const item of this.catalogue(category)){const action=()=>this.select(item);if(this.screens[category])this.hotspot(item.label,item.rect,action,item.key);const b=this.button(item.label,action);b.dataset.shopItem=item.key;this.items.append(b);}
+  for(const item of this.catalogue(category)){const action=()=>this.select(item),price=itemPrice(item),label=item.label+(price?' · '+price.text:'');if(this.screens[category]){const hit=this.hotspot(label,item.rect,action,item.key);if(price){const badge=el('span',price.badge||price.text,'shop-price-badge');badge.dataset.shopPrice=item.key;hit.append(badge);}}const b=this.button(label,action);b.dataset.shopItem=item.key;if(price)b.dataset.shopItemPrice=price.text;this.items.append(b);}
   this.viewport.scrollLeft=category==='shovels'?245:250;this.refresh();
  }
- hotspot(label,rect,action,key){const b=this.button('',action);b.className='shop-art-hit';b.setAttribute('aria-label',label);if(key)b.dataset.shopHit=key;const [x,y,w,h]=rect;Object.assign(b.style,{left:100*x/1280+'%',top:100*y/853+'%',width:100*w/1280+'%',height:100*h/853+'%'});this.hotspots.append(b);}
+ hotspot(label,rect,action,key){const b=this.button('',action);b.className='shop-art-hit';b.setAttribute('aria-label',label);if(key)b.dataset.shopHit=key;const [x,y,w,h]=rect;Object.assign(b.style,{left:100*x/1280+'%',top:100*y/853+'%',width:100*w/1280+'%',height:100*h/853+'%'});this.hotspots.append(b);return b;}
  catalogue(category){
   if(category==='shovels')return [...['basic','copper','bronze','iron','silver','gold','platinum','crystal','obsidian','void'].map((key,i)=>({key,label:key+' shovel',kind:'cosmetic',rect:[273+98*i,223,94,174]})),{key:'diamond',label:'Diamond legendary shovel',kind:'cosmetic',rect:[274,475,140,221]},{key:'shadow_forge',label:'Shadow Forge legendary shovel',kind:'cosmetic',rect:[417,475,140,221]},...['NOMO','Oso','Bebe','FENN','DIG'].map((key,i)=>({key,label:key+' Mythic NFT',kind:'nft',rect:[596+i*132,460,124,237]}))];
   if(category==='pickaxes')return ['DIG','FENN','NOMO'].flatMap((family,r)=>['copper','silver','gold','platinum'].map((tier,c)=>({key:family+'-'+tier,label:family+' '+tier+' pickaxe',kind:'pickaxe',family,tier,rect:[438+c*209,246+r*149,125,124]})));
