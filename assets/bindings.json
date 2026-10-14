@@ -771,6 +771,16 @@
       "batch": "approved-shop-special",
       "width": 1280,
       "height": 853
+    },
+    "shop.screen.information": {
+      "file": "assets/shop/approved_information.jpg",
+      "sourceVerified": true,
+      "sha256": "2eabbe7edde9400919411c0cfe68da4cf740327af6b46a3f3138dc3eaf1f2c2d",
+      "approval": "approved-original",
+      "sourceId": "4-1000011075.jpg",
+      "batch": "approved-shop-information",
+      "width": 1280,
+      "height": 853
     }
   }
 }

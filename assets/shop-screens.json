@@ -18,6 +18,12 @@
       "sha256": "710fff249bb473a4d7db934a5efeb9fd00f015ff07493670c9b875c496f3e73d",
       "width": 1280,
       "height": 853
+    },
+    "information": {
+      "file": "assets/shop/approved_information.jpg",
+      "sha256": "2eabbe7edde9400919411c0cfe68da4cf740327af6b46a3f3138dc3eaf1f2c2d",
+      "width": 1280,
+      "height": 853
     }
   }
 }
