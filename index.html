@@ -7,11 +7,11 @@
   <meta name="referrer" content="no-referrer">
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'">
   <title>DIG: Deep Quest — gameplay preview</title>
-  <link rel="stylesheet" href="style.css?v=shard-pieces-20261014">
-  <link rel="stylesheet" href="approved-board.css?v=shard-pieces-20261014">
-  <link rel="stylesheet" href="approved-shop.css?v=shard-pieces-20261014">
-  <script type="module" src="interface.mjs?v=shard-pieces-20261014"></script>
-  <script type="module" src="app.mjs?v=shard-pieces-20261014"></script>
+  <link rel="stylesheet" href="style.css?v=nomo-run-20261014">
+  <link rel="stylesheet" href="approved-board.css?v=nomo-run-20261014">
+  <link rel="stylesheet" href="approved-shop.css?v=nomo-run-20261014">
+  <script type="module" src="interface.mjs?v=nomo-run-20261014"></script>
+  <script type="module" src="app.mjs?v=nomo-run-20261014"></script>
 </head>
 <body>
   <header><div><p class="eyebrow">NOMO SUPPLY · DEVELOPMENT DEMO</p><h1>DIG: Deep Quest</h1></div><span class="tag">Simulated currency</span></header>
@@ -102,6 +102,13 @@
     <div class="descent-heading"><p class="eyebrow">DIG: DEEP QUEST · THE JOURNEY CONTINUES</p><h2 id="descent-title" data-descent-title></h2><p data-descent-status aria-live="polite"></p></div>
     <div class="descent-pass" hidden><img src="assets/equipment/depth_pass.png" alt="Approved Depth Pass artwork"><strong>Depth Pass</strong><p>Your passage to the next depth</p></div>
     <div class="descent-footer"><small>New animation · awaiting review</small><button type="button" data-descent-skip>Skip animation</button></div>
+  </dialog>
+  <dialog id="nomo-cinematic" class="nomo-cinematic" aria-labelledby="nomo-title" data-phase="idle">
+    <h2 id="nomo-title">NOMO Dynamite Run</h2>
+    <p data-nomo-status aria-live="polite"></p>
+    <canvas width="640" height="360" role="img" aria-label="NOMO plants dynamite across the two purchased mining rows"></canvas>
+    <p>Metal discoveries still need a matching pickaxe. Skipping the animation keeps your excavation and rewards.</p>
+    <div class="dialog-actions"><small>New animation using approved artwork · awaiting review</small><button type="button" data-nomo-skip>Skip animation</button></div>
   </dialog>
 </body>
 </html>

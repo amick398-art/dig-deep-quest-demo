@@ -1,14 +1,16 @@
 import { RULES, createGame, restoreGame, act, publicBoard, spendable, resolved, PICKAXE_PRICE, balance, nativeSpendable, COSMETICS, PLATES, NATIVE_PRICES, DIG_ALTERNATIVES, amount, bulkTargets } from './nft-game.mjs';
-import { MiningPresentation } from './effects.mjs?v=shard-pieces-20261014';
-import { DescentCinematic } from './descent.mjs?v=shard-pieces-20261014';
-import { MythicShop } from './nft-shop.mjs?v=shard-pieces-20261014';
-import { ApprovedShop, approvedArtwork } from './approved-shop.mjs?v=shard-pieces-20261014';
-import { closeGamePanels, refreshChoices } from './interface.mjs?v=shard-pieces-20261014';
-import approvedBoardLayout from './approved-board-layout.mjs?v=shard-pieces-20261014';
-import {shardBindingId,rewardLabel} from './reward-visuals.mjs?v=shard-pieces-20261014';
+import { MiningPresentation } from './effects.mjs?v=nomo-run-20261014';
+import { DescentCinematic } from './descent.mjs?v=nomo-run-20261014';
+import { MythicShop } from './nft-shop.mjs?v=nomo-run-20261014';
+import { ApprovedShop, approvedArtwork } from './approved-shop.mjs?v=nomo-run-20261014';
+import { closeGamePanels, refreshChoices } from './interface.mjs?v=nomo-run-20261014';
+import approvedBoardLayout from './approved-board-layout.mjs?v=nomo-run-20261014';
+import {shardBindingId,rewardLabel} from './reward-visuals.mjs?v=nomo-run-20261014';
+import {NomoRunCinematic} from './nomo-cinematic.mjs?v=nomo-run-20261014';
 const $ = id => document.getElementById(id);
 const presentation=new MiningPresentation($('mining-stage'));
 const descentCinematic=new DescentCinematic($('descent-cinematic'),{onTunnelStart:()=>presentation.tone('descend')});
+const nomoCinematic=new NomoRunCinematic($('nomo-cinematic'),{getArt:cell=>cellAsset(cell),onBlast:()=>presentation.tone('dynamite')});
 const SAVE = 'dig-deep-quest-c29-demo-v1';
 let game, selected = null, bindings = {}, candidateBindings={}, boardLayout = approvedBoardLayout, busy = false, storageReady = true, shopFingerprint='', boardFingerprint='';
 let chargeTargets=[];
@@ -58,9 +60,11 @@ async function run(type, data={}) {
     }));
     const previous=game;game = next;
     message(game.history[0]?.text || 'Ready.');
+    if(type==='bulk'&&data.kind==='smallCharge'){$('charge-mode').checked=false;chargeTargets=[];}
     render();
     if(['dig','pickaxe','bulk','light','detector','scanner','finder','breakCrystal','descend'].includes(type))closeGamePanels();
     if(type==='descend')await descentCinematic.play(previous,next);
+    else if(type==='bulk'&&data.kind==='dynamite')await nomoCinematic.play(previous,next,data);
     else if(['dig','pickaxe','bulk','light','detector','scanner','finder','breakCrystal'].includes(type))void presentAction(type,data,previous,next).catch(()=>{});
   } catch (error) { message(error.message,true); }
   finally { busy=false; }
