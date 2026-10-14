@@ -1,0 +1,45 @@
+/* Owner-approved 853 × 1280 JPEG remains unchanged underneath live UI.
+   Responsive placement and counter masks are new interface work for review. */
+/* Keep the viewport fixed while live counters and lazy shop previews update. */
+html{overflow-anchor:none}
+main{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
+.mine{grid-column:1/-1;grid-row:1;width:100%;max-width:1024px;justify-self:center;padding:0;border:0;background:none;box-shadow:none;overflow:visible}
+.account{grid-column:1;grid-row:2}.tools{grid-column:2;grid-row:2}
+.brand-scene{max-width:220px;margin:0 auto 10px;border:0;box-shadow:none;background:none}.brand-scene img{height:54px;max-height:54px;background:none;object-fit:contain}
+.approved-board-logo,.scene-panorama{display:none}
+.mine-supplies{margin:0 0 10px;background:#14231c;padding:8px 12px;border:1px solid #675230;border-radius:8px;grid-template-columns:1fr 1fr}
+.target-panel{position:sticky;top:8px;bottom:auto;z-index:20;margin-bottom:12px;display:grid;grid-template-columns:1fr 1fr;gap:6px;padding:10px 12px;box-shadow:0 4px 24px #000c}.target-panel p{grid-column:1/-1;margin:0;font-size:12px}.target-panel button{margin:0;font-size:12px;min-height:44px;padding:8px}
+.scene-viewport{width:100%;overflow:clip;isolation:isolate;border-radius:10px;background:#07100b;box-shadow:0 12px 38px #0009;container-type:inline-size}
+.scene-stage{position:relative;width:100%;aspect-ratio:853/1280}
+.board-source{display:block;position:absolute;inset:0;width:100%;height:100%;pointer-events:none;user-select:none;object-fit:fill}
+.scene-stage>#mining-stage{position:absolute;left:26.143024619%;top:12.34375%;width:48.886283705%;height:61.640625%;margin:0}
+.scene-stage .board[data-layout="approved"]{aspect-ratio:417/789;width:100%;height:100%;background:none}
+.scene-depth,.scene-shovel-main,.scene-refill,.scene-shard,.scene-pool,.scene-legend,.scene-progress{position:absolute;overflow:hidden;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;margin:0;color:#edf6e9;background:#08232e;line-height:1.25;font-size:clamp(10px,1.45cqw,16px)}
+.scene-depth{left:33%;top:3.8%;width:37.7%;height:7.6%;padding:4px;background:linear-gradient(100deg,#a7773f,#c48a48 50%,#a46d32);border-radius:4px;color:#140e07;box-shadow:inset 0 1px #dcac66,inset 0 -1px #6b3b1a}
+.scene-depth h2{margin:0;color:#170f06;text-shadow:none;font-size:clamp(19px,3.4cqw,38px);line-height:1.1}.scene-depth p{margin:3px 0;font-size:clamp(10px,1.45cqw,16px);font-weight:700}.scene-depth small{font-size:clamp(9px,1.25cqw,14px);font-weight:600}
+.scene-shovel-main{left:8.8%;top:22.05%;width:16.5%;height:6.15%;display:grid;grid-template-columns:1fr 44px;padding:4px 5px;gap:3px}.scene-shovel-main>strong{font-size:clamp(23px,3cqw,38px);font-variant-numeric:tabular-nums}.scene-shovel-main>small{grid-column:1/-1;font-size:clamp(9px,1.2cqw,13px)}.scene-shovel-main button{width:44px;min-height:44px;margin:0;padding:0;font-size:28px;font-weight:bold;background:linear-gradient(#57e682,#179c48);color:#fff}
+.scene-refill{left:2.1%;top:28.2%;width:23.3%;height:4.95%;padding:4px 8px;gap:4px}.scene-refill small{color:#a8ced1;font-size:.75em}
+.scene-nav{position:absolute;left:1.25%;width:24.5%;height:4.55%;border-radius:8px;background:transparent;display:block;z-index:2}.scene-nav:focus-visible{outline:3px solid #ffef9a;outline-offset:2px}.scene-nav:hover{box-shadow:inset 0 0 0 3px #eaffaa66}
+.scene-nav-shop{top:33.8%}.scene-nav-how{top:38.95%}.scene-nav-rewards{top:43.95%}.scene-nav-journey{top:48.95%}.scene-nav-journey span{position:absolute;left:29%;top:13%;width:70%;height:76%;display:flex;align-items:center;justify-content:center;background:#063b5c;color:#fff;text-transform:uppercase;font-size:clamp(11px,1.65cqw,19px);font-weight:800;border-radius:4px}
+.scene-shard{left:81.65%;width:16.2%;height:5.5%;gap:4px}.scene-shard span{text-transform:uppercase;font-size:.86em}.scene-shard strong{font-size:1.4em;font-variant-numeric:tabular-nums}.scene-shard-dig{top:15.3%}.scene-shard-fenn{top:22.2%}
+.scene-pool{left:82%;width:15.4%;height:6.85%;gap:3px;padding:4px}.scene-pool>span{text-transform:uppercase;color:#f8dc81;font-weight:700;font-size:.86em}.scene-pool>strong{font-size:1em;overflow-wrap:anywhere;max-width:100%;font-variant-numeric:tabular-nums}.scene-pool>small{font-size:.76em;color:#74edae}.scene-pool-dig{top:31.7%}.scene-pool-fenn{top:39.05%}.scene-pool-nomo{top:46.1%}
+.scene-legend{left:81.55%;width:16.4%;height:4.1%;padding:3px;align-items:flex-start;text-align:left;gap:4px;font-size:clamp(9px,1.2cqw,14px)}.scene-legend strong{font-size:1em;font-weight:600}.scene-legend small{font-size:.79em;color:#a6d2e6}
+.scene-legend[data-kind="covered"]{top:56.75%}.scene-legend[data-kind="copper"]{top:61.05%}.scene-legend[data-kind="silver"]{top:65.1%}.scene-legend[data-kind="gold"]{top:68.75%}.scene-legend[data-kind="platinum"]{top:72.35%}.scene-legend[data-kind="dig-shard"]{top:76.2%}.scene-legend[data-kind="fenn-shard"]{top:80.15%}.scene-legend[data-kind="nomo-crystal"]{top:84.15%}
+.scene-progress{left:36.9%;top:77.45%;width:29.5%;height:7.5%;padding:4px 8px;gap:2px;background:#082330;border-radius:5px}.scene-progress>strong{font-size:clamp(12px,1.55cqw,19px);font-variant-numeric:tabular-nums}.scene-progress progress{margin:3px 0;height:7px;accent-color:#38e67f}.scene-progress button{margin:0;min-height:44px;padding:4px 6px;width:100%;font-size:clamp(10px,1.3cqw,14px);background:linear-gradient(#264b40,#0c2a27);border-color:#3e7170}
+.mine>.descent{grid-template-columns:1fr}.mine>.reward-choice{background:#15231de8;border:1px solid #70552e;border-radius:8px;padding:12px}.mine>#equipped-plate:empty{display:none}
+@media(max-width:980px){main{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}.tools{grid-column:2;grid-row:2}.mine{grid-column:1/-1;max-width:none}}
+@media(max-width:620px){
+ main{display:flex}.mine{width:100%;max-width:none;order:0}.account,.tools{width:100%}.account{order:1}.tools{order:2}
+ .brand-scene{max-width:170px;margin:0 auto 6px}.brand-scene img{height:40px;max-height:40px}
+ .approved-board-logo{display:block;width:150px;aspect-ratio:245/238;margin:0 auto 8px;background:url('assets/boards/approved_full_board.jpg') left top/348.163265306% auto no-repeat}
+ .scene-stage{width:204.556354916%;margin-left:-53.477218225%}.scene-left-hud,.scene-right-hud,.scene-nav{display:none}
+ .scene-depth h2{font-size:clamp(23px,6cqw,33px)}.scene-depth p{font-size:clamp(11px,3cqw,16px)}.scene-depth small{font-size:clamp(10px,2.8cqw,14px)}
+ .scene-progress>strong{font-size:14px}.scene-progress button{font-size:11px}.scene-progress{padding:3px 6px}
+ .scene-panorama{display:block;width:100%;aspect-ratio:853/180;background:url('assets/boards/approved_full_board.jpg') center bottom/100% auto no-repeat;margin-top:8px;border-radius:8px}
+ .target-panel{top:6px;font-size:11px}.mine-supplies{padding:8px;margin-bottom:8px}
+}
+/* Player-facing panels replace the long development dashboard. */
+main{display:block;max-width:1070px}.mine{margin:0 auto}.game-panel{width:min(94vw,600px);max-height:88vh;max-height:88dvh;padding:16px 18px;overflow:auto;background:linear-gradient(135deg,#253529,#0b1b15);border:2px solid #9b793d;box-shadow:0 14px 60px #000d}.game-panel:not([open]){display:none}.game-panel::backdrop{background:#020b08c9}.game-panel .panel{border:0;background:none;box-shadow:none;padding:0}.game-panel .panel-heading{position:sticky;top:-16px;z-index:2;display:flex;align-items:center;justify-content:space-between;gap:12px;background:#15251e;padding:12px 0;margin-bottom:10px;border-bottom:1px solid #82653b}.panel-heading h2{margin:0;color:#f2d794;font-size:21px}.panel-heading button{width:auto;min-width:76px;margin:0}.game-panel .how-to{margin:0;padding:0}.game-panel .reward-choice{margin:12px 0}.panel-open{overflow:hidden}.target-panel{grid-template-columns:1fr 1fr auto}.target-panel button[data-open-panel]{font-size:11px;padding:8px}.mine #message{min-height:0;margin:10px 0;font-size:12px}#qa-launch{width:auto;margin:0;font-size:11px}.quick-links [hidden],[hidden]{display:none!important}footer{max-width:1070px;text-align:center;font-size:11px}footer p{margin:5px 0}.game-panel .metrics dd{font-size:19px}
+@media(max-width:620px){.target-panel{grid-template-columns:1fr 1fr}.target-panel button[data-open-panel]{grid-column:1/-1;min-height:38px}.game-panel{padding:12px 14px}.game-panel .panel-heading{top:-12px}.scene-panorama{margin-bottom:8px}}
+
+.choice-label{display:block;font-size:12px;color:var(--muted);margin-top:10px}.choice-buttons{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0 12px}.choice-buttons button{flex:1 1 70px;width:auto;min-height:44px;margin:0;font-size:12px;padding:8px}.choice-buttons button[aria-pressed="true"]{border-color:#b8f293;background:#24563c;color:#e2ffd8;box-shadow:inset 0 0 0 1px #92c87b}.choice-buttons button:focus-visible{outline:3px solid #f7dfa1;outline-offset:2px}

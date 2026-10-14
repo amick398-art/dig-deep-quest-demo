@@ -8,57 +8,87 @@
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'">
   <title>DIG: Deep Quest — gameplay preview</title>
   <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="approved-board.css">
+  <script type="module" src="interface.mjs"></script>
   <script type="module" src="app.mjs"></script>
 </head>
 <body>
   <header><div><p class="eyebrow">NOMO SUPPLY · DEVELOPMENT DEMO</p><h1>DIG: Deep Quest</h1></div><span class="tag">Simulated currency</span></header>
   <div class="brand-scene"><img src="assets/branding/DIG_NOMO_FENN_Coins_User_Selected.png" alt="Official DIG mining emblem, NOMO face and FENN face currency designs" decoding="async"></div>
-  <div class="notice" id="art-status">Approved original artwork · new interface and effects remain available for review.</div>
-  <nav class="quick-links" aria-label="Game sections"><a href="#mine">Mine</a><a href="#supplies" data-art-id="ui.shop">Shop</a><a href="#how-to" data-art-id="ui.how_to_play">How to play</a><a href="#tools" data-art-id="ui.rewards">Rewards</a><a href="#statistics" data-art-id="ui.leaderboard">My journey</a></nav>
-  <details class="how-to" id="how-to"><summary>First expedition? Start here</summary><ol><li>Open Supplies and claim two eligible free shovels, or buy a pack using simulated DIG.</li><li>Choose a covered position in the Mine, then tap Excavate. Discovered metal needs the displayed DIG pickaxe.</li><li>To test Boost, buy a simulated pass. In Tools, open Simulation fixture and deposit simulated funding.</li><li>Use information tools before excavating. Resolve 35 positions, or purchase early Depth Pass, then confirm the next depth.</li></ol><p>Nothing connects to a live wallet. Your phone saves a separate local game; saves do not sync across devices.</p></details>
+  <div class="notice" id="art-status" hidden>Approved original artwork · new interface and effects remain available for review.</div>
+  <nav class="quick-links" aria-label="Game sections"><a href="#mine">Mine</a><a href="#supplies" data-open-panel="shop-panel" data-art-id="ui.shop">Shop</a><a href="#how-to" data-open-panel="help-panel" data-art-id="ui.how_to_play">How to play</a><a href="#tools" data-open-panel="rewards-panel" data-art-id="ui.rewards">Rewards</a><a href="#statistics" data-open-panel="journey-panel" data-art-id="ui.leaderboard">My journey</a><button type="button" id="qa-launch" data-open-panel="qa-panel" hidden>Demo testing</button></nav>
+
   <main>
-    <aside class="panel account" id="supplies">
+
+    <section class="mine" id="mine" aria-label="Mining board">
+      <div class="approved-board-logo" role="img" aria-label="Approved DIG: Deep Quest shovel and emerald emblem"></div>
+      <div class="mine-supplies"><span>Free <b id="free-balance">0</b> · stored <b id="stored-balance">0</b></span><button id="quick-free">Daily pair</button><button id="quick-buy">5 shovels · 22,500 DIG</button></div>
+      <div class="target-panel"><p id="target">Select a covered position.</p><button id="dig" class="primary">Excavate · 1 shovel</button><button id="pickaxe">Resolve metal with DIG pickaxe</button><button type="button" data-open-panel="equipment-panel">Equipment</button></div>
+      <div class="scene-viewport" data-board-source="assets/boards/approved_full_board.jpg"><div class="scene-stage">
+        <img class="board-source" src="assets/boards/approved_full_board.jpg" width="853" height="1280" alt="Approved DIG: Deep Quest cave scenery, emerald mining emblem, lanterns, wooden and metal frame, and mining cart" decoding="async">
+        <div class="board-heading scene-depth"><h2>Depth <span id="depth">1</span></h2><p>5 columns × 10 rows</p><small>Resolve 35 positions to descend</small></div>
+        <div class="scene-shovel-main scene-left-hud"><strong id="scene-shovels">0</strong><button id="scene-free" aria-label="Claim daily shovel pair">+</button><small>Free <span id="scene-free-count">0</span> · stored <span id="scene-stored-count">0</span></small></div>
+        <div class="scene-refill scene-left-hud"><span id="scene-refill">Checking daily eligibility</span><small>Simulated supplies</small></div>
+        <a class="scene-nav scene-nav-shop" href="#supplies" data-open-panel="shop-panel" aria-label="Shop excavation supplies"></a>
+        <a class="scene-nav scene-nav-how" href="#how-to" data-open-panel="help-panel" aria-label="How to play"></a>
+        <a class="scene-nav scene-nav-rewards" href="#tools" data-open-panel="rewards-panel" aria-label="Rewards and inventory"></a>
+        <a class="scene-nav scene-nav-journey" href="#statistics" data-open-panel="journey-panel" aria-label="Your local mining journey"><span>My journey</span></a>
+        <div class="scene-shard scene-shard-dig scene-right-hud"><span>DIG shards</span><strong id="scene-shards-DIG">0 / 10</strong></div>
+        <div class="scene-shard scene-shard-fenn scene-right-hud"><span>FENN shards</span><strong id="scene-shards-FENN">0 / 10</strong></div>
+        <div class="scene-pool scene-pool-dig scene-right-hud"><span>DIG pool</span><strong id="scene-pool-DIG">—</strong><small id="scene-yield-DIG">—</small></div>
+        <div class="scene-pool scene-pool-fenn scene-right-hud"><span>FENN pool</span><strong id="scene-pool-FENN">—</strong><small id="scene-yield-FENN">—</small></div>
+        <div class="scene-pool scene-pool-nomo scene-right-hud"><span>NOMO pool</span><strong id="scene-pool-NOMO">—</strong><small id="scene-yield-NOMO">—</small></div>
+        <div class="scene-legend scene-right-hud" data-kind="covered"><strong>Dirt block</strong><small>Unknown reward</small></div>
+        <div class="scene-legend scene-right-hud" data-kind="copper"><strong>Copper</strong><small>Matching pickaxe required</small></div>
+        <div class="scene-legend scene-right-hud" data-kind="silver"><strong>Silver</strong><small>Matching pickaxe required</small></div>
+        <div class="scene-legend scene-right-hud" data-kind="gold"><strong>Gold</strong><small>Matching pickaxe required</small></div>
+        <div class="scene-legend scene-right-hud" data-kind="platinum"><strong>Platinum</strong><small>Matching pickaxe required</small></div>
+        <div class="scene-legend scene-right-hud" data-kind="dig-shard"><strong>DIG shard</strong><small>Collected into inventory</small></div>
+        <div class="scene-legend scene-right-hud" data-kind="fenn-shard"><strong>FENN shard</strong><small>Collected into inventory</small></div>
+        <div class="scene-legend scene-right-hud" data-kind="nomo-crystal"><strong>NOMO crystal</strong><small>Whole crystal discovery</small></div>
+        <div id="mining-stage"><div id="board" class="board" aria-label="50 mining positions"></div></div>
+        <div class="scene-progress"><strong id="progress">0 / 35</strong><progress id="progress-bar" max="35" value="0" aria-label="Resolved positions toward descent"></progress><button id="descend">Descend to next depth</button></div>
+      </div></div>
+      <div class="scene-panorama" role="img" aria-label="Approved mining cart, emeralds and underground scenery"></div>
+
+      <div id="message" role="status" aria-live="polite">Buy a shovel pack or claim the daily pair to begin.</div>
+
+    </section>
+
+  </main>
+  <footer><p id="save-status">Progress saves locally in this browser.</p><span>Demo · simulated balances</span> · <a href="visual-review.html">Artwork review</a></footer>
+  <dialog id="shop-panel" class="game-panel" aria-labelledby="shop-panel-title"><div class="panel-heading"><h2 id="shop-panel-title">Shop</h2><button type="button" data-close-panel aria-label="Close Shop">Close</button></div>    <aside class="panel account" id="supplies">
       <h2>Your expedition</h2>
       <dl class="metrics"><div><dt>Demo wallet · DIG</dt><dd id="wallet">—</dd></div><div><dt>Shovels</dt><dd id="shovels">—</dd></div><div><dt>Lifetime simulated DIG earned</dt><dd id="earned">—</dd></div><div><dt>Simulated profile Rewards · DIG</dt><dd id="rewards">—</dd></div></dl>
       <button id="claim-rewards">Claim available Rewards</button>
       <details class="native-wallets"><summary>FENN &amp; NOMO balances</summary><p>FENN <strong id="wallet-FENN"></strong> · held Rewards <span id="rewards-FENN"></span></p><button id="claim-FENN">Claim FENN Rewards</button><p>NOMO <strong id="wallet-NOMO"></strong> · held Rewards <span id="rewards-NOMO"></span></p><button id="claim-NOMO">Claim NOMO Rewards</button></details>
       <p class="hint">Rewards above the per-wallet 30M DIG cap stay claimable. This demo uses a local mock of profile Rewards.</p>
       <h2>Excavation supplies</h2>
-      <label for="pack">Shovel pack</label><select id="pack"><option value="1">1 · 4,500 DIG</option><option value="5">5 · 22,500 DIG</option><option value="10" selected>10 · 45,000 DIG</option><option value="25">25 · 112,500 DIG</option><option value="50">50 · 225,000 DIG</option></select>
+      <span class="choice-label">Shovel pack</span><input type="hidden" id="pack" value="10"><div id="pack-choices" class="choice-buttons" data-choice="pack" role="group" aria-label="Shovel pack"><button type="button" data-value="1" aria-pressed="false">1 · 4,500 DIG</button><button type="button" data-value="5" aria-pressed="false">5 · 22,500 DIG</button><button type="button" data-value="10" aria-pressed="true">10 · 45,000 DIG</button><button type="button" data-value="25" aria-pressed="false">25 · 112,500 DIG</button><button type="button" data-value="50" aria-pressed="false">50 · 225,000 DIG</button></div>
       <button id="buy-shovels">Buy simulated shovels</button><button id="free">Claim 2 daily free shovels</button>
       <p class="hint" id="free-status"></p>
       <h2>Boost coverage</h2><p id="boost-status"></p><p><strong id="pass">0</strong> covered positions remaining</p>
       <button id="buy-pass">Boost Pass · 260,000 DIG</button>
       <p class="hint">250 future eligible positions. Digging sold separately. Unused uses carry forward. No refunds; timing and profit are not guaranteed.</p>
-    </aside>
-    <section class="mine" id="mine" aria-label="Mining board">
-      <div class="board-heading"><div><p class="eyebrow">CANONICAL 5 × 10 BOARD</p><h2>Depth <span id="depth">1</span></h2></div><div><strong id="progress">0 / 35</strong><p class="hint">resolved to unlock descent</p></div></div>
-      <progress id="progress-bar" max="35" value="0" aria-label="Resolved positions toward descent"></progress>
-      <div class="mine-supplies"><span>Free <b id="free-balance">0</b> · stored <b id="stored-balance">0</b></span><button id="quick-free">Daily pair</button><button id="quick-buy">5 shovels · 22,500 DIG</button></div>
-      <div id="equipped-plate"></div><div id="mining-stage"><div id="board" class="board" aria-label="50 mining positions"></div></div>
-      <p class="hint">Select a position, then excavate. A lit position still needs excavation; discovered metal needs its matching pickaxe.</p>
-      <div class="target-panel"><p id="target">Select a covered position.</p><button id="dig" class="primary">Excavate · 1 shovel</button><button id="pickaxe">Resolve metal with DIG pickaxe</button></div>
-      <div class="reward-choice"><label for="reward-family">Metal reward family</label><select id="reward-family"><option>DIG</option><option>FENN</option><option>NOMO</option></select><label for="pay-currency">Payment currency</label><select id="pay-currency"><option>DIG</option><option>FENN</option><option>NOMO</option></select><p class="hint">Metal prices remain fixed. DIG-paid native rewards fund DIG only; unavailable NOMO quotes cannot be bypassed.</p></div>
-      <div id="pickaxe-preview"></div><button id="sound-toggle" aria-pressed="false">Sound off · new effect preview</button>
-      <div id="message" role="status" aria-live="polite">Buy a shovel pack or claim the daily pair to begin.</div>
-      <div class="descent"><button id="depth-pass" data-art-id="tool.depth_pass">Early descent · 10,000 DIG</button><button id="descend">Descend to next depth</button></div>
-    </section>
-    <aside class="panel tools" id="tools">
+      <details><summary>Shovel shop &amp; allowances</summary><div id="shovel-shop"></div><div id="mythic-shop"></div><div id="allowances"></div><p class="hint">New Mythic visual treatments await review. Permanent skins grant no actions. Finite reserved bonuses apply only to regular token blocks; DIG extras never stack with covered Boost.</p></details>
+      <details><summary>Decorative plates</summary><p class="hint">Standalone catalogue prices; no gameplay effects. New frame designs await review; branded previews retain the original approved coin pixels.</p><div id="plate-shop"></div></details>
+      <div class="descent"><button id="depth-pass" data-art-id="tool.depth_pass">Early descent · 10,000 DIG</button></div>    </aside></dialog>
+  <dialog id="equipment-panel" class="game-panel" aria-labelledby="equipment-panel-title"><div class="panel-heading"><h2 id="equipment-panel-title">Equipment</h2><button type="button" data-close-panel aria-label="Close Equipment">Close</button></div>    <aside class="panel tools" id="tools">
       <h2>Information tools</h2><button id="light" data-art-id="tool.miners_light">Miner’s Light · 2,000 DIG</button><button id="detector" data-art-id="tool.metal_detector">Metal Detector · 3,000 DIG</button><button id="scanner" data-art-id="tool.prospector_scanner">Scan selected row · 4,000 DIG</button><button id="finder" data-art-id="tool.crystal_finder">Crystal Finder · 2,750 DIG</button>
       <p class="hint">Information tools reveal existing outcomes. They do not excavate, reroll, or consume shovels.</p><div id="info" class="hint"></div>
       <h2>Bulk equipment</h2><label class="charge-toggle"><input type="checkbox" id="charge-mode"> Select three connected Charge targets</label><button id="small-charge" data-art-id="tool.small_charge">Small Charge · 3 positions · 13,500 DIG</button><button id="power-strike">Power Strike · 2×2 · 18,000 DIG</button><button id="drill">FENN Deep Drill · column · 45,000 DIG</button><button id="dynamite">NOMO Dynamite · two rows · 0.05 NOMO</button><p class="hint">For Power Strike or Dynamite, select the upper-left position. Every affected position must be unexcavated; the whole purchase rolls back if any settlement fails.</p>
-      <h2>Inventory</h2><p id="shards"></p><div id="crystals"></div><p id="supplemental" class="hint"></p>
+      <div class="reward-choice"><span class="choice-label">Metal reward family</span><input type="hidden" id="reward-family" value="DIG"><div id="reward-family-choices" class="choice-buttons" data-choice="reward-family" role="group" aria-label="Metal reward family"><button type="button" data-value="DIG" aria-pressed="true">DIG</button><button type="button" data-value="FENN" aria-pressed="false">FENN</button><button type="button" data-value="NOMO" aria-pressed="false">NOMO</button></div><span class="choice-label">Payment currency</span><input type="hidden" id="pay-currency" value="DIG"><div id="pay-currency-choices" class="choice-buttons" data-choice="pay-currency" role="group" aria-label="Payment currency"><button type="button" data-value="DIG" aria-pressed="true">DIG</button><button type="button" data-value="FENN" aria-pressed="false">FENN</button><button type="button" data-value="NOMO" aria-pressed="false">NOMO</button></div><p class="hint">Metal prices remain fixed. DIG-paid native rewards fund DIG only; unavailable NOMO quotes cannot be bypassed.</p></div>      <div id="pickaxe-preview"></div><button id="sound-toggle" aria-pressed="false">Sound off · new effect preview</button>      <div id="equipped-plate"></div>    </aside></dialog>
+  <dialog id="rewards-panel" class="game-panel" aria-labelledby="rewards-panel-title"><div class="panel-heading"><h2 id="rewards-panel-title">Rewards</h2><button type="button" data-close-panel aria-label="Close Rewards">Close</button></div>      <h2>Inventory</h2><p id="shards"></p><div id="crystals"></div><p id="supplemental" class="hint"></p>
       <h2>Reward vault · DIG</h2><dl class="metrics compact"><div><dt>Spendable</dt><dd id="spendable">—</dd></div><div><dt>Protected obligations</dt><dd id="reserved">—</dd></div><div><dt>Unreserved treasury</dt><dd id="treasury">—</dd></div></dl>
       <p class="hint">FENN: <span id="pool-FENN"></span></p><p class="hint">NOMO: <span id="pool-NOMO"></span></p>
-      <details><summary>Allocation monitor</summary><p class="hint">Read-only simulated balances. Protected obligations are part of the actual pool, not additional funding. No withdrawal controls.</p><div id="ledger-monitor"></div></details>
-      <details><summary>Decorative plates</summary><p class="hint">Standalone catalogue prices; no gameplay effects. New frame designs await review; branded previews retain the original approved coin pixels.</p><div id="plate-shop"></div></details>
+</dialog>
+  <dialog id="help-panel" class="game-panel" aria-labelledby="help-panel-title"><div class="panel-heading"><h2 id="help-panel-title">How to play</h2><button type="button" data-close-panel aria-label="Close How to play">Close</button></div>  <div class="how-to" id="how-to"><ol><li>Open Shop and claim two eligible free shovels, or buy a pack using simulated DIG.</li><li>Choose a covered position in the Mine, then tap Excavate. Discovered metal needs the displayed DIG pickaxe.</li><li>Boost Pass coverage activates when the simulated reward pool meets its funding threshold. Digging still uses shovels.</li><li>Use information tools before excavating. Resolve 35 positions, or purchase early Depth Pass, then confirm the next depth.</li></ol><p>Nothing connects to a live wallet. Your phone saves a separate local game; saves do not sync across devices.</p></div></dialog>
+  <dialog id="journey-panel" class="game-panel" aria-labelledby="journey-panel-title"><div class="panel-heading"><h2 id="journey-panel-title">My journey</h2><button type="button" data-close-panel aria-label="Close My journey">Close</button></div>      <h2 id="statistics">Your mining journey</h2><p class="hint">Local expedition history. Online leaderboard service is not connected.</p><ol id="activity"></ol>
+</dialog>
+  <dialog id="qa-panel" class="game-panel" aria-labelledby="qa-panel-title"><div class="panel-heading"><h2 id="qa-panel-title">Demo testing</h2><button type="button" data-close-panel aria-label="Close Demo testing">Close</button></div>      <details><summary>Allocation monitor</summary><p class="hint">Read-only simulated balances. Protected obligations are part of the actual pool, not additional funding. No withdrawal controls.</p><div id="ledger-monitor"></div></details>
       <details><summary>Simulation fixture</summary><p class="hint">Test funding only; no live token transfer. Deposits enter native vaults at 100%. There is no withdrawal action.</p><button id="deposit">Funder deposit · 20M simulated DIG</button><button id="deposit-FENN">Deposit · 1B simulated FENN</button><button id="deposit-NOMO">Deposit · 10 simulated NOMO</button></details>
-      <details><summary>Shovel shop &amp; allowances</summary><div id="shovel-shop"></div><div id="mythic-shop"></div><div id="allowances"></div><p class="hint">New Mythic visual treatments await review. Permanent skins grant no actions. Finite reserved bonuses apply only to regular token blocks; DIG extras never stack with covered Boost.</p></details>
-      <details><summary>Simulated profile &amp; wallets</summary><p class="hint">One local profile; up to ten linked mock wallets. Linking never duplicates daily or first-release entitlements. Real NOMO Supply identity and Rewards integration are not connected.</p><label for="wallet-selection">Reward destination</label><select id="wallet-selection"></select><label for="wallet-id">New mock wallet name</label><input id="wallet-id" maxlength="40"><button id="link-wallet">Link mock wallet</button></details>
-      <h2 id="statistics">Your mining journey</h2><p class="hint">Local expedition history. Online leaderboard service is not connected.</p><ol id="activity"></ol>
-    </aside>
-  </main>
-  <footer><p id="save-status">Progress saves locally in this browser.</p>C29 simulation · native runway estimation, paused-pool fallback, multi-crystal ranking and shard-formed settlement remain pending. Physical-device QA is pending. No live wallet connection.<p><a href="visual-review.html">Artwork &amp; animation review</a></p></footer>
+      <details><summary>Simulated profile &amp; wallets</summary><p class="hint">One local profile; up to ten linked mock wallets. Linking never duplicates daily or first-release entitlements. Real NOMO Supply identity and Rewards integration are not connected.</p><span class="choice-label">Reward destination</span><input type="hidden" id="wallet-selection" value=""><div id="wallet-selection-choices" class="choice-buttons" data-choice="wallet-selection" role="group" aria-label="Reward destination"></div><label for="wallet-id">New mock wallet name</label><input id="wallet-id" maxlength="40"><button id="link-wallet">Link mock wallet</button></details>
+<p class="hint">Local simulation only. Native runway estimation, paused-pool fallback, crystal ranking and shard-formed settlement remain pending. Physical-device QA remains pending.</p></dialog>
   <dialog id="confirm-dialog"><form method="dialog"><h2 id="confirm-title"></h2><p id="confirm-text"></p><div class="dialog-actions"><button value="cancel">Cancel</button><button value="confirm" class="primary">Confirm</button></div></form></dialog>
   <dialog id="descent-cinematic" class="descent-cinematic" aria-labelledby="descent-title" data-phase="idle">
     <canvas class="descent-tunnel" aria-hidden="true" hidden></canvas>

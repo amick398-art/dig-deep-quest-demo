@@ -624,6 +624,16 @@
       "approval": "approved-original",
       "sourceId": "block.damage.heavy",
       "batch": "visual-12-masks-and-damage"
+    },
+    "board.approved_full": {
+      "file": "assets/boards/approved_full_board.jpg",
+      "sourceVerified": true,
+      "sha256": "7409b72e5f1b23116194a3cb725558ecf1bfe0e5541544e44d2d81c79ca72c18",
+      "approval": "approved-original",
+      "sourceId": "owner-upload-1000011053-2026-10-14",
+      "batch": "visual-16-full-board",
+      "width": 853,
+      "height": 1280
     }
   }
 }

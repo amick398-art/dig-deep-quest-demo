@@ -1,6 +1,7 @@
 import { RULES, createGame, restoreGame, act, publicBoard, spendable, resolved, PICKAXE_PRICE, balance, nativeSpendable, MYTHICS, COSMETICS, PLATES, RECHARGE, NATIVE_PRICES, DIG_ALTERNATIVES, amount, bulkTargets } from './game.mjs';
 import { MiningPresentation } from './effects.mjs';
 import { DescentCinematic } from './descent.mjs';
+import { closeGamePanels, refreshChoices } from './interface.mjs';
 const $ = id => document.getElementById(id);
 const presentation=new MiningPresentation($('mining-stage'));
 const descentCinematic=new DescentCinematic($('descent-cinematic'),{onTunnelStart:()=>presentation.tone('descend')});
@@ -51,6 +52,7 @@ async function run(type, data={}) {
     const previous=game;game = next;
     message(game.history[0]?.text || 'Ready.');
     render();
+    if(['dig','pickaxe','bulk','light','detector','scanner','finder','breakCrystal','descend'].includes(type))closeGamePanels();
     if(type==='descend')await descentCinematic.play(previous,next);
     else if(['dig','pickaxe','bulk','light','detector','scanner','finder','breakCrystal'].includes(type))void presentAction(type,data,previous,next).catch(()=>{});
   } catch (error) { message(error.message,true); }
@@ -90,7 +92,7 @@ function renderBoard() {
     const button=document.createElement('button');
     button.type='button';button.className='cell';button.dataset.index=cell.index;
     button.dataset.kind=cell.kind||'';
-    if(boardLayout){const [x,y,w,h]=boardLayout.cells[cell.index].rect;Object.assign(button.style,{left:`${x/5}%`,top:`${y/9.46}%`,width:`${w/5}%`,height:`${h/9.46}%`});}
+    if(boardLayout){const [x,y,w,h]=boardLayout.cells[cell.index].rect;Object.assign(button.style,{left:`${x/boardLayout.width*100}%`,top:`${y/boardLayout.height*100}%`,width:`${w/boardLayout.width*100}%`,height:`${h/boardLayout.height*100}%`});}
     button.dataset.state=cell.state;button.dataset.light=String(cell.light);
     button.setAttribute('aria-pressed',String(selected===cell.index));
     const label=cell.kind ? `${names[cell.kind]}${cell.asset ? ` · ${cell.asset}` : ''}${cell.light&&cell.state==='covered'?' · lit, unexcavated':''}${cell.state==='metal'?' · unresolved':cell.state==='resolved'&&['copper','silver','gold','platinum'].includes(cell.kind)?' · collected':''}` : 'Covered';
@@ -134,11 +136,20 @@ function renderTimeStatus() {
   $('free-status').textContent=designated<RULES.freeGate?'Daily claim requires 500,000 DIG held in the designated demo wallet.':freeWait?`Daily pair available in ${Math.ceil(freeWait/3600000)} hours.`:'Eligible: refill free balance to 2 once per 24 hours.';
   $('free').disabled=freeWait>0||designated<RULES.freeGate||!game.account.eligible;
   $('quick-free').disabled=$('free').disabled;
+  $('scene-free').disabled=$('free').disabled;
+  $('scene-refill').textContent=designated<RULES.freeGate?'Requires 500,000 DIG held':!game.account.eligible?'Profile ineligible':freeWait?`Daily pair in ${Math.ceil(freeWait/3600000)}h`:'Daily pair available';
+  $('scene-yield-DIG').textContent=game.boost.active?'90% covered Boost':'75% normal yield';
 }
 function render() {
   $('wallet').textContent=fmt(game.wallet);$('shovels').textContent=fmt(game.shovels);
   $('earned').textContent=fmt(game.earned);$('rewards').textContent=fmt(game.profileRewards);
   $('free-balance').textContent=game.freeShovels;$('stored-balance').textContent=game.storedShovels;
+  $('scene-shovels').textContent=fmt(game.shovels);$('scene-free-count').textContent=game.freeShovels;$('scene-stored-count').textContent=game.storedShovels;
+  for(const token of ['DIG','FENN','NOMO']){
+    $(`scene-pool-${token}`).textContent=fmt(token==='DIG'?spendable(game):nativeSpendable(game,token));
+    if(token!=='DIG')$(`scene-yield-${token}`).textContent=game.controllers[token].paused?'Pool paused':`${game.controllers[token].rate}% yield`;
+  }
+  for(const token of ['DIG','FENN'])$(`scene-shards-${token}`).textContent=`${game.shards[token].length} / 10`;
   for(const native of ['FENN','NOMO']){
     $(`wallet-${native}`).textContent=fmt(balance(game,native));$(`rewards-${native}`).textContent=fmt(balance(game,native,'profileRewards'));
     $(`pool-${native}`).textContent=`${fmt(nativeSpendable(game,native))} spendable · ${game.controllers[native].rate}% yield${game.controllers[native].paused?' · PAUSED':''}`;
@@ -195,6 +206,7 @@ function render() {
   if(!$('crystals').childElementCount)$('crystals').textContent='No owned crystals yet.';
   $('supplemental').textContent=`${game.supplemental.length} historical native discoveries held. Native runway estimation, canonical paused-pool fallback and shard-formed settlement remain pending; new native settlements use available funded pools.`;
   renderShop();
+  refreshChoices();
   $('activity').replaceChildren();
   for(const entry of game.history.slice(0,8)){const li=document.createElement('li');li.textContent=entry.text;$('activity').append(li);}
   renderBoard();
@@ -202,6 +214,7 @@ function render() {
 $('buy-shovels').onclick=()=>run('buyShovels',{count:Number($('pack').value)});
 $('free').onclick=()=>run('free');
 $('quick-free').onclick=()=>run('free');$('quick-buy').onclick=()=>run('buyShovels',{count:5});
+$('scene-free').onclick=()=>run('free');
 $('buy-pass').onclick=()=>confirmAction('Buy a simulated Boost Pass?', `260,000 DIG for 250 eligible future covered positions. Digging costs extra. NO REFUNDS. Uses carry forward; activation, timing, utilization and profit are not guaranteed. Current vault: ${fmt(game.vault)} actual, ${fmt(game.reserved)} reserved, ${fmt(spendable(game))} spendable. Activation 114,063,300; exit 100,000,000; five-minute post-event cooldown. Allocation: 104,000 pool, 91,000 treasury, 39,000 burn, 13,000 each Oso/Bebe. Covered DIG 90%; native yields unchanged.`,()=>run('buyPass',{acceptNoRefunds:true}));
 $('dig').onclick=()=>run('dig',{index:selected});
 $('pickaxe').onclick=()=>{
@@ -260,7 +273,7 @@ function renderShop(){
   const equip=document.createElement('button');equip.textContent=(game.equipped===key?'Equipped ':'Equip ')+key;equip.disabled=game.equipped===key;equip.onclick=()=>run('equip',{key});allowance.append(equip);const p=document.createElement('p');p.className='hint';p.textContent=`${key}: ${fmt(amount(remaining))} ${asset} bonus allowance remaining`;
   const b=document.createElement('button');b.textContent=`Recharge ${key} · ${fmt(RECHARGE[asset])} ${asset}`;b.onclick=()=>confirmAction('Recharge this allowance?',`${key} only: ${fmt(RECHARGE[asset])} ${asset} adds ${fmt(RECHARGE[asset]*0.35)} ${asset} bonus allowance. Optional; no new actions, ownership or percentage.`,()=>run('recharge',{key,asset}));allowance.append(p,b);
  }
- const wallets=$('wallet-selection');wallets.replaceChildren();for(const wallet of game.account.wallets){const option=document.createElement('option');option.value=wallet.id;option.textContent=wallet.id;wallets.append(option);}wallets.value=game.account.receivingWallet;
+ const wallets=$('wallet-selection'),choices=$('wallet-selection-choices');choices.replaceChildren();for(const wallet of game.account.wallets){const option=document.createElement('button');option.type='button';option.dataset.value=wallet.id;option.textContent=wallet.id;choices.append(option);}wallets.value=game.account.receivingWallet;
 }
 function platePreview(key){const wrapper=document.createElement('div');wrapper.className='plate-preview';const file=asset('plate.'+key);if(file){const img=document.createElement('img');img.src=file;img.alt=key+' new decorative plate';img.loading='lazy';wrapper.append(img);if(['DIG','FENN','NOMO'].includes(key)){const coin=document.createElement('span');coin.className='coin-face';coin.dataset.token=key;wrapper.append(coin);}}const label=document.createElement('small');label.textContent='NEW ART · REVIEW';wrapper.append(label);return wrapper;}
 async function presentAction(type,data,previous,next){
@@ -278,8 +291,10 @@ try {
   const candidateResponse=await fetch('./assets/candidate-bindings.json');if(candidateResponse.ok)candidateBindings=(await candidateResponse.json()).assets||{};
   await presentation.load();
   for(const node of document.querySelectorAll('[data-art-id]')){const file=asset(node.dataset.artId);if(file){const img=document.createElement('img');img.src=file;img.alt='';img.className='control-art';img.loading='lazy';img.decoding='async';node.prepend(img);}}
-  const layoutResponse=await fetch('./assets/board-layout.json');
+  const fullBoard=asset('board.approved_full');
+  const layoutResponse=await fetch(fullBoard?'./assets/board-full-layout.json':'./assets/board-layout.json');
   if(layoutResponse.ok&&asset('board.covered_viewport')){boardLayout=await layoutResponse.json();$('board').dataset.layout='approved';}
+  if(fullBoard&&boardLayout?.source?.file===fullBoard){$('board').dataset.surface='full-approved';document.body.classList.add('full-board');}
   const count=Object.values(bindings).filter(x=>x.sourceVerified===true).length;
   if(count)$('art-status').textContent=`${count} original asset bindings available. Missing visuals remain explicitly labeled placeholders; new UI remains a development treatment.`;
 } catch { message('Asset map unavailable. Temporary labeled visuals retained.',true); }
