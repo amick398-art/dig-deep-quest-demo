@@ -147,7 +147,7 @@ function assertLedger(s){
  if(s.wallet<0||s.reserved<0||s.vault<s.reserved||s.pass.remaining<0||s.freeShovels<0||s.storedShovels<0)throw Error('DIG accounting invariant failed.');
  for(const asset of ['FENN','NOMO']){const b=s.native[asset];if(fields.some(k=>BigInt(b[k])<0n)||BigInt(b.vault)<BigInt(b.reserved))throw Error('Native accounting invariant failed.');}
 }
-export function act(current,action,{now=Date.now(),rng=base.random}={}){
+export function act(current,action,{now=Date.now(),rng=base.random,afterRegularReward}={}){
  if(!action.id||typeof action.id!=='string')throw Error('A unique transaction ID is required.');
  if(current.transactions.includes(action.id))return current;
  // Owner clarification: reject foreign payment/pool labels before any controller or ledger mutation.
@@ -191,7 +191,7 @@ export function act(current,action,{now=Date.now(),rng=base.random}={}){
  else if(action.type==='bulk'){
   const indices=bulkTargets(action.kind,action);validateBulk(s,action.kind,indices);
   pay(s,action.kind==='dynamite'?'NOMO':'DIG',{smallCharge:13500,powerStrike:18000,drill:45000,dynamite:0.05}[action.kind]);
-  for(const index of indices){base.updateBoost(s,now);s.shovels++;s=base.act(s,{type:'dig',index,id:`${action.id}:cell:${index}`},{now,rng});finishDiscovery(s,s.board[index],rng);if(s.board[index].kind==='shovel')s.storedShovels++;syncShovels(s);for(const a of ['FENN','NOMO'])evaluateNative(s,a);}
+  for(const index of indices){base.updateBoost(s,now);s.shovels++;s=base.act(s,{type:'dig',index,id:`${action.id}:cell:${index}`},{now,rng});finishDiscovery(s,s.board[index],rng);afterRegularReward?.(s,s.board[index]);if(s.board[index].kind==='shovel')s.storedShovels++;syncShovels(s);for(const a of ['FENN','NOMO'])evaluateNative(s,a);}
   note(s,`${action.kind}: ${indices.length} positions excavated in row-major order.`);
  }else if(action.type==='buyCosmetic'){
   if(!Object.hasOwn(COSMETICS,action.key)||s.cosmetics.includes(action.key))throw Error('Cosmetic unavailable or already owned.');
@@ -236,7 +236,7 @@ export function act(current,action,{now=Date.now(),rng=base.random}={}){
   const oldFree=s.freeShovels;
   s=base.act(s,action,{now,rng});
   if(action.type==='buyShovels')s.storedShovels+=action.count;
-  if(action.type==='dig'){if(oldFree>0)s.freeShovels--;else s.storedShovels--;if(s.board[action.index].kind==='shovel')s.storedShovels++;finishDiscovery(s,s.board[action.index],rng);}
+  if(action.type==='dig'){if(oldFree>0)s.freeShovels--;else s.storedShovels--;if(s.board[action.index].kind==='shovel')s.storedShovels++;finishDiscovery(s,s.board[action.index],rng);afterRegularReward?.(s,s.board[action.index]);}
   if(action.type==='descend')enrichBoard(s,rng);
  }else throw Error('Unknown demo action.');
  syncShovels(s);base.updateBoost(s,now);for(const a of ['FENN','NOMO'])evaluateNative(s,a);

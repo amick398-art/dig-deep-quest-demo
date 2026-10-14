@@ -1,6 +1,7 @@
-import { RULES, createGame, restoreGame, act, publicBoard, spendable, resolved, PICKAXE_PRICE, balance, nativeSpendable, MYTHICS, COSMETICS, PLATES, RECHARGE, NATIVE_PRICES, DIG_ALTERNATIVES, amount, bulkTargets } from './game.mjs';
+import { RULES, createGame, restoreGame, act, publicBoard, spendable, resolved, PICKAXE_PRICE, balance, nativeSpendable, COSMETICS, PLATES, NATIVE_PRICES, DIG_ALTERNATIVES, amount, bulkTargets } from './nft-game.mjs';
 import { MiningPresentation } from './effects.mjs';
 import { DescentCinematic } from './descent.mjs';
+import { MythicShop } from './nft-shop.mjs';
 import { closeGamePanels, refreshChoices } from './interface.mjs';
 const $ = id => document.getElementById(id);
 const presentation=new MiningPresentation($('mining-stage'));
@@ -8,6 +9,7 @@ const descentCinematic=new DescentCinematic($('descent-cinematic'),{onTunnelStar
 const SAVE = 'dig-deep-quest-c29-demo-v1';
 let game, selected = null, bindings = {}, candidateBindings={}, boardLayout = null, busy = false, storageReady = true, shopFingerprint='', boardFingerprint='';
 let chargeTargets=[];
+const nftShop=new MythicShop($('mythic-shop'),{getGame:()=>game,perform:run,confirm:confirmAction,message,getBindings:()=>bindings});
 const fmt = n => n.toLocaleString('en-US',{maximumFractionDigits:12});
 function transactionId() {
   // randomUUID requires a secure context; getRandomValues also supports a phone
@@ -43,11 +45,12 @@ async function run(type, data={}) {
     const next = await (navigator.locks?.request ? navigator.locks.request(SAVE, () => {
       const latest = storageReady && localStorage.getItem(SAVE);
       if (latest) game = JSON.parse(latest);
-      const next = act(game, {type,...data,...context,id:transactionId()});
+      const next = act(game, {type,...data,...context,id:transactionId()},{authority:nftShop.authority()});
+      nftShop.commit(next);
       save(next);
       return next;
     }) : Promise.resolve().then(() => {
-      const next = act(game,{type,...data,...context,id:transactionId()}); save(next); return next;
+      const next = act(game,{type,...data,...context,id:transactionId()},{authority:nftShop.authority()}); nftShop.commit(next); save(next); return next;
     }));
     const previous=game;game = next;
     message(game.history[0]?.text || 'Ready.');
@@ -242,7 +245,7 @@ $('wallet-selection').onchange=()=>run('selectWallet',{walletId:$('wallet-select
 function confirmBulk(kind,data){try{const indices=bulkTargets(kind,data),price={smallCharge:'13,500 DIG',powerStrike:'18,000 DIG',drill:'45,000 DIG',dynamite:'0.05 NOMO'}[kind];confirmAction(`Use ${kind}?`,`${price} for ${indices.length} covered positions: ${indices.map(i=>`${Math.floor(i/5)+1}:${i%5+1}`).join(', ')} (row:column). Every target and settlement must validate; failure rolls back the whole purchase. Metal remains unresolved until its matching pickaxe. Inventory shovels are not consumed; Boost coverage uses one eligible position at a time.`,()=>run('bulk',{kind,...data}).then(()=>{chargeTargets=[];render();}));}catch(error){message(error.message,true);}}
 $('sound-toggle').onclick=()=>{const on=presentation.enableSound();$('sound-toggle').textContent=on?'Sound on · new effect preview':'Sound off · new effect preview';$('sound-toggle').setAttribute('aria-pressed',String(on));};
 function renderShop(){
- const signature=JSON.stringify([game.equipped,game.cosmetics,game.plates,game.equippedPlate,game.mythics,game.releaseStock,game.account.wallets.map(w=>w.id),game.account.receivingWallet,Object.keys(bindings),Object.keys(candidateBindings)]);
+ const signature=JSON.stringify([game.equipped,game.cosmetics,game.plates,game.equippedPlate,game.mythics,game.releaseStock,game.account.wallets.map(w=>w.id),game.account.receivingWallet,game.nftSandbox,game.nftEquipped,nftShop.enabled,Object.keys(bindings),Object.keys(candidateBindings)]);
  if(signature===shopFingerprint)return;shopFingerprint=signature;
  const shop=$('shovel-shop');shop.replaceChildren();
  for(const [key,price] of Object.entries(COSMETICS)){
@@ -259,20 +262,8 @@ function renderShop(){
   button.onclick=()=>owned?run('equipPlate',{key}):confirmAction('Buy a decorative plate?',`${key} standalone plate · ${fmt(price)} DIG. Permanent cosmetic only; no actions or reward bonus. Allocation: 90% DIG pool, 5% Oso, 5% Bebe. NEW ART AWAITING REVIEW.`,()=>run('buyPlate',{key}));card.append(button);plates.append(card);
  }
  const removePlate=document.createElement('button');removePlate.textContent='Remove decorative plate';removePlate.disabled=!game.equippedPlate;removePlate.onclick=()=>run('equipPlate',{key:null});plates.append(removePlate);
- const mythics=$('mythic-shop');mythics.replaceChildren();
- for(const [key,prices] of Object.entries(MYTHICS)){
-  const div=document.createElement('div');div.className='mythic-card';
-  const concept=candidateBindings[`shovel.${key}.sprite`];if(concept?.region){const preview=document.createElement('div');preview.className='concept-tool';const scale=120/concept.height;Object.assign(preview.style,{width:`${concept.width*concept.region[2]*scale}px`,height:'120px',backgroundImage:`url('${concept.file}')`,backgroundSize:`${concept.width*scale}px 120px`,backgroundPosition:`${-concept.width*concept.region[0]*scale}px 0`});preview.setAttribute('role','img');preview.setAttribute('aria-label',`${key} new Mythic shovel concept for review`);div.append(preview);}
-  const label=document.createElement('strong');label.textContent=`${key} Mythic · ${['Oso','Bebe'].includes(key)?'+15% regular DIG/FENN/NOMO':'+10% regular '+key} · NEW VISUAL FOR REVIEW${game.releaseStock[key]!==undefined?' · '+game.releaseStock[key]+' first-release copies remaining':''}`;
-  const text=Object.entries(prices).map(([a,p])=>`${fmt(p)} ${a}`).join(' + ');
-  const button=document.createElement('button'),owned=Boolean(game.mythics[key]);button.textContent=owned?`${game.equipped===key?'Equipped':'Equip'} ${key}`:`Buy · ${text}`;button.disabled=game.equipped===key;
-  const purchase=()=>confirmAction('Buy a functional Mythic?',`${text}. Included native allowances: ${Object.entries(prices).map(([a,p])=>fmt(p*0.35)+' '+a).join(' + ')}. All payment legs required. Permanent ownership; finite funded extras only. Extra = min(rate × payable eligible reward, remaining allowance); base unchanged. Metals, shards and crystals excluded. No DIG extra on covered Boost. No actions included. ${['Oso','Bebe'].includes(key)?'Premium class: 65% pool (35% reserved, 30% ordinary), 10% burn, 10% liquidity, 7.5% each Oso/Bebe, zero treasury. First release 100 copies, one per eligible profile.':'Ordinary class: 65% pool (35% reserved, 30% ordinary), 10% burn, 10% liquidity, 5% treasury, 5% each Oso/Bebe.'}`,()=>run('buyMythic',{key}));button.onclick=owned?()=>run('equip',{key}):purchase;div.append(label,button);if(owned&&!['Oso','Bebe'].includes(key)){const another=document.createElement('button');another.textContent='Buy another '+key+' Mythic';another.onclick=purchase;div.append(another);}mythics.append(div);
- }
- const allowance=$('allowances');allowance.replaceChildren();
- for(const [key,m] of Object.entries(game.mythics))for(const [asset,remaining] of Object.entries(m.allowances)){
-  const equip=document.createElement('button');equip.textContent=(game.equipped===key?'Equipped ':'Equip ')+key;equip.disabled=game.equipped===key;equip.onclick=()=>run('equip',{key});allowance.append(equip);const p=document.createElement('p');p.className='hint';p.textContent=`${key}: ${fmt(amount(remaining))} ${asset} bonus allowance remaining`;
-  const b=document.createElement('button');b.textContent=`Recharge ${key} · ${fmt(RECHARGE[asset])} ${asset}`;b.onclick=()=>confirmAction('Recharge this allowance?',`${key} only: ${fmt(RECHARGE[asset])} ${asset} adds ${fmt(RECHARGE[asset]*0.35)} ${asset} bonus allowance. Optional; no new actions, ownership or percentage.`,()=>run('recharge',{key,asset}));allowance.append(p,b);
- }
+ nftShop.render();
+ $('allowances').textContent='Historical simulated records are preserved; legacy allowances and recharges do not authorize NFT utility. No real NFT migration has been performed.';
  const wallets=$('wallet-selection'),choices=$('wallet-selection-choices');choices.replaceChildren();for(const wallet of game.account.wallets){const option=document.createElement('button');option.type='button';option.dataset.value=wallet.id;option.textContent=wallet.id;choices.append(option);}wallets.value=game.account.receivingWallet;
 }
 function platePreview(key){const wrapper=document.createElement('div');wrapper.className='plate-preview';const file=asset('plate.'+key);if(file){const img=document.createElement('img');img.src=file;img.alt=key+' new decorative plate';img.loading='lazy';wrapper.append(img);if(['DIG','FENN','NOMO'].includes(key)){const coin=document.createElement('span');coin.className='coin-face';coin.dataset.token=key;wrapper.append(coin);}}const label=document.createElement('small');label.textContent='NEW ART · REVIEW';wrapper.append(label);return wrapper;}

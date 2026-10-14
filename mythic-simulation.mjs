@@ -1,0 +1,26 @@
+// Explicit offline/simulated collection authority. Production must use verified chain adapters.
+import {COLLECTION_ID,NFT_TYPES,nftType,edition,getEdition,buildMintQuote,validateMintPayment} from './mythic-nft.mjs';
+export class SimulatedMythicRegistry{
+ #state;#quotes=new Map();
+ constructor(snapshot){this.#state=snapshot?structuredClone(snapshot):{mode:'simulation',collection:COLLECTION_ID,minted:Object.fromEntries(Object.keys(NFT_TYPES).map(type=>[type,0])),tokens:{},equipped:{},mintReceipts:{},settlementReceipts:{},settledActions:[],revision:0};this.#state.settledActions??=[];this.#validate();}
+ #validate(){const s=this.#state;if(s.mode!=='simulation'||s.collection!==COLLECTION_ID)throw Error('Not a simulated Mythic registry.');for(const type of Object.keys(NFT_TYPES)){if(!Number.isInteger(s.minted[type])||s.minted[type]<0||s.minted[type]>NFT_TYPES[type].cap)throw Error('Collection supply invariant failed.');const tokens=Object.values(s.tokens).filter(n=>n.type===type);if(tokens.length!==s.minted[type]||tokens.some(n=>getEdition(n.id).type!==type||getEdition(n.id).edition!==n.edition||!n.owner))throw Error('Edition registry invariant failed.');}for(const [wallet,id] of Object.entries(s.equipped))if(id&&s.tokens[id]?.owner!==wallet)throw Error('Equipped NFT owner invariant failed.');}
+ transact(operation){const before=structuredClone(this.#state),quotes=new Map(this.#quotes);try{return operation();}catch(error){this.#state=before;this.#quotes=quotes;throw error;}}
+ snapshot(){return structuredClone(this.#state);}
+ availability(){return Object.fromEntries(Object.keys(NFT_TYPES).map(type=>[type,{maximum:NFT_TYPES[type].cap,minted:this.#state.minted[type],remaining:NFT_TYPES[type].cap-this.#state.minted[type],verifiedOnChain:false}]));}
+ quote(type,{wallet,feed,now,id}){nftType(type);if(!wallet||this.availability()[type].remaining===0)throw Error('Wallet missing or edition sold out.');if(feed?.mode!=='simulation')throw Error('The offline registry accepts explicitly simulated test feeds only.');const quote=buildMintQuote(type,{wallet,feed,now,id});if(this.#quotes.has(id))throw Error('Quote identifier reused.');this.#quotes.set(id,quote);return structuredClone(quote);}
+ mint({quoteId,wallet,payments,now,requestId,balances}){
+  if(!requestId)throw Error('Mint transaction ID required.');const signature=JSON.stringify({quoteId,wallet,payments});const old=this.#state.mintReceipts[requestId];if(old){if(old.signature!==signature)throw Error('Idempotency identifier belongs to another mint.');return structuredClone(old);}
+  const quote=this.#quotes.get(quoteId);if(!quote)throw Error('Unknown or consumed server quote.');validateMintPayment(quote,{wallet,payments,now});const type=quote.type;
+  if(this.#state.minted[type]>=nftType(type).cap)throw Error('Fixed lifetime supply exhausted.');
+  const nextBalances=structuredClone(balances||{});for(const leg of quote.legs){if(!/^\d+$/.test(String(nextBalances[leg.asset]))||BigInt(nextBalances[leg.asset])<BigInt(leg.amountUnits))throw Error('A required payment leg is unavailable; nothing minted.');nextBalances[leg.asset]=String(BigInt(nextBalances[leg.asset])-BigInt(leg.amountUnits));}
+  const nft={...edition(type,this.#state.minted[type]+1),owner:wallet,mintedAt:now,ownershipRevision:this.#state.revision+1,verifiedOnChain:false};const receipt={requestId,signature,nft,balances:nextBalances,quote:structuredClone(quote),mode:'simulation'};
+  // Commit only after every leg, identifier and supply check has passed.
+  this.#state.minted[type]++;this.#state.tokens[nft.id]=nft;this.#state.mintReceipts[requestId]=structuredClone(receipt);this.#state.revision++;this.#quotes.delete(quoteId);this.#validate();return structuredClone(receipt);
+ }
+ owned(wallet){return Object.values(this.#state.tokens).filter(n=>n.owner===wallet).map(n=>structuredClone(n));}
+ verifyOwner(wallet,id){const nft=this.#state.tokens[id];if(!nft||nft.owner!==wallet)throw Error('NFT ownership verification failed.');return {...getEdition(id),owner:wallet,revision:nft.ownershipRevision,mode:'simulation',verifiedOnChain:false};}
+ equip(wallet,id){if(id!==null)this.verifyOwner(wallet,id);this.#state.equipped[wallet]=id;return id;}
+ equipped(wallet){const id=this.#state.equipped[wallet];return id?this.verifyOwner(wallet,id):null;}
+ transfer({id,from,to}){if(!to||to===from)throw Error('Choose a distinct receiving test wallet.');this.verifyOwner(from,id);const nft=this.#state.tokens[id];nft.owner=to;nft.ownershipRevision=++this.#state.revision;if(this.#state.equipped[from]===id)this.#state.equipped[from]=null;this.#validate();return structuredClone(nft);}
+ settleOnce(wallet,actionId,operation){if(!actionId)throw Error('Reward action ID required.');const key=`${wallet}:${actionId}`;if(this.#state.settlementReceipts[key])return structuredClone(this.#state.settlementReceipts[key]);if(this.#state.settledActions.includes(key))throw Error('Previously settled action is archived; reload the current game.');const entitlement=this.equipped(wallet);const result=operation(entitlement);this.#state.settlementReceipts[key]=structuredClone(result);this.#state.settledActions.push(key);const keys=Object.keys(this.#state.settlementReceipts);if(keys.length>24)delete this.#state.settlementReceipts[keys[0]];return result;}
+}
