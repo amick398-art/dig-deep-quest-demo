@@ -1,0 +1,11 @@
+{
+  "schema": 1,
+  "screens": {
+    "shovels": {
+      "file": "assets/shop/approved_shovels.jpg",
+      "sha256": "9a04547a91573c3c24f9f2979f8480e9814be86d2a6303c20f9b26fda965a84e",
+      "width": 1280,
+      "height": 853
+    }
+  }
+}

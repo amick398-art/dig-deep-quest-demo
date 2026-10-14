@@ -2,6 +2,7 @@ import { RULES, createGame, restoreGame, act, publicBoard, spendable, resolved, 
 import { MiningPresentation } from './effects.mjs';
 import { DescentCinematic } from './descent.mjs';
 import { MythicShop } from './nft-shop.mjs';
+import { ApprovedShop, approvedArtwork } from './approved-shop.mjs';
 import { closeGamePanels, refreshChoices } from './interface.mjs';
 const $ = id => document.getElementById(id);
 const presentation=new MiningPresentation($('mining-stage'));
@@ -10,6 +11,7 @@ const SAVE = 'dig-deep-quest-c29-demo-v1';
 let game, selected = null, bindings = {}, candidateBindings={}, boardLayout = null, busy = false, storageReady = true, shopFingerprint='', boardFingerprint='';
 let chargeTargets=[];
 const nftShop=new MythicShop($('mythic-shop'),{getGame:()=>game,perform:run,confirm:confirmAction,message,getBindings:()=>bindings});
+const approvedShop=new ApprovedShop($('approved-shop'),{getGame:()=>game,getSelected:()=>selected,getChargeTargets:()=>[...chargeTargets],perform:run,confirm:confirmAction,requestBulk:confirmBulk,setFamily:(family)=>{$('reward-family').value=family;$('pay-currency').value=family;render();refreshChoices();}});
 const fmt = n => n.toLocaleString('en-US',{maximumFractionDigits:12});
 function transactionId() {
   // randomUUID requires a secure context; getRandomValues also supports a phone
@@ -144,6 +146,7 @@ function renderTimeStatus() {
   $('scene-yield-DIG').textContent=game.boost.active?'90% covered Boost':'75% normal yield';
 }
 function render() {
+  approvedShop.refresh();
   $('wallet').textContent=fmt(game.wallet);$('shovels').textContent=fmt(game.shovels);
   $('earned').textContent=fmt(game.earned);$('rewards').textContent=fmt(game.profileRewards);
   $('free-balance').textContent=game.freeShovels;$('stored-balance').textContent=game.storedShovels;
@@ -250,7 +253,7 @@ function renderShop(){
  const shop=$('shovel-shop');shop.replaceChildren();
  for(const [key,price] of Object.entries(COSMETICS)){
   const card=document.createElement('div');card.className='shop-card';
-  const file=asset(`shovel.${key}.card`);if(file){const img=document.createElement('img');img.src=file;img.alt=`${key} cosmetic`;img.loading='lazy';card.append(img);}
+  const file=asset(`shovel.${key}.card`);if(file)card.append(approvedArtwork(bindings[`shovel.${key}.card`]||{file},`${key} cosmetic`));
   const button=document.createElement('button'),owned=game.cosmetics.includes(key);
   button.textContent=owned?`${game.equipped===key?'Equipped':'Equip'} ${key}`:`${key} · ${fmt(price)} DIG`;
   button.disabled=game.equipped===key;button.onclick=()=>owned?run('equip',{key}):confirmAction('Buy a permanent cosmetic?',`${key} · ${fmt(price)} DIG. Cosmetic only; no actions, odds or reward bonus.`,()=>run('buyCosmetic',{key}));card.append(button);shop.append(card);
@@ -290,6 +293,7 @@ try {
   if(count)$('art-status').textContent=`${count} original asset bindings available. Missing visuals remain explicitly labeled placeholders; new UI remains a development treatment.`;
 } catch { message('Asset map unavailable. Temporary labeled visuals retained.',true); }
 render();
+approvedShop.load().catch(error=>message(error.message,true));
 save(game);
 // Timer evaluation is local simulation, not a live economic service.
 setInterval(()=>{

@@ -41,7 +41,8 @@ export function act(current,action,{authority=null,now=Date.now(),rng}={}){
   if(s.mythics[action.key])throw Error('Legacy item is not a verified NFT.');authority?.equip(wallet,null);
  }
  // The authority is queried at settlement, never read from saved nftEquipped/mythics.
- s=legacy.act(s,action,{now,rng,afterRegularReward:(next,cell)=>payBonus(next,cell,entitled())});wallet=s.account.receivingWallet;s.nftEquipped=entitled()?.id||null;return s;
+ // Current release has owner-approved Shadow Forge artwork; historical callers retain their pre-release guard.
+ s=legacy.act(s,action,{now,rng,approvedShadowForge:true,afterRegularReward:(next,cell)=>payBonus(next,cell,entitled())});wallet=s.account.receivingWallet;s.nftEquipped=entitled()?.id||null;return s;
  };
  const settle=()=>authority?.settleOnce?authority.settleOnce(current.account.receivingWallet,action.id,()=>execute()):execute();
  return authority?.transact?authority.transact(settle):settle();

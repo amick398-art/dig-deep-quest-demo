@@ -9,6 +9,7 @@
   <title>DIG: Deep Quest — gameplay preview</title>
   <link rel="stylesheet" href="style.css">
   <link rel="stylesheet" href="approved-board.css">
+  <link rel="stylesheet" href="approved-shop.css">
   <script type="module" src="interface.mjs"></script>
   <script type="module" src="app.mjs"></script>
 </head>
@@ -57,7 +58,7 @@
 
   </main>
   <footer><p id="save-status">Progress saves locally in this browser.</p><span>Demo · simulated balances</span> · <a href="visual-review.html">Artwork review</a></footer>
-  <dialog id="shop-panel" class="game-panel" aria-labelledby="shop-panel-title"><div class="panel-heading"><h2 id="shop-panel-title">Shop</h2><button type="button" data-close-panel aria-label="Close Shop">Close</button></div>    <aside class="panel account" id="supplies">
+  <dialog id="shop-panel" class="game-panel" aria-labelledby="shop-panel-title"><div class="panel-heading"><h2 id="shop-panel-title">Shop</h2><button type="button" data-close-panel aria-label="Close Shop">Close</button></div><section id="approved-shop" aria-label="Approved interactive shop"></section>    <aside class="panel account" id="supplies">
       <h2>Your expedition</h2>
       <dl class="metrics"><div><dt>Demo wallet · DIG</dt><dd id="wallet">—</dd></div><div><dt>Shovels</dt><dd id="shovels">—</dd></div><div><dt>Lifetime simulated DIG earned</dt><dd id="earned">—</dd></div><div><dt>Simulated profile Rewards · DIG</dt><dd id="rewards">—</dd></div></dl>
       <button id="claim-rewards">Claim available Rewards</button>

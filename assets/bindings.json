@@ -634,6 +634,123 @@
       "batch": "visual-16-full-board",
       "width": 853,
       "height": 1280
+    },
+    "shop.screen.shovels": {
+      "file": "assets/shop/approved_shovels.jpg",
+      "sourceVerified": true,
+      "sha256": "9a04547a91573c3c24f9f2979f8480e9814be86d2a6303c20f9b26fda965a84e",
+      "approval": "approved-original",
+      "sourceId": "1-1000011072.jpg",
+      "batch": "approved-shop-shovels",
+      "width": 1280,
+      "height": 853
+    },
+    "shovel.mythic.nomo.catalogue": {
+      "file": "assets/shop/approved_shovels.jpg",
+      "sourceVerified": true,
+      "sha256": "9a04547a91573c3c24f9f2979f8480e9814be86d2a6303c20f9b26fda965a84e",
+      "approval": "approved-original",
+      "sourceId": "1-1000011072.jpg",
+      "batch": "approved-shop-shovels",
+      "width": 1280,
+      "height": 853,
+      "region": [
+        596,
+        460,
+        124,
+        237
+      ],
+      "regionUnits": "source-pixels",
+      "usage": "Approved catalogue view from exact shop original; isolated production NFT image still required"
+    },
+    "shovel.mythic.oso.catalogue": {
+      "file": "assets/shop/approved_shovels.jpg",
+      "sourceVerified": true,
+      "sha256": "9a04547a91573c3c24f9f2979f8480e9814be86d2a6303c20f9b26fda965a84e",
+      "approval": "approved-original",
+      "sourceId": "1-1000011072.jpg",
+      "batch": "approved-shop-shovels",
+      "width": 1280,
+      "height": 853,
+      "region": [
+        728,
+        460,
+        124,
+        237
+      ],
+      "regionUnits": "source-pixels",
+      "usage": "Approved catalogue view from exact shop original; isolated production NFT image still required"
+    },
+    "shovel.mythic.bebe.catalogue": {
+      "file": "assets/shop/approved_shovels.jpg",
+      "sourceVerified": true,
+      "sha256": "9a04547a91573c3c24f9f2979f8480e9814be86d2a6303c20f9b26fda965a84e",
+      "approval": "approved-original",
+      "sourceId": "1-1000011072.jpg",
+      "batch": "approved-shop-shovels",
+      "width": 1280,
+      "height": 853,
+      "region": [
+        860,
+        460,
+        124,
+        237
+      ],
+      "regionUnits": "source-pixels",
+      "usage": "Approved catalogue view from exact shop original; isolated production NFT image still required"
+    },
+    "shovel.mythic.fenn.catalogue": {
+      "file": "assets/shop/approved_shovels.jpg",
+      "sourceVerified": true,
+      "sha256": "9a04547a91573c3c24f9f2979f8480e9814be86d2a6303c20f9b26fda965a84e",
+      "approval": "approved-original",
+      "sourceId": "1-1000011072.jpg",
+      "batch": "approved-shop-shovels",
+      "width": 1280,
+      "height": 853,
+      "region": [
+        992,
+        460,
+        124,
+        237
+      ],
+      "regionUnits": "source-pixels",
+      "usage": "Approved catalogue view from exact shop original; isolated production NFT image still required"
+    },
+    "shovel.mythic.dig.catalogue": {
+      "file": "assets/shop/approved_shovels.jpg",
+      "sourceVerified": true,
+      "sha256": "9a04547a91573c3c24f9f2979f8480e9814be86d2a6303c20f9b26fda965a84e",
+      "approval": "approved-original",
+      "sourceId": "1-1000011072.jpg",
+      "batch": "approved-shop-shovels",
+      "width": 1280,
+      "height": 853,
+      "region": [
+        1124,
+        460,
+        124,
+        237
+      ],
+      "regionUnits": "source-pixels",
+      "usage": "Approved catalogue view from exact shop original; isolated production NFT image still required"
+    },
+    "shovel.shadow_forge.card": {
+      "file": "assets/shop/approved_shovels.jpg",
+      "sourceVerified": true,
+      "sha256": "9a04547a91573c3c24f9f2979f8480e9814be86d2a6303c20f9b26fda965a84e",
+      "approval": "approved-original",
+      "sourceId": "1-1000011072.jpg",
+      "batch": "approved-shop-shovels",
+      "width": 1280,
+      "height": 853,
+      "region": [
+        417,
+        475,
+        140,
+        221
+      ],
+      "regionUnits": "source-pixels"
     }
   }
 }

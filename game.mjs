@@ -2,7 +2,7 @@
 import * as base from './engine.mjs';
 export const { RULES, publicBoard, resolved, spendable, PICKAXE_PRICE } = base;
 export const SUPPLY={DIG:1_000_000_000,FENN:1_000_000_000_000,NOMO:10_000};
-export const COSMETICS={basic:0,copper:1000,bronze:2000,iron:2500,silver:5000,gold:10000,platinum:25000,crystal:30000,obsidian:35000,void:40000,diamond:50000};
+export const COSMETICS={basic:0,copper:1000,bronze:2000,iron:2500,silver:5000,gold:10000,platinum:25000,crystal:30000,obsidian:35000,void:40000,diamond:50000,shadow_forge:50000};
 export const PLATES={silver:1000,gold:2000,platinum:5000,DIG:6000,FENN:6000,NOMO:6000};
 export const MYTHICS={DIG:{DIG:100000},FENN:{FENN:500000000},NOMO:{NOMO:0.10},Oso:{DIG:200000,FENN:500000000,NOMO:0.10},Bebe:{DIG:200000,FENN:500000000,NOMO:0.10}};
 export const RECHARGE={DIG:20000,FENN:100000000,NOMO:0.02};
@@ -147,7 +147,7 @@ function assertLedger(s){
  if(s.wallet<0||s.reserved<0||s.vault<s.reserved||s.pass.remaining<0||s.freeShovels<0||s.storedShovels<0)throw Error('DIG accounting invariant failed.');
  for(const asset of ['FENN','NOMO']){const b=s.native[asset];if(fields.some(k=>BigInt(b[k])<0n)||BigInt(b.vault)<BigInt(b.reserved))throw Error('Native accounting invariant failed.');}
 }
-export function act(current,action,{now=Date.now(),rng=base.random,afterRegularReward}={}){
+export function act(current,action,{now=Date.now(),rng=base.random,afterRegularReward,approvedShadowForge=false}={}){
  if(!action.id||typeof action.id!=='string')throw Error('A unique transaction ID is required.');
  if(current.transactions.includes(action.id))return current;
  // Owner clarification: reject foreign payment/pool labels before any controller or ledger mutation.
@@ -194,6 +194,7 @@ export function act(current,action,{now=Date.now(),rng=base.random,afterRegularR
   for(const index of indices){base.updateBoost(s,now);s.shovels++;s=base.act(s,{type:'dig',index,id:`${action.id}:cell:${index}`},{now,rng});finishDiscovery(s,s.board[index],rng);afterRegularReward?.(s,s.board[index]);if(s.board[index].kind==='shovel')s.storedShovels++;syncShovels(s);for(const a of ['FENN','NOMO'])evaluateNative(s,a);}
   note(s,`${action.kind}: ${indices.length} positions excavated in row-major order.`);
  }else if(action.type==='buyCosmetic'){
+  if(action.key==='shadow_forge'&&!approvedShadowForge)throw Error('Shadow Forge release requires approved artwork.');
   if(!Object.hasOwn(COSMETICS,action.key)||s.cosmetics.includes(action.key))throw Error('Cosmetic unavailable or already owned.');
   pay(s,'DIG',COSMETICS[action.key],'cosmetic');s.cosmetics.push(action.key);note(s,'Permanent cosmetic owned; no gameplay bonus.');
  }else if(action.type==='buyPlate'){
