@@ -6,3 +6,15 @@
 .approved-shop-detail fieldset{display:grid;grid-template-columns:minmax(0,1fr);gap:8px;min-width:0}
 .approved-shop-detail fieldset label{display:block}
 .approved-shop-detail fieldset input{display:block;width:100%;min-width:0;box-sizing:border-box}
+
+/* Fit the unchanged landscape originals; readable item controls remain below. */
+.approved-shop-scene{min-width:0}
+.approved-shop-viewport{overflow:hidden;touch-action:pan-y pinch-zoom}
+@media(max-width:620px){
+ .approved-shop-scene .shop-art-hit{min-height:0}
+ .shop-art-balance{font-size:clamp(4px,1.4vw,7px);padding:0}
+ .shop-currency-runtime{font-size:clamp(4px,1.5vw,7px);line-height:1.25;padding:0}
+ .shop-price-badge{display:none}
+ .approved-shop-items button{min-width:100px;min-height:44px}
+ .approved-shop-notice,.approved-shop-detail p,.shop-digging-packs p{overflow-wrap:anywhere}
+}

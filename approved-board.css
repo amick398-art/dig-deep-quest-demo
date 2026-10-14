@@ -79,3 +79,44 @@ main{display:block;max-width:1070px}.mine{margin:0 auto}.game-panel{width:min(94
 @media(prefers-reduced-motion:reduce){.board[data-layout="approved"] .cell .reward-amount{animation:none}}
 
 @media(max-width:620px){body.full-board .target-panel{position:relative;top:auto}}
+
+/* Mobile width fit: original scene proportions, all 50 targets and both side panels. */
+@media(max-width:620px){
+ body.full-board main{padding:8px 0}
+ body.full-board .target-panel{margin:0 8px 10px}
+ .board-pan-hint{margin:6px 10px 10px}
+ .scene-viewport{overflow:hidden;touch-action:pan-y pinch-zoom;border-radius:4px}
+ .scene-stage{width:100%;min-width:0;margin:0}
+ .scene-depth{padding:2px}
+ .scene-depth h2{font-size:clamp(12px,3.4cqw,22px)}
+ .scene-depth p{margin:1px 0;font-size:clamp(6px,1.8cqw,10px)}
+ .scene-depth small{font-size:clamp(5.5px,1.6cqw,9px)}
+ .scene-shovel-main{grid-template-columns:minmax(0,1fr) 24px;padding:0 1px;gap:0}
+ .scene-shovel-main>strong{font-size:clamp(10px,3.4cqw,18px);line-height:1}
+ .scene-shovel-main>small{font-size:clamp(5.5px,1.55cqw,8px);line-height:1}
+ .scene-shovel-main button{width:24px;min-height:24px;height:24px;font-size:19px;border-radius:4px}
+ .scene-refill{padding:1px 2px;gap:1px;font-size:clamp(6px,1.9cqw,10px)}
+ .scene-refill small{font-size:.8em}
+ .scene-nav-journey span{font-size:clamp(6.5px,2cqw,11px)}
+ .scene-shard{gap:1px;font-size:clamp(6px,1.8cqw,10px)}
+ .scene-shard strong{font-size:clamp(11px,3cqw,16px)}
+ .scene-pool{padding:2px;gap:2px}
+ .scene-pool-values{gap:1px;line-height:1.1}
+ .scene-pool-values>span{font-size:clamp(6px,1.8cqw,9px)}
+ .scene-pool-values>strong{font-size:clamp(7px,2.1cqw,11px)}
+ .scene-pool-values>small{font-size:clamp(5.5px,1.4cqw,8px)}
+ .scene-legend{padding:1px 2px;gap:0;font-size:clamp(6px,1.9cqw,10px);line-height:1.15}
+ .scene-legend small{width:100%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:.88em}
+ .scene-progress{padding:0 2px;gap:0}
+ .scene-progress>strong{font-size:clamp(9px,2.5cqw,13px);line-height:1.1}
+ .scene-progress progress{height:1.5px;margin:0}
+ .scene-progress button{min-height:24px;padding:1px 2px;font-size:clamp(7px,1.9cqw,10px)}
+ .reward-shape-label{font-size:5px;line-height:7px}
+ .board[data-layout="approved"] .cell .reward-amount{font-size:10px;padding:2px 4px}
+}
+
+/* Keep the first tap's status/price update from moving a small touch target. */
+@media(max-width:620px){
+ body.full-board .target-panel p{height:3.6em;line-height:1.2;overflow:auto}
+ body.full-board .target-panel #dig,body.full-board .target-panel #pickaxe{height:64px;min-height:64px;line-height:1.2;overflow:auto}
+}

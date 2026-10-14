@@ -20,6 +20,9 @@ let chargeTargets=[],bulkMode=null;
 const rewardReveals=new RewardReveals(()=>renderBoard());
 const nftShop=new MythicShop($('mythic-shop'),{getGame:()=>game,perform:run,confirm:confirmAction,message,getBindings:()=>bindings});
 const approvedShop=new ApprovedShop($('approved-shop'),{getGame:()=>game,getSelected:()=>selected,getChargeTargets:()=>[...chargeTargets],perform:run,confirm:confirmAction,requestBulk:confirmBulk,startBulk:beginBulkTargeting,setFamily:(family)=>{$('reward-family').value=family;$('pay-currency').value=family;render();refreshChoices();}});
+const mobileView=matchMedia('(max-width:620px)');
+const compactNumber=new Intl.NumberFormat('en-US',{notation:'compact',maximumFractionDigits:1});
+const sceneNumber=n=>mobileView.matches?compactNumber.format(n):fmt(n);
 const fmt = n => n.toLocaleString('en-US',{maximumFractionDigits:12});
 function transactionId() {
   // randomUUID requires a secure context; getRandomValues also supports a phone
@@ -182,9 +185,9 @@ function render() {
   approvedShop.refresh();
   $('wallet').textContent=fmt(game.wallet);$('shovels').textContent=fmt(game.shovels);
   $('earned').textContent=fmt(game.earned);$('rewards').textContent=fmt(game.profileRewards);
-  $('scene-shovels').textContent=fmt(game.shovels);$('scene-free-count').textContent=game.freeShovels;$('scene-stored-count').textContent=game.storedShovels;
+  $('scene-shovels').textContent=sceneNumber(game.shovels);$('scene-shovels').title=fmt(game.shovels)+' shovels';$('scene-free-count').textContent=game.freeShovels;$('scene-stored-count').textContent=game.storedShovels;
   for(const token of ['DIG','FENN','NOMO']){
-    $(`scene-pool-${token}`).textContent=fmt(token==='DIG'?spendable(game):nativeSpendable(game,token));
+    const poolValue=token==='DIG'?spendable(game):nativeSpendable(game,token),poolNode=$(`scene-pool-${token}`);poolNode.textContent=sceneNumber(poolValue);poolNode.title=fmt(poolValue)+' '+token;poolNode.setAttribute('aria-label',fmt(poolValue)+' '+token+' spendable');
     if(token!=='DIG')$(`scene-yield-${token}`).textContent=game.controllers[token].paused?'Pool paused':`${game.controllers[token].rate}% yield`;
   }
   for(const token of ['DIG','FENN'])$(`scene-shards-${token}`).textContent=`${game.shards[token].length} / 10`;
@@ -338,6 +341,7 @@ try {
 await approvedShop.load().catch(error=>message(error.message,true));
 await cleanBoardReady;
 document.body.dataset.runtimeReady='true';
+mobileView.addEventListener('change',()=>render());
 // Timer evaluation is local simulation, not a live economic service.
 setInterval(()=>{
   if(document.hidden||busy)return;
