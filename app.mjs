@@ -1,4 +1,5 @@
 import {RewardReveals,COIN_REGIONS} from './reward-reveal.mjs?v=loot-reveal-20261014';
+import {enablePoolAutomation} from './nft-game.mjs?v=loot-reveal-20261014';
 import {BULK_TOOLS,bulkReadiness} from './bulk-controls.mjs?v=loot-reveal-20261014';
 import {restorePoolEmblems,restoreCleanBoard} from './board-presentation.mjs?v=loot-reveal-20261014';
 import { RULES, createGame, restoreGame, act, publicBoard, spendable, resolved, PICKAXE_PRICE, balance, nativeSpendable, COSMETICS, PLATES, NATIVE_PRICES, DIG_ALTERNATIVES, amount, bulkTargets } from './nft-game.mjs?v=loot-reveal-20261014';
@@ -36,7 +37,7 @@ try {
   game = saved ? JSON.parse(saved) : createGame();
   if (game.schema !== 1 || game.version !== RULES.version || !Array.isArray(game.board) || game.board.length !== 50) throw new Error('Save format does not match this demo. Existing save has been retained.');
   if(saved&&!game.native&&!localStorage.getItem(SAVE+'-before-extensions'))localStorage.setItem(SAVE+'-before-extensions',saved);
-  game=restoreGame(game);
+  game=enablePoolAutomation(restoreGame(game));
 } catch (error) {
   // Do not silently overwrite paid inventory or earned rights on a bad save.
   storageReady = false;
@@ -246,7 +247,8 @@ function render() {
     $('crystals').append(div);
   }
   if(!$('crystals').childElementCount)$('crystals').textContent='No owned crystals yet.';
-  $('supplemental').textContent=`${game.supplemental.length} historical native discoveries held. Native runway estimation, canonical paused-pool fallback and shard-formed settlement remain pending; new native settlements use available funded pools.`;
+  $('supplemental').textContent=`${game.supplemental.length} historical native discoveries held. Native pool forecasting is automatic; historical fallback and unsupported shard provenance remain held.`;
+  for(const token of ['FENN','NOMO']){const c=game.controllers[token],f=c.forecast;if(f)$('pool-'+token).textContent=`${fmt(balance(game,token,'vault'))} · ${c.paused?'PAUSED':c.rate+'% yield'} · ${fmt(Math.floor(f.expectedDigs))} expected digs · ${f.exposure.samples}/256 metal samples`;}
   renderShop();
   refreshChoices();
   $('activity').replaceChildren();

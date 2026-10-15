@@ -1,4 +1,5 @@
 import {scanCrystals} from './crystal-finder.mjs?v=nomo-finder-20261014';
+import {refreshNativeForecast,recordMetalSelection} from './pool-automation.mjs';
 // C29 simulated gameplay extensions. The recovered engine.mjs remains immutable.
 import * as base from './engine.mjs';
 export const { RULES, publicBoard, resolved, spendable, PICKAXE_PRICE } = base;
@@ -131,18 +132,24 @@ function validateBulk(s,kind,indices){
  }
 }
 export function evaluateNative(s,asset){
+ if(s.poolAutomationVersion===1)refreshNativeForecast(s);
  const c=s.controllers[asset],available=BigInt(s.native[asset].vault)-BigInt(s.native[asset].reserved),rates=[100,75,50,25,10];
  if(asset==='FENN'&&available<percent(80000000,c.rate*100)||asset==='NOMO'&&available<units(2))c.paused=true;
  // Runway must come from the authoritative native-liability estimator, not an invented denominator.
  if(!c.runway)return;
+ // Safety always rechecks; at most one yield transition per atomic settlement event.
+ if(s.poolAutomationVersion===1&&s.poolEvent&&c.lastTransitionEvent===s.poolEvent)return;
+ const beforeRate=c.rate,beforePaused=c.paused;
  const index=rates.indexOf(c.rate),down=[12500,10000,5000,2500],recovery=[16000,13500,8500,6000];
  if(c.paused){
   if(asset==='FENN'&&c.runway[25]>=6000&&available>=units(20000000)){c.rate=25;c.paused=false;}
   if(asset==='NOMO'&&Number.isFinite(c.restartLiability)&&c.restartLiability>=0&&available>=units(2)+units(c.restartLiability))c.paused=false;
+  if(s.poolAutomationVersion===1&&(c.rate!==beforeRate||c.paused!==beforePaused))c.lastTransitionEvent=s.poolEvent;
   return;
  }
  if(index<4&&c.runway[c.rate]<down[index])c.rate=rates[index+1];
  else if(index>0&&c.runway[rates[index-1]]>=recovery[index-1])c.rate=rates[index-1];
+ if(s.poolAutomationVersion===1&&c.rate!==beforeRate)c.lastTransitionEvent=s.poolEvent;
 }
 function assertLedger(s){
  if(s.wallet<0||s.reserved<0||s.vault<s.reserved||s.pass.remaining<0||s.freeShovels<0||s.storedShovels<0)throw Error('DIG accounting invariant failed.');
@@ -155,7 +162,7 @@ export function act(current,action,{now=Date.now(),rng=base.random,afterRegularR
  if(action.type==='buyPass'&&['currency','paymentCurrency','asset','family','pool','rewardPool'].some(key=>action[key]!==undefined&&action[key]!=='DIG'))throw Error('DIG Boost Passes require DIG payment and the DIG reward pool. No charge made.');
  if(action.expectedDepth!==undefined&&action.expectedDepth!==current.depth)throw Error('Depth changed while this action was open. Review the target again; no charge made.');
  if(action.expectedWallet!==undefined&&action.expectedWallet!==(current.account?.receivingWallet||'demo-wallet'))throw Error('Receiving wallet changed. Review checkout again; no charge made.');
- let s=restoreGame(current,rng);syncShovels(s);
+ let s=restoreGame(current,rng);syncShovels(s);if(s.poolAutomationVersion===1)s.poolEvent=action.id;
  for(const a of ['FENN','NOMO'])evaluateNative(s,a);
  const inherited=['tick','buyShovels','buyPass','dig','light','detector','scanner','depthPass','descend','deposit'];
  if(action.type==='deposit'&&action.asset&&action.asset!=='DIG'){
@@ -240,7 +247,9 @@ export function act(current,action,{now=Date.now(),rng=base.random,afterRegularR
   if(action.type==='dig'){if(oldFree>0)s.freeShovels--;else s.storedShovels--;if(s.board[action.index].kind==='shovel')s.storedShovels++;finishDiscovery(s,s.board[action.index],rng);afterRegularReward?.(s,s.board[action.index]);}
   if(action.type==='descend')enrichBoard(s,rng);
  }else throw Error('Unknown demo action.');
+ if(action.type==='pickaxe'&&s.poolAutomationVersion===1)recordMetalSelection(s,{id:action.id,family:action.family||'DIG',tier:current.board[action.index].kind});
  syncShovels(s);base.updateBoost(s,now);for(const a of ['FENN','NOMO'])evaluateNative(s,a);
+ if(s.poolAutomationVersion===1)refreshNativeForecast(s);
  if(!s.transactions.includes(action.id))s.transactions.push(action.id);
  assertLedger(s);return s;
 }
