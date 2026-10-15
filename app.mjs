@@ -1,5 +1,5 @@
 import {RewardReveals,COIN_REGIONS} from './reward-reveal.mjs?v=loot-reveal-20261014';
-import {enablePoolAutomation} from './nft-game.mjs?v=loot-reveal-20261014';
+import {enablePoolAutomation,enableCrystalRewards} from './nft-game.mjs?v=loot-reveal-20261014';
 import {BULK_TOOLS,bulkReadiness} from './bulk-controls.mjs?v=loot-reveal-20261014';
 import {restorePoolEmblems,restoreCleanBoard} from './board-presentation.mjs?v=loot-reveal-20261014';
 import { RULES, createGame, restoreGame, act, publicBoard, spendable, resolved, PICKAXE_PRICE, balance, nativeSpendable, COSMETICS, PLATES, NATIVE_PRICES, DIG_ALTERNATIVES, amount, bulkTargets } from './nft-game.mjs?v=loot-reveal-20261014';
@@ -37,7 +37,7 @@ try {
   game = saved ? JSON.parse(saved) : createGame();
   if (game.schema !== 1 || game.version !== RULES.version || !Array.isArray(game.board) || game.board.length !== 50) throw new Error('Save format does not match this demo. Existing save has been retained.');
   if(saved&&!game.native&&!localStorage.getItem(SAVE+'-before-extensions'))localStorage.setItem(SAVE+'-before-extensions',saved);
-  game=enablePoolAutomation(restoreGame(game));
+  game=enableCrystalRewards(enablePoolAutomation(restoreGame(game)));
 } catch (error) {
   // Do not silently overwrite paid inventory or earned rights on a bad save.
   storageReady = false;
@@ -241,7 +241,7 @@ function render() {
     const div=document.createElement('div');div.className='inventory-item';
     const text=document.createElement('span');text.textContent=`Owned ${crystal.asset} ${crystal.origin==='shards'?'shard-formed ':''}crystal`;
     div.append(text);
-    if(crystal.origin==='whole'&&(crystal.asset==='DIG'||crystal.nativeNominal)){
+    if(game.crystalRewardsVersion!==1&&crystal.origin==='whole'&&(crystal.asset==='DIG'||crystal.nativeNominal)){
       const button=document.createElement('button');button.textContent=`Break and settle simulated ${crystal.asset}`;button.onclick=()=>run('breakCrystal',{crystalId:crystal.id});div.append(button);
     } else { const hint=document.createElement('p');hint.className='hint';hint.textContent='Owned right retained. Settlement policy/controller pending.';div.append(hint); }
     $('crystals').append(div);
