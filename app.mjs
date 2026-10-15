@@ -1,5 +1,5 @@
 import {RewardReveals,COIN_REGIONS} from './reward-reveal.mjs?v=loot-reveal-20261014';
-import {enablePoolAutomation,enableCrystalRewards} from './nft-game.mjs?v=loot-reveal-20261014';
+import {enablePoolAutomation,enableFusionRewards} from './nft-game.mjs?v=loot-reveal-20261014';
 import {BULK_TOOLS,bulkReadiness} from './bulk-controls.mjs?v=loot-reveal-20261014';
 import {restorePoolEmblems,restoreCleanBoard} from './board-presentation.mjs?v=loot-reveal-20261014';
 import { RULES, createGame, restoreGame, act, publicBoard, spendable, resolved, PICKAXE_PRICE, balance, nativeSpendable, COSMETICS, PLATES, NATIVE_PRICES, DIG_ALTERNATIVES, amount, bulkTargets } from './nft-game.mjs?v=loot-reveal-20261014';
@@ -37,7 +37,7 @@ try {
   game = saved ? JSON.parse(saved) : createGame();
   if (game.schema !== 1 || game.version !== RULES.version || !Array.isArray(game.board) || game.board.length !== 50) throw new Error('Save format does not match this demo. Existing save has been retained.');
   if(saved&&!game.native&&!localStorage.getItem(SAVE+'-before-extensions'))localStorage.setItem(SAVE+'-before-extensions',saved);
-  game=enableCrystalRewards(enablePoolAutomation(restoreGame(game)));
+  game=enableFusionRewards(enablePoolAutomation(restoreGame(game)));
 } catch (error) {
   // Do not silently overwrite paid inventory or earned rights on a bad save.
   storageReady = false;
@@ -77,9 +77,18 @@ async function run(type, data={}) {
     if(['dig','pickaxe','bulk','light','detector','scanner','finder','breakCrystal','descend'].includes(type))closeGamePanels();
     if(type==='descend')await descentCinematic.play(previous,next);
     else if(type==='bulk'&&data.kind==='dynamite'){await nomoCinematic.play(previous,next,data);rewardReveals.show(revealTicket);}
-    else if(['dig','pickaxe','bulk','light','detector','scanner','finder','breakCrystal'].includes(type))void presentAction(type,data,previous,next,revealTicket).catch(()=>{});
+    else if(['dig','pickaxe','bulk','light','detector','scanner','finder','breakCrystal'].includes(type)){const showing=presentAction(type,data,previous,next,revealTicket).catch(()=>{});if(game.fusionQueue?.length)await showing;}
+    await processFusionRewards();
   } catch (error) { message(error.message,true); }
   finally { busy=false; }
+}
+async function processFusionRewards(){
+ while(game.fusionQueue?.length){const pending=game.fusionQueue[0];
+  // Persisted before presentation. Stage 5 supplies the full cutscene here.
+  if(!storageReady)throw Error('Storage unavailable. Fusion entitlement retained in this session; restore storage before settlement.');
+  const settle=()=>{const latest=localStorage.getItem(SAVE);const current=latest?JSON.parse(latest):game;const next=act(current,{type:'finalizeFusion',rewardId:pending.id,id:'fusion-finalize:'+pending.id});save(next);return next;};
+  game=await(navigator.locks?.request?navigator.locks.request(SAVE,settle):Promise.resolve().then(settle));render();message(game.history[0]?.text||'Crystal reward credited.');
+ }
 }
 function confirmAction(title,text,action) {
   const expectedDepth=game.depth,expectedWallet=game.account.receivingWallet;
@@ -243,7 +252,7 @@ function render() {
     div.append(text);
     if(game.crystalRewardsVersion!==1&&crystal.origin==='whole'&&(crystal.asset==='DIG'||crystal.nativeNominal)){
       const button=document.createElement('button');button.textContent=`Break and settle simulated ${crystal.asset}`;button.onclick=()=>run('breakCrystal',{crystalId:crystal.id});div.append(button);
-    } else { const hint=document.createElement('p');hint.className='hint';hint.textContent='Owned right retained. Settlement policy/controller pending.';div.append(hint); }
+    } else { const hint=document.createElement('p');hint.className='hint';hint.textContent=crystal.settlementHold||'Owned right retained. Settlement policy/controller pending.';div.append(hint); }
     $('crystals').append(div);
   }
   if(!$('crystals').childElementCount)$('crystals').textContent='No owned crystals yet.';
@@ -343,6 +352,7 @@ try {
 await approvedShop.load().catch(error=>message(error.message,true));
 await cleanBoardReady;
 document.body.dataset.runtimeReady='true';
+await run('tick'); // Recover known whole/fusion rewards from the saved ledger.
 mobileView.addEventListener('change',()=>render());
 // Timer evaluation is local simulation, not a live economic service.
 setInterval(()=>{
