@@ -18,3 +18,12 @@
  .approved-shop-items button{min-width:100px;min-height:44px}
  .approved-shop-notice,.approved-shop-detail p,.shop-digging-packs p{overflow-wrap:anywhere}
 }
+
+/* Current approved Boost terms overlay the dated embedded numbers without altering source art. */
+.approved-shop-scene{container-type:inline-size}
+.shop-boost-runtime{position:absolute;display:flex;align-items:center;justify-content:center;box-sizing:border-box;margin:0;padding:0 2px;background:#091612;color:#ffe39a;font-size:1.6cqw;line-height:1.1;font-weight:800;text-align:center;white-space:nowrap;pointer-events:none;text-shadow:1px 1px 2px #000}
+.shop-boost-price{font-size:1.65cqw;background:#0b251b;color:#ffe59c}
+.shop-boost-terms{font-size:1.25cqw;justify-content:flex-start;color:#f4edd5;background:#07111a;font-weight:500}
+#dig-reward-table{width:100%;border-collapse:collapse;font-size:clamp(11px,2.8vw,15px)}
+#dig-reward-table th,#dig-reward-table td{padding:8px 5px;border-bottom:1px solid #496047;text-align:left}
+#dig-reward-rules{margin:12px 0}#dig-reward-rules summary{min-height:44px;padding:10px;cursor:pointer}

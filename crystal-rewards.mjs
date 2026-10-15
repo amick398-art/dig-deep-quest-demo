@@ -25,13 +25,14 @@ export function prepareFusions(s,rng=random){if(s.fusionRewardsVersion!==1)retur
  for(const asset of ['DIG','FENN'])while(s.shards[asset].length>=10){const shards=s.shards[asset].splice(0,10),id=`fusion:${asset}:${s.transactions.length}:${s.crystals.length}`;s.crystals.push({id,asset,origin:'shards',shards,reserve:shards.reduce((n,x)=>n+(x.reserve||0),0),nativeReserve:String(shards.reduce((n,x)=>n+BigInt(x.nativeReserve||'0'),0n)),state:'owned',version:s.version});}
  for(const c of s.crystals){if(c.origin!=='shards'||c.state!=='owned'||c.rewardUnits||s.crystalReceipts?.[c.id])continue;
   if(!['DIG','FENN'].includes(c.asset)||c.shards?.length!==10||c.shards.some(x=>x.version!==RULES.version||typeof x.covered!=='boolean')){c.settlementHold='Historical shard provenance needs verification; rights preserved.';continue;}
-  const covered=c.shards.filter(x=>x.covered).length;
-  if(c.asset==='DIG'&&covered!==0&&covered!==10){c.settlementHold='Mixed covered/uncovered DIG shard payout awaits explicit approval; ten shards and reservations retained in this crystal.';continue;}
-  const rate=c.asset==='DIG'?(covered===10?90:75):s.controllers.FENN.rate;
+  const covered=c.shards.filter(x=>x.covered).length,currentDig=c.asset==='DIG'&&c.shards.at(-1).economyVersion===RULES.economyVersion;
+  if(c.asset==='DIG'&&!currentDig&&covered!==0&&covered!==10){c.settlementHold='Mixed covered/uncovered DIG shard payout awaits explicit approval; ten shards and reservations retained in this crystal.';continue;}
+  const rate=c.asset==='DIG'?(currentDig?(c.shards.at(-1).covered?100:75):(covered===10?90:75)):s.controllers.FENN.rate;
   const nominal=c.nominal??weighted(c.asset==='DIG'?DIG_CRYSTAL:FENN_LADDER,rng);c.nominal=nominal;c.settlementRate??=rate;const due=units(nominal)*BigInt(c.settlementRate)/100n;
+  c.earningWallet??=s.account.receivingWallet;
   const held=c.asset==='DIG'?units(c.reserve||0):BigInt(c.nativeReserve||'0');
-  if(held<due){c.settlementHold='Historical shard funding evidence unavailable; rights preserved.';continue;}
-  c.nominal=nominal;c.rate=c.settlementRate;c.rewardUnits=String(due);c.earningWallet=s.account.receivingWallet;delete c.settlementHold;
+  if(held<due&&(!currentDig||units(s.vault)-units(s.reserved)<due-held)){c.settlementHold=currentDig?'DIG crystal completion top-up is not fully funded; fixed reward and rights preserved.':'Historical shard funding evidence unavailable; rights preserved.';continue;}
+  c.nominal=nominal;c.rate=c.settlementRate;c.rewardUnits=String(due);delete c.settlementHold;
   if(c.asset==='DIG'){s.reserved-=amount(held-due);c.reserve=amount(due);c.amount=amount(due);}else{s.native.FENN.reserved=String(BigInt(s.native.FENN.reserved)-(held-due));c.nativeReserve=String(due);c.nativeNominal=nominal;}
   s.fusionQueue.push({id:c.id,asset:c.asset,units:String(due),wallet:c.earningWallet,status:'pending',bonusUnits:'0'});
  }

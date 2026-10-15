@@ -1,17 +1,18 @@
-import {RewardReveals,COIN_REGIONS} from './reward-reveal.mjs?v=loot-reveal-20261014';
-import {enablePoolAutomation,enableFusionRewards} from './nft-game.mjs?v=loot-reveal-20261014';
+import {DIG_LADDER} from './dig-engine.mjs';
+import {RewardReveals,COIN_REGIONS} from './reward-reveal.mjs?v=dig-rules-20261015';
+import {enablePoolAutomation,enableFusionRewards} from './nft-game.mjs?v=dig-rules-20261015';
 import {CrystalFusionCinematic} from './crystal-cinematic.mjs';
-import {BULK_TOOLS,bulkReadiness} from './bulk-controls.mjs?v=loot-reveal-20261014';
-import {restorePoolEmblems,restoreCleanBoard} from './board-presentation.mjs?v=loot-reveal-20261014';
-import { RULES, createGame, restoreGame, act, publicBoard, spendable, resolved, PICKAXE_PRICE, balance, nativeSpendable, COSMETICS, PLATES, NATIVE_PRICES, DIG_ALTERNATIVES, amount, bulkTargets } from './nft-game.mjs?v=loot-reveal-20261014';
-import { MiningPresentation } from './effects.mjs?v=loot-reveal-20261014';
-import { DescentCinematic } from './descent.mjs?v=loot-reveal-20261014';
-import { MythicShop } from './nft-shop.mjs?v=loot-reveal-20261014';
-import { ApprovedShop, approvedArtwork } from './approved-shop.mjs?v=loot-reveal-20261014';
-import { closeGamePanels, refreshChoices } from './interface.mjs?v=loot-reveal-20261014';
-import approvedBoardLayout from './approved-board-layout.mjs?v=loot-reveal-20261014';
-import {shardBindingId,rewardLabel} from './reward-visuals.mjs?v=loot-reveal-20261014';
-import {NomoRunCinematic} from './nomo-cinematic.mjs?v=loot-reveal-20261014';
+import {BULK_TOOLS,bulkReadiness} from './bulk-controls.mjs?v=dig-rules-20261015';
+import {restorePoolEmblems,restoreCleanBoard} from './board-presentation.mjs?v=dig-rules-20261015';
+import { RULES, createGame, restoreGame, act, publicBoard, spendable, resolved, PICKAXE_PRICE, balance, nativeSpendable, COSMETICS, PLATES, NATIVE_PRICES, DIG_ALTERNATIVES, amount, bulkTargets } from './nft-game.mjs?v=dig-rules-20261015';
+import { MiningPresentation } from './effects.mjs?v=dig-rules-20261015';
+import { DescentCinematic } from './descent.mjs?v=dig-rules-20261015';
+import { MythicShop } from './nft-shop.mjs?v=dig-rules-20261015';
+import { ApprovedShop, approvedArtwork } from './approved-shop.mjs?v=dig-rules-20261015';
+import { closeGamePanels, refreshChoices } from './interface.mjs?v=dig-rules-20261015';
+import approvedBoardLayout from './approved-board-layout.mjs?v=dig-rules-20261015';
+import {shardBindingId,rewardLabel} from './reward-visuals.mjs?v=dig-rules-20261015';
+import {NomoRunCinematic} from './nomo-cinematic.mjs?v=dig-rules-20261015';
 const $ = id => document.getElementById(id);
 const presentation=new MiningPresentation($('mining-stage'));
 const descentCinematic=new DescentCinematic($('descent-cinematic'),{onTunnelStart:()=>presentation.tone('descend')});
@@ -27,6 +28,9 @@ const mobileView=matchMedia('(max-width:620px)');
 const compactNumber=new Intl.NumberFormat('en-US',{notation:'compact',maximumFractionDigits:1});
 const sceneNumber=n=>mobileView.matches?compactNumber.format(n):fmt(n);
 const fmt = n => n.toLocaleString('en-US',{maximumFractionDigits:12});
+const rewardTable=$('dig-reward-table');
+if(rewardTable){const head=document.createElement('tr');for(const text of ['Chance within DIG finds','Normal DIG (75%)','Covered DIG (100%)']){const th=document.createElement('th');th.scope='col';th.textContent=text;head.append(th);}const thead=document.createElement('thead');thead.append(head);rewardTable.append(thead);const body=document.createElement('tbody');for(const [i,[nominal]]of DIG_LADDER.entries()){const row=document.createElement('tr');for(const text of [['45%','33⅓%','14⅓%','6⅓%','0.95%','0.05%'][i],fmt(nominal*.75),fmt(nominal)]){const td=document.createElement('td');td.textContent=text;row.append(td);}body.append(row);}rewardTable.append(body);}
+
 function transactionId() {
   // randomUUID requires a secure context; getRandomValues also supports a phone
   // accessing the local development server over ordinary HTTP.
@@ -184,7 +188,7 @@ function renderBoard() {
 function renderTimeStatus() {
   approvedShop.refreshTimeStatus();
   const cooldown=game.boost.endedAt===null?0:Math.max(0,Math.ceil((game.boost.endedAt+RULES.cooldown-Date.now())/1000));
-  $('boost-status').textContent=game.boost.active?`DIG Boost ${game.boost.id} active · covered DIG 90%`:cooldown?`DIG Boost cooldown · ${cooldown}s remaining`:'DIG Boost inactive · normal DIG 75%';
+  $('boost-status').textContent=game.boost.active?`DIG Boost ${game.boost.id} active · covered DIG 100%`:cooldown?`DIG Boost cooldown · ${cooldown}s remaining`:'DIG Boost inactive · normal DIG 75%';
   document.body.dataset.boost=String(game.boost.active);
   const freeWait=game.lastFreeClaim===null?0:Math.max(0,game.lastFreeClaim+RULES.freeInterval-Date.now());
   const designated=game.account.designatedWallet===game.account.receivingWallet?game.wallet:game.account.wallets.find(w=>w.id===game.account.designatedWallet)?.DIG||0;
@@ -192,7 +196,7 @@ function renderTimeStatus() {
   $('free').disabled=freeWait>0||designated<RULES.freeGate||!game.account.eligible;
   $('scene-free').disabled=$('free').disabled;
   $('scene-refill').textContent=designated<RULES.freeGate?'Requires 500,000 DIG held':!game.account.eligible?'Profile ineligible':freeWait?`Daily pair in ${Math.ceil(freeWait/3600000)}h`:'Daily pair available';
-  $('scene-yield-DIG').textContent=game.boost.active?'90% covered Boost':'75% normal yield';
+  $('scene-yield-DIG').textContent=game.boost.active?'100% covered Boost':'75% normal yield';
 }
 function render() {
   approvedShop.refresh();
@@ -270,7 +274,7 @@ function render() {
 $('buy-shovels').onclick=()=>run('buyShovels',{count:Number($('pack').value)});
 $('free').onclick=()=>run('free');
 $('scene-free').onclick=()=>run('free');
-$('buy-pass').onclick=()=>confirmAction('Buy a DIG Boost Pass?', `Payment: DIG only. Boost Mode applies only to the DIG reward pool. 260,000 DIG for 250 eligible future covered positions. Digging costs extra. NO REFUNDS. Uses carry forward; activation, timing, utilization and profit are not guaranteed. Current vault: ${fmt(game.vault)} actual, ${fmt(game.reserved)} reserved, ${fmt(spendable(game))} spendable. Activation 114,063,300; exit 100,000,000; five-minute post-event cooldown. Allocation: 104,000 pool, 91,000 treasury, 39,000 burn, 13,000 each Oso/Bebe. Covered DIG 90%; normal FENN/NOMO yields and pauses stay unchanged. Oso/Bebe equipment allowances are separate from Boost Mode.`,()=>run('buyPass',{currency:'DIG',asset:'DIG',acceptNoRefunds:true}));
+$('buy-pass').onclick=()=>confirmAction('Buy a DIG Boost Pass?', `Payment: DIG only. Boost Mode applies only to the DIG reward pool. 52,000 DIG for 50 eligible future covered positions. Digging costs extra. NO REFUNDS. Uses carry forward; activation, timing, utilization and profit are not guaranteed. Current vault: ${fmt(game.vault)} actual, ${fmt(game.reserved)} reserved, ${fmt(spendable(game))} spendable. Activation 114,063,300; exit 100,000,000; five-minute post-event cooldown. Allocation: 20,800 pool, 18,200 treasury, 7,800 burn, 2,600 each Oso/Bebe. Covered DIG 100%; normal FENN/NOMO yields and pauses stay unchanged. Eligible permanent regular DIG Mythic bonuses stack after yield, including Boost. No NFT bonuses on metal, crystals or shards.`,()=>run('buyPass',{currency:'DIG',asset:'DIG',acceptNoRefunds:true}));
 $('dig').onclick=()=>run('dig',{index:selected});
 $('pickaxe').onclick=()=>{
  const family=$('reward-family').value,currency=$('pay-currency').value,cell=game.board[selected];if(!cell||cell.state!=='metal')return;

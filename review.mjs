@@ -1,3 +1,4 @@
+import {boostArtworkLabels} from './approved-shop.mjs';
 import {frameAt} from './effects.mjs';
 const variants = [
   ['DIG','DIG token'],['FENN','FENN token'],['NOMO','NOMO token'],
@@ -33,7 +34,7 @@ try {
   const img=document.createElement('img');img.src=binding.file;img.alt=id;img.loading='lazy';
   const label=document.createElement('h3');label.textContent=id;
   const note=document.createElement('p');note.textContent='APPROVED ORIGINAL · pixels preserved';
-  card.append(img,label,note);gallery.append(card);
+  if(binding.file==='assets/shop/approved_boost.jpg'){const scene=document.createElement('div');scene.className='approved-shop-scene';const layer=document.createElement('div');layer.className='approved-shop-hotspots';boostArtworkLabels(layer);scene.append(img,layer);card.append(scene,label,note);note.textContent='APPROVED ORIGINAL · current 52,000 DIG / 50-block labels are interface overlays';}else card.append(img,label,note);gallery.append(card);
  }
 }catch{document.getElementById('approved-gallery').textContent='Artwork index unavailable.';}
 try{

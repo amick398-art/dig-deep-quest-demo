@@ -1,7 +1,7 @@
 import {scanCrystals} from './crystal-finder.mjs?v=nomo-finder-20261014';
 import {refreshNativeForecast,recordMetalSelection} from './pool-automation.mjs';
 // C29 simulated gameplay extensions. The recovered engine.mjs remains immutable.
-import * as base from './engine.mjs';
+import * as base from './dig-engine.mjs';
 export const { RULES, publicBoard, resolved, spendable, PICKAXE_PRICE } = base;
 export const SUPPLY={DIG:1_000_000_000,FENN:1_000_000_000_000,NOMO:10_000};
 export const COSMETICS={basic:0,copper:1000,bronze:2000,iron:2500,silver:5000,gold:10000,platinum:25000,crystal:30000,obsidian:35000,void:40000,diamond:50000,shadow_forge:50000};
@@ -35,7 +35,7 @@ function enrichBoard(s,rng){
  }
 }
 export function restoreGame(current,rng=base.random){
- const s=structuredClone(current);
+ const s=base.migrateDigEconomy(structuredClone(current));
  if(!s.native){
   s.native={FENN:book(1000000000,13000000000),NOMO:book(1,20)};
   s.controllers={FENN:{rate:100,paused:false,runway:null},NOMO:{rate:100,paused:false,runway:null,restartLiability:null}};
