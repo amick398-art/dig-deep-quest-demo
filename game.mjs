@@ -199,7 +199,7 @@ export function act(current,action,{now=Date.now(),rng=base.random,afterRegularR
  else if(action.type==='bulk'){
   const indices=bulkTargets(action.kind,action);validateBulk(s,action.kind,indices);
   pay(s,action.kind==='dynamite'?'NOMO':'DIG',{smallCharge:13500,powerStrike:18000,drill:45000,dynamite:0.05}[action.kind]);
-  for(const index of indices){base.updateBoost(s,now);s.shovels++;s=base.act(s,{type:'dig',index,id:`${action.id}:cell:${index}`},{now,rng});finishDiscovery(s,s.board[index],rng);afterRegularReward?.(s,s.board[index]);if(s.board[index].kind==='shovel')s.storedShovels++;syncShovels(s);for(const a of ['FENN','NOMO'])evaluateNative(s,a);}
+  for(const index of indices){if(s.poolAutomationVersion===1){s.poolEvent=`${action.id}:cell:${index}`;for(const a of ['FENN','NOMO'])evaluateNative(s,a);}base.updateBoost(s,now);s.shovels++;s=base.act(s,{type:'dig',index,id:`${action.id}:cell:${index}`},{now,rng});finishDiscovery(s,s.board[index],rng);afterRegularReward?.(s,s.board[index]);if(s.board[index].kind==='shovel')s.storedShovels++;syncShovels(s);for(const a of ['FENN','NOMO'])evaluateNative(s,a);}
   note(s,`${action.kind}: ${indices.length} positions excavated in row-major order.`);
  }else if(action.type==='buyCosmetic'){
   if(action.key==='shadow_forge'&&!approvedShadowForge)throw Error('Shadow Forge release requires approved artwork.');

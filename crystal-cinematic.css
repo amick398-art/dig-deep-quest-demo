@@ -1,0 +1,7 @@
+.crystal-fusion{width:min(94vw,620px);max-height:92dvh;padding:clamp(16px,4vw,30px);border:3px solid #bc9451;border-radius:18px;background:radial-gradient(ellipse at 50% 35%,#163c2c,#040c0b 70%);color:#fbe8ae;text-align:center;box-shadow:0 0 50px #2ac78b55;overflow-y:auto}
+.crystal-fusion::backdrop{background:#010805e8;backdrop-filter:blur(3px)}
+.crystal-fusion[data-asset=FENN]{background:radial-gradient(ellipse at 50% 35%,#481d29,#0b070a 70%);box-shadow:0 0 50px #ff486555}
+.crystal-fusion h2{font-size:clamp(22px,6vw,34px);margin:8px 0;color:#98ffcd}.crystal-fusion[data-asset=FENN] h2{color:#ffa5b2}
+.crystal-fusion canvas{display:block;width:100%;height:auto;max-height:44dvh;object-fit:contain;margin:auto}
+.crystal-fusion [data-fusion-amount]{display:block;font-size:clamp(25px,7vw,42px);font-weight:800;min-height:1.4em;color:#fff4bc;text-shadow:0 2px 10px #000}
+.crystal-fusion [data-fusion-status]{min-height:2.7em;font-size:16px;line-height:1.35}.crystal-fusion [data-fusion-bonus]{font-size:13px;color:#c3cec5}.crystal-fusion button{min-height:48px;min-width:180px;margin-top:12px}

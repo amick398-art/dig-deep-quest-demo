@@ -12,6 +12,7 @@
   <link rel="stylesheet" href="approved-shop.css?v=mobile-fit-20261014">
   <script type="module" src="interface.mjs?v=mobile-fit-20261014"></script>
   <script type="module" src="app.mjs?v=mobile-fit-20261014"></script>
+  <link rel="stylesheet" href="crystal-cinematic.css">
 </head>
 <body>
   <header><div><p class="eyebrow">NOMO SUPPLY · DEVELOPMENT DEMO</p><h1>DIG: Deep Quest</h1></div><span class="tag">Simulated currency</span></header>
@@ -93,7 +94,7 @@
   <dialog id="qa-panel" class="game-panel" aria-labelledby="qa-panel-title"><div class="panel-heading"><h2 id="qa-panel-title">Demo testing</h2><button type="button" data-close-panel aria-label="Close Demo testing">Close</button></div>      <details><summary>Allocation monitor</summary><p class="hint">Read-only simulated balances. Protected obligations are part of the actual pool, not additional funding. No withdrawal controls.</p><div id="ledger-monitor"></div></details>
       <details><summary>Simulation fixture</summary><p class="hint">Test funding only; no live token transfer. Deposits enter native vaults at 100%. There is no withdrawal action.</p><button id="deposit">Funder deposit · 20M simulated DIG</button><button id="deposit-FENN">Deposit · 1B simulated FENN</button><button id="deposit-NOMO">Deposit · 10 simulated NOMO</button></details>
       <details><summary>Simulated profile &amp; wallets</summary><p class="hint">One local profile; up to ten linked mock wallets. Linking never duplicates daily or first-release entitlements. Real NOMO Supply identity and Rewards integration are not connected.</p><span class="choice-label">Reward destination</span><input type="hidden" id="wallet-selection" value=""><div id="wallet-selection-choices" class="choice-buttons" data-choice="wallet-selection" role="group" aria-label="Reward destination"></div><label for="wallet-id">New mock wallet name</label><input id="wallet-id" maxlength="40"><button id="link-wallet">Link mock wallet</button></details>
-<p class="hint">Local simulation only. Native runway estimation, paused-pool fallback and shard-formed settlement remain pending; Crystal Finder ranks nominal values at entered test USD prices. Physical-device QA remains pending.</p></dialog>
+<p class="hint">Local simulation only. Native pool forecasts and crystal rewards are automatic. Mixed DIG shard provenance and historical paused-pool fallback remain held; Crystal Finder ranks nominal values at entered test USD prices. Physical-device QA remains pending.</p></dialog>
   <dialog id="confirm-dialog"><form method="dialog"><h2 id="confirm-title"></h2><p id="confirm-text"></p><div class="dialog-actions"><button value="cancel">Cancel</button><button value="confirm" class="primary">Confirm</button></div></form></dialog>
   <dialog id="descent-cinematic" class="descent-cinematic" aria-labelledby="descent-title" data-phase="idle">
     <canvas class="descent-tunnel" aria-hidden="true" hidden></canvas>
@@ -107,6 +108,12 @@
     <canvas width="640" height="360" role="img" aria-label="NOMO plants dynamite across the two purchased mining rows"></canvas>
     <p>Metal discoveries still need a matching pickaxe. Skipping the animation keeps your excavation and rewards.</p>
     <div class="dialog-actions"><small>New animation using approved artwork · awaiting review</small><button type="button" data-nomo-skip>Skip animation</button></div>
+  </dialog>
+  <dialog id="crystal-fusion" class="crystal-fusion" aria-labelledby="fusion-title">
+    <p>10 SHARDS → ONE CRYSTAL</p><h2 id="fusion-title" data-fusion-title></h2>
+    <canvas width="560" height="360" role="img" aria-label="Ten matching shards fuse into one crystal"></canvas>
+    <strong data-fusion-amount></strong><p data-fusion-status role="status"></p><p data-fusion-bonus></p>
+    <button type="button" data-fusion-skip>Skip Animation</button><p><small>New animation using existing artwork · awaiting review</small></p>
   </dialog>
 </body>
 </html>

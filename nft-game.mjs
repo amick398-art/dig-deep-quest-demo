@@ -31,7 +31,7 @@ export function act(current,action,{authority=null,now=Date.now(),rng,onDiscover
  let s=restoreGame(current,rng),wallet=s.account.receivingWallet;delete s.nftSandbox;
  if(action.expectedWallet!==undefined&&action.expectedWallet!==wallet||action.expectedDepth!==undefined&&action.expectedDepth!==s.depth)throw Error('Wallet or depth changed; no charge made.');
  const entitled=()=>{const proof=authority?.equipped(wallet);if(proof){getEdition(proof.id);if(proof.owner!==wallet||proof.mode!=='simulation'&&proof.verifiedOnChain!==true)throw Error('Current NFT ownership could not be verified.');}return proof||null;};
- if(action.type==='finalizeFusion'){finalizeFusion(s,action.rewardId);s=legacy.act(s,{type:'tick',id:action.id},{now,rng});return s;}
+ if(action.type==='finalizeFusion'){if(current.nftSandbox)s.nftSandbox=structuredClone(current.nftSandbox);s.nftEquipped=current.nftEquipped??null;finalizeFusion(s,action.rewardId);s=legacy.act(s,{type:'tick',id:action.id},{now,rng});return s;}
  if(action.type==='transferNFT'){if(!authority)throw Error('NFT ownership authority unavailable.');authority.transfer({id:action.nftId,from:wallet,to:action.destination});s.nftEquipped=entitled()?.id||null;s.transactions.push(action.id);return s;}
  if(action.type==='equipNFT'){
   if(!authority)throw Error('NFT ownership verification is not configured.');authority.equip(wallet,action.nftId??null);s.nftEquipped=entitled()?.id||null;s.equipped='basic';s.transactions.push(action.id);return s;

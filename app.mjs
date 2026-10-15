@@ -1,5 +1,6 @@
 import {RewardReveals,COIN_REGIONS} from './reward-reveal.mjs?v=loot-reveal-20261014';
 import {enablePoolAutomation,enableFusionRewards} from './nft-game.mjs?v=loot-reveal-20261014';
+import {CrystalFusionCinematic} from './crystal-cinematic.mjs';
 import {BULK_TOOLS,bulkReadiness} from './bulk-controls.mjs?v=loot-reveal-20261014';
 import {restorePoolEmblems,restoreCleanBoard} from './board-presentation.mjs?v=loot-reveal-20261014';
 import { RULES, createGame, restoreGame, act, publicBoard, spendable, resolved, PICKAXE_PRICE, balance, nativeSpendable, COSMETICS, PLATES, NATIVE_PRICES, DIG_ALTERNATIVES, amount, bulkTargets } from './nft-game.mjs?v=loot-reveal-20261014';
@@ -15,6 +16,7 @@ const $ = id => document.getElementById(id);
 const presentation=new MiningPresentation($('mining-stage'));
 const descentCinematic=new DescentCinematic($('descent-cinematic'),{onTunnelStart:()=>presentation.tone('descend')});
 const nomoCinematic=new NomoRunCinematic($('nomo-cinematic'),{getArt:cell=>cellAsset(cell),onBlast:()=>presentation.tone('dynamite')});
+const fusionCinematic=new CrystalFusionCinematic($('crystal-fusion'),{getArt:(kind,token)=>kind==='shard'?asset(shardBindingId(token)):asset(`reward.crystal.${token.toLowerCase()}`)});
 const SAVE = 'dig-deep-quest-c29-demo-v1';
 let game, selected = null, bindings = {}, candidateBindings={}, boardLayout = approvedBoardLayout, busy = false, storageReady = true, shopFingerprint='', boardFingerprint='';
 let chargeTargets=[],bulkMode=null;
@@ -46,8 +48,8 @@ try {
   message(`${error.message} This temporary session will not overwrite the saved game.`,true);
 }
 function save(s) {
-  if (!storageReady) return;
-  try { localStorage.setItem(SAVE, JSON.stringify(s)); }
+  if (!storageReady) return false;
+  try { localStorage.setItem(SAVE, JSON.stringify(s));return true; }
   catch { storageReady=false; $('save-status').textContent='Browser storage unavailable. New progress will not be saved.'; }
 }
 async function run(type, data={}) {
@@ -63,10 +65,10 @@ async function run(type, data={}) {
       if (latest) game = JSON.parse(latest);
       const next = act(game, {type,...data,...context,id:transactionId()},{authority:nftShop.authority(),onDiscovery});
       nftShop.commit(next);
-      save(next);
+      if(!save(next))throw Error('Could not save this action; original saved inventory and rewards retained.');
       return next;
     }) : Promise.resolve().then(() => {
-      const next = act(game,{type,...data,...context,id:transactionId()},{authority:nftShop.authority(),onDiscovery}); nftShop.commit(next); save(next); return next;
+      const next = act(game,{type,...data,...context,id:transactionId()},{authority:nftShop.authority(),onDiscovery}); nftShop.commit(next); if(!save(next))throw Error('Could not save this action; original saved inventory and rewards retained.'); return next;
     }));
     const previous=game;game = next;
     rewardReveals.context(game.depth,game.account.receivingWallet);
@@ -78,15 +80,16 @@ async function run(type, data={}) {
     if(type==='descend')await descentCinematic.play(previous,next);
     else if(type==='bulk'&&data.kind==='dynamite'){await nomoCinematic.play(previous,next,data);rewardReveals.show(revealTicket);}
     else if(['dig','pickaxe','bulk','light','detector','scanner','finder','breakCrystal'].includes(type)){const showing=presentAction(type,data,previous,next,revealTicket).catch(()=>{});if(game.fusionQueue?.length)await showing;}
-    await processFusionRewards();
+    await processFusionRewards({resume:data.resumeFusions===true});
   } catch (error) { message(error.message,true); }
   finally { busy=false; }
 }
-async function processFusionRewards(){
+async function processFusionRewards({resume=false}={}){
  while(game.fusionQueue?.length){const pending=game.fusionQueue[0];
-  // Persisted before presentation. Stage 5 supplies the full cutscene here.
+  // The exact amount and identifier were persisted with the earning action.
   if(!storageReady)throw Error('Storage unavailable. Fusion entitlement retained in this session; restore storage before settlement.');
-  const settle=()=>{const latest=localStorage.getItem(SAVE);const current=latest?JSON.parse(latest):game;const next=act(current,{type:'finalizeFusion',rewardId:pending.id,id:'fusion-finalize:'+pending.id});save(next);return next;};
+  if(!resume)await fusionCinematic.play(pending);
+  const settle=()=>{const latest=localStorage.getItem(SAVE);const current=latest?JSON.parse(latest):game;const next=act(current,{type:'finalizeFusion',rewardId:pending.id,id:'fusion-finalize:'+pending.id});if(!save(next))throw Error('Reward remains in saved pending queue; reload to recover it.');return next;};
   game=await(navigator.locks?.request?navigator.locks.request(SAVE,settle):Promise.resolve().then(settle));render();message(game.history[0]?.text||'Crystal reward credited.');
  }
 }
@@ -197,7 +200,7 @@ function render() {
   $('earned').textContent=fmt(game.earned);$('rewards').textContent=fmt(game.profileRewards);
   $('scene-shovels').textContent=sceneNumber(game.shovels);$('scene-shovels').title=fmt(game.shovels)+' shovels';$('scene-free-count').textContent=game.freeShovels;$('scene-stored-count').textContent=game.storedShovels;
   for(const token of ['DIG','FENN','NOMO']){
-    const poolValue=token==='DIG'?spendable(game):nativeSpendable(game,token),poolNode=$(`scene-pool-${token}`);poolNode.textContent=sceneNumber(poolValue);poolNode.title=fmt(poolValue)+' '+token;poolNode.setAttribute('aria-label',fmt(poolValue)+' '+token+' spendable');
+    const poolValue=token==='DIG'?spendable(game):(game.controllers[token].forecast?.spendable??nativeSpendable(game,token)),poolNode=$(`scene-pool-${token}`);poolNode.textContent=sceneNumber(poolValue);poolNode.title=fmt(poolValue)+' '+token;poolNode.setAttribute('aria-label',fmt(poolValue)+' '+token+' spendable');
     if(token!=='DIG')$(`scene-yield-${token}`).textContent=game.controllers[token].paused?'Pool paused':`${game.controllers[token].rate}% yield`;
   }
   for(const token of ['DIG','FENN'])$(`scene-shards-${token}`).textContent=`${game.shards[token].length} / 10`;
@@ -352,7 +355,7 @@ try {
 await approvedShop.load().catch(error=>message(error.message,true));
 await cleanBoardReady;
 document.body.dataset.runtimeReady='true';
-await run('tick'); // Recover known whole/fusion rewards from the saved ledger.
+await run('tick',{resumeFusions:true}); // Resume a persisted reward without replaying or rerolling it.
 mobileView.addEventListener('change',()=>render());
 // Timer evaluation is local simulation, not a live economic service.
 setInterval(()=>{
